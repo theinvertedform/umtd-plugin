@@ -16,6 +16,10 @@ define( 'UMTD_PATH', plugin_dir_path( __FILE__ ) );
 
 add_action( 'init', 'umtd_register_post_types' );
 
+add_action( 'init', function() {
+    load_plugin_textdomain( 'umtd', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+} );
+
 function umtd_register_post_types() {
 
     $post_types = apply_filters( 'umtd_post_types', require UMTD_PATH . 'config/post-types.php' );
@@ -38,7 +42,8 @@ function umtd_register_post_types() {
                 'has_archive'   => true,
                 'rewrite'       => array( 'slug' => $args['slug'] ),
                 'show_in_rest'  => true,
-				'supports' => isset( $args['supports'] ) ? $args['supports'] : array( 'title' ),
+				'supports'		=> isset( $args['supports'] ) ? $args['supports'] : array( 'title' ),
+				'show_in_menu'	=> isset( $args['show_in_menu'] ) ? $args['show_in_menu'] : true,
             )
         );
 
@@ -75,4 +80,19 @@ function umtd_register_taxonomies() {
 		);
 	}
 }
+
+/**
+ *
+ *	add custom ACF fields
+ *
+ */
+
+add_filter( 'acf/settings/load_json', function( $paths ) {
+    $paths[] = UMTD_PATH . 'acf-json';
+    return $paths;
+} );
+
+add_filter( 'acf/settings/save_json', function( $path ) {
+    return UMTD_PATH . 'acf-json';
+} );
 /**?>*/
