@@ -6,6 +6,7 @@ return array(
         'plural'		=> 'Events',
         'singular'		=> 'Event',
 		'slug'			=> 'events',
+		'supports'		=> array( 'title', 'thumbnail' ),
 		//'show_in_menu'	=> 'umtd-events',
     ),
 
@@ -14,6 +15,7 @@ return array(
         'plural'		=> 'Works',
         'singular'		=> 'Work',
         'slug'			=> 'works',
+		'supports'		=> array( 'title', 'thumbnail' ),
 		//'show_in_menu'  => 'umtd-works',
     ),
 
@@ -22,7 +24,7 @@ return array(
         'plural'		=> 'Agents',
         'singular'		=> 'Agent',
 		'slug'			=> 'agents',
-		'supports'		=> array( 'title' ),
+		'supports'		=> array( 'title', 'thumbnail' ),
 		//'show_in_menu'  => 'umtd-agents',
     ),
 );

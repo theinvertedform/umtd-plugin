@@ -1,13 +1,13 @@
 {
-    "key": "group_69b0409962f04",
-    "title": "Work Metadata",
+    "key": "group_69b9919e17cbb",
+    "title": "Image Metadata",
     "fields": [
         {
-            "key": "field_69b04129a1b77",
-            "label": "Agent",
-            "name": "agents",
+            "key": "field_69b9919f7d3a7",
+            "label": "View Type",
+            "name": "view_type",
             "aria-label": "",
-            "type": "relationship",
+            "type": "select",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -16,28 +16,30 @@
                 "class": "",
                 "id": ""
             },
-            "post_type": [
-                "umtd_agents"
-            ],
-            "post_status": "",
-            "taxonomy": "",
-            "filters": [
-                "search",
-                "post_type",
-                "taxonomy"
-            ],
-            "return_format": "object",
-            "min": "",
-            "max": "",
+            "choices": {
+                "recto": "recto",
+                "verso": "verso",
+                "detail": "detail",
+                "installation view": "installation view",
+                "exhibition view": "exhibition view",
+                "before treatment": "before treatment",
+                "after treatment": "after treatment"
+            },
+            "default_value": false,
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
             "allow_in_bindings": 0,
-            "elements": "",
-            "bidirectional": 0,
-            "bidirectional_target": []
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
         },
         {
-            "key": "field_69b0413ca1b78",
-            "label": "Medium",
-            "name": "medium",
+            "key": "field_69b9929a7d3a8",
+            "label": "Rights",
+            "name": "rights",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -48,7 +50,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "intaglio",
+            "default_value": "©",
             "maxlength": "",
             "allow_in_bindings": 0,
             "placeholder": "",
@@ -56,30 +58,9 @@
             "append": ""
         },
         {
-            "key": "field_69b83ed4aed5a",
-            "label": "Work Type",
-            "name": "work_type",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_69b83efcaed5b",
-            "label": "Date Display",
-            "name": "date_display",
+            "key": "field_69b992b67d3a9",
+            "label": "Rights Holder",
+            "name": "rights_holder",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -98,9 +79,41 @@
             "append": ""
         },
         {
-            "key": "field_69b83f09aed5c",
-            "label": "Date Earliest",
-            "name": "date_earliest",
+            "key": "field_69b992c77d3aa",
+            "label": "License",
+            "name": "license",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "All Rights Reserved": "All Rights Reserved",
+                "CC BY": "CC BY",
+                "CC BY-SA": "CC BY-SA",
+                "CC BY-NC": "CC BY-NC",
+                "Public Domain": "Public Domain"
+            },
+            "default_value": false,
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "allow_in_bindings": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_69b992ea7d3ab",
+            "label": "Credit Line",
+            "name": "credit_line",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -119,9 +132,9 @@
             "append": ""
         },
         {
-            "key": "field_69b83f12aed5d",
-            "label": "Date Latest",
-            "name": "date_latest",
+            "key": "field_69b992fa7d3ac",
+            "label": "Image Source",
+            "name": "image_source",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -140,9 +153,9 @@
             "append": ""
         },
         {
-            "key": "field_69b83f1baed5e",
-            "label": "Dimensions",
-            "name": "dimensions",
+            "key": "field_69b993077d3ad",
+            "label": "Image Date",
+            "name": "image_date",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -161,83 +174,9 @@
             "append": ""
         },
         {
-            "key": "field_69b83f24aed5f",
-            "label": "Current Location",
-            "name": "current_location",
-            "aria-label": "",
-            "type": "relationship",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "post_type": [
-                "umtd_agents"
-            ],
-            "post_status": "",
-            "taxonomy": "",
-            "filters": [
-                "search",
-                "post_type",
-                "taxonomy"
-            ],
-            "return_format": "object",
-            "min": "",
-            "max": "",
-            "allow_in_bindings": 0,
-            "elements": "",
-            "bidirectional": 0,
-            "bidirectional_target": []
-        },
-        {
-            "key": "field_69b83f3caed60",
-            "label": "Accession Number",
-            "name": "accession_number",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_69b83f55aed61",
-            "label": "Description",
-            "name": "description",
-            "aria-label": "",
-            "type": "textarea",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "rows": "",
-            "placeholder": "",
-            "new_lines": ""
-        },
-        {
-            "key": "field_69b83f69aed62",
-            "label": "Related Works",
-            "name": "related_works",
+            "key": "field_69b993117d3ae",
+            "label": "Related Work",
+            "name": "related_work",
             "aria-label": "",
             "type": "relationship",
             "instructions": "",
@@ -270,9 +209,9 @@
     "location": [
         [
             {
-                "param": "post_type",
+                "param": "attachment",
                 "operator": "==",
-                "value": "umtd_works"
+                "value": "all"
             }
         ]
     ],
@@ -286,5 +225,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1773781322
+    "modified": 1773769768
 }
