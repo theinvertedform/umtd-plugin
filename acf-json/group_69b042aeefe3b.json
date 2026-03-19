@@ -29,6 +29,85 @@
             "save_other_choice": 0
         },
         {
+            "key": "field_69bb206cb458b",
+            "label": "First Name",
+            "name": "name_first",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69b8310b25a1f",
+                        "operator": "==",
+                        "value": "person"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69bb209ab458d",
+            "label": "Last Name",
+            "name": "name_last",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_69b8310b25a1f",
+                        "operator": "==",
+                        "value": "person"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69bb22d2064d2",
+            "label": "Display Name",
+            "name": "name_display",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_69b042b03980d",
             "label": "Name Variant",
             "name": "name_variants",
@@ -42,7 +121,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "One variant per line",
+            "default_value": "",
             "maxlength": "",
             "allow_in_bindings": 0,
             "rows": "",
@@ -90,7 +169,7 @@
             "label": "Date of Birth",
             "name": "birth_date",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -107,19 +186,18 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b831c057d1f",
             "label": "Date of Death",
             "name": "death_date",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -136,12 +214,11 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b831f457d20",
@@ -274,7 +351,7 @@
             "label": "ULAN ID",
             "name": "ulan_id",
             "aria-label": "",
-            "type": "url",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -284,15 +361,18 @@
                 "id": ""
             },
             "default_value": "",
+            "maxlength": "",
             "allow_in_bindings": 0,
-            "placeholder": ""
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_69b83d937cbc7",
             "label": "Wikidata ID",
             "name": "wikidata_id",
             "aria-label": "",
-            "type": "url",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -302,15 +382,18 @@
                 "id": ""
             },
             "default_value": "",
+            "maxlength": "",
             "allow_in_bindings": 0,
-            "placeholder": ""
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_69b83e0e7cbc8",
             "label": "Founding Date",
             "name": "founding_date",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -327,19 +410,18 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b83e2f7cbc9",
             "label": "Dissolution Date",
             "name": "dissolution_date",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -356,12 +438,11 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b83e477cbca",
@@ -452,5 +533,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1773769749
+    "modified": 1773875372
 }

@@ -157,7 +157,7 @@
             "label": "Image Date",
             "name": "image_date",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -166,12 +166,11 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b993117d3ae",
@@ -225,5 +224,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1773769768
+    "modified": 1773875418
 }

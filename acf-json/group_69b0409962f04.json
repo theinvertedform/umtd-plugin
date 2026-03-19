@@ -56,27 +56,6 @@
             "append": ""
         },
         {
-            "key": "field_69b83ed4aed5a",
-            "label": "Work Type",
-            "name": "work_type",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_69b83efcaed5b",
             "label": "Date Display",
             "name": "date_display",
@@ -102,7 +81,7 @@
             "label": "Date Earliest",
             "name": "date_earliest",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -111,19 +90,18 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b83f12aed5d",
             "label": "Date Latest",
             "name": "date_latest",
             "aria-label": "",
-            "type": "text",
+            "type": "date_picker",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -132,12 +110,11 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "display_format": "Y-m-d",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0,
+            "allow_in_bindings": 0
         },
         {
             "key": "field_69b83f1baed5e",
@@ -286,5 +263,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1773781322
+    "modified": 1773875471
 }
