@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'UMTD_PATH', plugin_dir_path( __FILE__ ) );
+define( 'UMTD_VERSION', '0.1.0' );
 
 add_action( 'init', 'umtd_register_post_types' );
 
@@ -152,4 +153,4 @@ function umtd_seed_terms() {
 require_once plugin_dir_path( __FILE__ ) . 'includes/schema.php';
 
 // sets post title from name_first and name_last fields
-require_once plugin_dir_path( __FILE__ ) . 'includes/agents.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
