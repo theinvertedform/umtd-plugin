@@ -182,7 +182,11 @@ On child plugin activation, terms present in the base vocabulary but absent from
 
 ### Location
 
-Base plugin ACF fields live in `acf-json/` and are loaded automatically by ACF's local JSON feature. Field group JSON files are named by ACF's generated key (`group_*.json`). ACF saves field group changes back to this directory.
+Base plugin ACF fields live in `acf-json/` and are loaded automatically by ACF's local JSON feature. Field group JSON files are named by ACF's generated key (`group_*.json`).
+
+**No `acf/settings/save_json` filter is registered in the base plugin.** This is intentional. If a save path were registered, ACF would write field group changes back to the base plugin directory on whatever server the edit occurred on — meaning a client install could silently diverge from the canonical repo. Base field groups are read-only on all deployed installs.
+
+**To modify base field groups:** edit on localhost, let ACF save to the local `acf-json/` directory, commit the updated JSON, deploy. Never edit base field groups on a staging or production server.
 
 Child plugin fields are registered via PHP using `acf_add_local_field_group()` on `acf/init`. The child plugin registers an additional `acf-json/` load path but has no save path — ACF Pro is required for automatic JSON saving in child plugins.
 
@@ -433,3 +437,4 @@ See `DEFERRED.md` for full register. Primary items:
 - Schema output for `umtd_events` and `umtd_agents` not written
 - Uninstall hook leaves orphaned data
 - `wp i18n make-pot` not generated
+

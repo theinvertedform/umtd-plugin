@@ -116,13 +116,12 @@ register_activation_hook( __FILE__, function() {
  *	add custom ACF fields
  *
  */
+// Load base plugin field groups from acf-json/.
+// No save_json filter — base field groups are read-only on all deployed installs.
+// To modify base field groups: edit on localhost, commit updated JSON, deploy.
 add_filter( 'acf/settings/load_json', function( $paths ) {
     $paths[] = UMTD_PATH . 'acf-json';
     return $paths;
-} );
-
-add_filter( 'acf/settings/save_json', function( $path ) {
-    return UMTD_PATH . 'acf-json';
 } );
 
 // register all terms with AAT ID as term meta

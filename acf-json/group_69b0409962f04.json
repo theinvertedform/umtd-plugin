@@ -56,27 +56,6 @@
             "append": ""
         },
         {
-            "key": "field_69b83efcaed5b",
-            "label": "Date Display",
-            "name": "date_display",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_69b83f09aed5c",
             "label": "Date Earliest",
             "name": "date_earliest",
@@ -115,6 +94,27 @@
             "first_day": 1,
             "default_to_current_date": 0,
             "allow_in_bindings": 0
+        },
+        {
+            "key": "field_69b83efcaed5b",
+            "label": "Date Display",
+            "name": "date_display",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_69b83f1baed5e",
@@ -263,5 +263,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1773875471
+    "modified": 1774046237
 }
