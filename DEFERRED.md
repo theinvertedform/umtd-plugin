@@ -33,6 +33,32 @@ A custom date section replacing ACF date pickers for `date_earliest` and `date_l
 
 ---
 
+## Translation Model
+
+**Status:** Deferred to custom DB schema milestone. URL routing is language-aware (see ARCHITECTURE.md — Internationalisation). Content is not yet differentiated by language.
+
+**Decision:** Polylang was evaluated and rejected. Its duplicate-post model is incompatible with the FRBR target architecture. Polylang Pro licensing (€99/site) does not scale for a multi-client product. TranslatePress and WPML were also evaluated — all third-party solutions have the same fundamental mismatch with this stack.
+
+**Target model:** A `umtd_translations` table — `post_id | lang | field_name | value`. Translatable fields (title, description) stored per language. Language-agnostic fields (dates, relationships, dimensions) stored once and shared. `umtd_get_field( $field, $post_id, $lang )` checks translations table first, falls back to postmeta.
+
+**FRBR framing:** A translation is a new Expression of the same Work — not a copy of the Work record. The relationship is encoded in the data model, not in duplicate posts.
+
+**Dependency:** Must be implemented as part of the custom DB schema. Installing a third-party translation plugin now would create a migration problem when the schema lands. Data import for any client should wait until the schema is in place.
+
+---
+
+## Custom DB Schema
+
+**Status:** Post-contract. Currently all data lives in WordPress postmeta (ACF serialized arrays).
+
+**Problem:** `meta_query` with `LIKE` on serialized postmeta does not scale. Work–Agent relationships stored as serialized post ID arrays cannot be queried efficiently. Translation model cannot be implemented cleanly on top of postmeta.
+
+**Target:** Custom tables replacing postmeta for all CPT data. Junction table for Work–Agent–Role relationships. Translation table per above. `umtd_get_field()` abstraction layer so templates are insulated from storage changes.
+
+**Dependency:** Must be designed before data import for any client. Importing into postmeta now means doing the import twice.
+
+---
+
 ## Agent Role Model
 
 ACF Pro Repeater required. Current `agents_artists` / `agents_authors` parallel fields are a Piroir-specific hack.
@@ -43,7 +69,7 @@ Target: single `agents` repeater with sub-fields `agent` (relationship) + `role`
 
 ## Work–Agent Junction Table
 
-FRBR-correct normalization target: `work_id | agent_id | role_id`. Deferred until after ACF Pro Repeater migration and scale justifies it.
+FRBR-correct normalization target: `work_id | agent_id | role_id`. Deferred until after ACF Pro Repeater migration and scale justifies it. Superseded by Custom DB Schema above.
 
 ---
 
@@ -59,9 +85,9 @@ One engine reads a config array, outputs JSON-LD for all CPTs. Currently only `u
 
 ---
 
-## Polylang — FR/EN
+## Page Generation on Child Plugin Activation
 
-Install and configure before production data entry. Piroir requirement — bilingual Montreal gallery. Deferred past presentation.
+Child plugin activation could call `wp_insert_post()` to create required navigation pages with correct slugs and page templates assigned via `_wp_page_template` postmeta. Currently pages are created manually in WP admin. Config-driven: define required pages in a child plugin config array, generate on activation.
 
 ---
 
@@ -77,9 +103,9 @@ Not started. Client typography, colour, layout, branding.
 
 ---
 
-## Prints / Books / Artists Page Templates — nav_menu
+## Nav Menus — Piroir
 
-Nav menus registered in `functions.php`. Menus need to be created and assigned in Appearance → Menus after deployment.
+Nav menus registered in `functions.php`. Menus need to be created and assigned in Appearance → Menus on the production site.
 
 ---
 
@@ -107,12 +133,6 @@ EC2 instance mirroring production. Required before production launch.
 
 ---
 
-## CI/CD Pipeline
-
-GitHub Actions → SSH → EC2 `git pull`. Not configured.
-
----
-
 ## Uninstall Hook
 
 Plugin leaves orphaned CPT data and taxonomy terms on removal.
@@ -135,9 +155,13 @@ Not generated. Required before any translation work.
 
 Irrelevant at Piroir scale. Revisit if traffic warrants.
 
+---
+
 ## WP Admin Menu Placement
 
 `show_in_menu` on CPTs controls sidebar placement in the WP admin. Currently unset — CPTs appear at the top level. Requires deciding on a menu structure and slug convention before implementing.
+
+---
 
 ## PHP/JS Style Guide
 
@@ -151,3 +175,15 @@ Recommend adopting WordPress Coding Standards formally:
 https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/
 
 Consider adding a `.editorconfig` and optionally `phpcs.xml` with `WordPress-Core` ruleset for automated enforcement.
+
+---
+
+## PHP/MariaDB Version Pinning
+
+PHP 8.5 local vs PHP 8.4 production. MariaDB 12.0.2 local vs production. Address before production launch.
+
+---
+
+## Backup Automation
+
+No automated backups configured. Run manual backup before major changes. See `INFRASTRUCTURE.md` — Maintenance for manual backup commands.

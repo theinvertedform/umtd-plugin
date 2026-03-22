@@ -132,6 +132,20 @@ Pattern: `EnvironmentFile=/etc/[service]/secrets.env` in systemd units. Files ar
 
 MariaDB root password set during `mysql_secure_installation`, not stored on disk.
 
+## File Transfer
+
+Bidirectional transfer between local and EC2 via S3. Bucket: `umt-temp-transfer` (ca-central-1).
+EC2 instance role `UMT.NET-SSM-Role` has `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` on `umt-temp-transfer/*`.
+Local AWS CLI credentials require the same permissions on the same bucket.
+
+Pattern:
+# local → EC2
+`aws s3 cp ~/file.sql s3://umt-temp-transfer/file.sql`
+# on EC2
+`~/.local/venv/aws/bin/aws s3 cp s3://umt-temp-transfer/file.sql /home/ubuntu/file.sql`
+# cleanup
+`aws s3 rm s3://umt-temp-transfer/file.sql`
+
 ---
 
 ## nginx
@@ -183,25 +197,28 @@ git push → GitHub Actions → AWS OIDC → IAM role ec2-github → SSM SendCom
 
 IAM role: `arn:aws:iam::828007040661:role/ec2-github`
 Permissions: `ssm:SendCommand`, `ssm:GetCommandInvocation` on instance `i-0e4757a759e2a9991`
-Trust policy: `repo:theinvertedform/*:ref:refs/heads/main`
+Trust policy: `repo:theinvertedform/*:ref:refs/heads/main` (StringLike — covers all repos under theinvertedform)
 
 SSH deploy key: `/home/ubuntu/.ssh/github_deploy` (ed25519, account-level GitHub key)
 
 ### Deploy Scripts
 
-Located at `/usr/local/bin/deploy-*`, chmod 755, root-owned. Called by SSM as root with no login shell — `HOME` and `GIT_SSH_COMMAND` must be set explicitly. Pattern:
+Single generic script at `/usr/local/bin/deploy`, chmod 755, root-owned. Takes target path as argument. Called by SSM as root with no login shell — `HOME` and `GIT_SSH_COMMAND` must be set explicitly.
 
-```bash
 #!/bin/bash
 set -e
+TARGET="$1"
+if [ -z "$TARGET" ]; then
+    echo "Usage: deploy <target-path>" >&2
+    exit 1
+fi
 export HOME=/home/ubuntu
 export GIT_SSH_COMMAND="ssh -i /home/ubuntu/.ssh/github_deploy -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-git config --global --add safe.directory /var/www/TARGET
-cd /var/www/TARGET
+git config --global --add safe.directory "$TARGET"
+cd "$TARGET"
 git pull
-chown -R www-data:www-data /var/www/TARGET
-chown -R ubuntu:ubuntu /var/www/TARGET/.git
-```
+chown -R www-data:www-data "$TARGET"
+chown -R ubuntu:ubuntu "$TARGET/.git"
 
 ### Actions Workflow
 
@@ -222,7 +239,7 @@ jobs:
           role-to-assume: arn:aws:iam::828007040661:role/ec2-github
           aws-region: ca-central-1
       - run: |
-          COMMAND_ID=$(aws ssm send-command --instance-ids i-0e4757a759e2a9991 --document-name AWS-RunShellScript --parameters 'commands=["/usr/local/bin/deploy-NAME"]' --query Command.CommandId --output text)
+          COMMAND_ID=$(aws ssm send-command --instance-ids i-0e4757a759e2a9991 --document-name AWS-RunShellScript --parameters 'commands=["/usr/local/bin/deploy /var/www/TARGET"]' --query Command.CommandId --output text)
           aws ssm wait command-executed --command-id $COMMAND_ID --instance-id i-0e4757a759e2a9991
           aws ssm get-command-invocation --command-id $COMMAND_ID --instance-id i-0e4757a759e2a9991 --query '[StatusDetails,StandardOutputContent,StandardErrorContent]' --output text
 ```
@@ -231,12 +248,10 @@ SSM `--parameters` must be a single line — nested quoting across YAML → bash
 
 ### Repos
 
-| Repo | Deploy script | Target |
-|---|---|---|
-| theinvertedform/listmonk | deploy-listmonk | /var/www/listmonk |
-| theinvertedform/umt-design | pending | wp-content/themes/umt-design |
-| theinvertedform/umt-studio | pending | wp-content/plugins/umt-studio |
-| theinvertedform/umt-studio-piroir | pending | wp-content/plugins/umt-studio-piroir |
+| theinvertedform/listmonk | deploy /var/www/listmonk | /var/www/listmonk |
+| theinvertedform/umt-design | deploy /var/www/piroir/htdocs/wp-content/themes/umt-design | /var/www/piroir/htdocs/wp-content/themes/umt-design |
+| theinvertedform/umt-studio | deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio | /var/www/piroir/htdocs/wp-content/plugins/umt-studio |
+| theinvertedform/umt-studio-piroir | deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir | /var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir |
 
 ---
 
@@ -330,7 +345,7 @@ sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d clientdomain.com
 ```
 
-**8. Deploy scripts** — create `/usr/local/bin/deploy-*` for each repo, add `.github/workflows/deploy.yml` to each.
+**8. To add a new repo: add `.github/workflows/deploy.yml` to the repo with the correct path argument. No new server scripts required.
 
 ---
 

@@ -9,6 +9,17 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- feat(i18n): add config/i18n.php — centralized slug translations and language config
+- feat(i18n): add umtd_get_i18n() and umtd_i18n filter hook
+- refactor(cpts): umtd_register_post_types() — language-prefixed primary slugs, supplementary rewrite rules per active language
+- refactor(taxonomies): umtd_register_taxonomies() — same i18n pattern
+- fix(piroir): move umtd_i18n and acf/settings/load_json filters into plugins_loaded — fixes load order race condition with UMTD_PATH
+- feat(piroir): declare active languages via umtd_i18n filter — fr primary, en supplementary
+- chore(cpts): remove slug key from config/post-types.php — owned by config/i18n.php
+- chore(infra): audit ec2-s3 inline policy on UMT.NET-SSM-Role — already scoped to umt-temp-transfer, added PutObject and DeleteObject for bidirectional transfer
+- chore(ci): replace per-service deploy scripts with generic /usr/local/bin/deploy <path>
+- chore(ci): add deploy workflows to umt-studio, umt-studio-piroir, umt-design
+- fix(ci): update ec2-github IAM trust policy — was hardcoded to news.umt.world, now theinvertedform/*
 - fix(schema): replace get_the_title() with get_field('name_display') for agent names
 - docs(schema): add PHPDoc to includes/schema.php
 - docs(piroir): add file-level docblock to config/terms.php

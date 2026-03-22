@@ -23,7 +23,6 @@ return array(
 		'enabled'     => true,
 		'plural'      => 'Events',
 		'singular'    => 'Event',
-		'slug'        => 'events',
 		'supports'    => array( 'title', 'thumbnail', 'revisions' ),
 		'has_archive' => false, // Prevents URL conflict with the /events/ WordPress page.
 	),
@@ -32,7 +31,6 @@ return array(
 		'enabled'  => true,
 		'plural'   => 'Works',
 		'singular' => 'Work',
-		'slug'     => 'works',
 		'supports' => array( 'title', 'thumbnail', 'revisions' ),
 	),
 
@@ -40,7 +38,6 @@ return array(
 		'enabled'  => true,
 		'plural'   => 'Agents',
 		'singular' => 'Agent',
-		'slug'     => 'agents',
 		'supports' => array( 'title', 'thumbnail', 'revisions' ),
 	),
 

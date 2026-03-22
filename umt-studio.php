@@ -34,26 +34,41 @@ add_action( 'init', function() {
 } );
 
 /**
+ * Load i18n config and apply umtd_i18n filter.
+ *
+ * Called by both umtd_register_post_types() and umtd_register_taxonomies().
+ * Child plugins override default_lang, languages, and/or slug entries via
+ * the umtd_i18n filter. Deferred to after plugins_loaded via init hook so
+ * child plugin filters registered on plugins_loaded are available.
+ *
+ * @return array
+ */
+function umtd_get_i18n() {
+	return apply_filters( 'umtd_i18n', require UMTD_PATH . 'config/i18n.php' );
+}
+
+/**
  * Register all CPTs defined in config/post-types.php.
  *
- * Reads the config array, applies the umtd_post_types filter (allowing child
- * plugins to add or modify CPT definitions), then registers each enabled type.
+ * Primary rewrite slug is {default_lang}/{slug} — e.g. 'fr/artistes'. This
+ * ensures all internally generated URLs (get_permalink, archives) include the
+ * language prefix. Bare slugs without a language prefix are never registered
+ * and will 404.
  *
- * Registration defaults are set here. Per-CPT overrides are passed through only
- * for keys listed in $passthrough_keys — all other config keys are consumed
- * internally (e.g. 'plural', 'singular', 'slug') and not passed to register_post_type().
+ * has_archive is set to the prefixed slug string so the archive URL matches
+ * the single URL pattern — e.g. 'fr/artistes' not true.
  *
- * Merge order: defaults → labels → computed → overrides. Overrides always win.
- *
- * Called on 'init' and explicitly during activation (before 'init' fires).
+ * Additional active languages generate supplementary rewrite rules at
+ * /{lang}/{slug}/ and /{lang}/{slug}/{post-name}/ with lang query var set.
  *
  * @see config/post-types.php
+ * @see config/i18n.php
  * @see umtd_activate()
  */
 function umtd_register_post_types() {
 	$post_types = apply_filters( 'umtd_post_types', require UMTD_PATH . 'config/post-types.php' );
+	$i18n       = umtd_get_i18n();
 
-	// Keys from config that are allowed to override registration defaults.
 	$passthrough_keys = array(
 		'has_archive',
 		'hierarchical',
@@ -63,14 +78,31 @@ function umtd_register_post_types() {
 		'exclude_from_search',
 	);
 
+	$default_lang = $i18n['default_lang'];
+
 	foreach ( $post_types as $type => $args ) {
 		if ( empty( $args['enabled'] ) ) {
 			continue;
 		}
 
+		// Primary slug includes language prefix — generates /fr/artistes/{slug}/ URLs natively.
+		// Bare slugs without prefix are never registered and will 404.
+		$base_slug = isset( $i18n['slugs'][ $type ][ $default_lang ] )
+			? $i18n['slugs'][ $type ][ $default_lang ]
+			: $type;
+		$slug = $default_lang . '/' . $base_slug;
+
+		// has_archive must match the prefixed slug to generate the correct archive URL.
+		// If explicitly false in config (e.g. umtd_events), preserve that.
+		// If true or unset, set to the prefixed slug string.
+		$has_archive = isset( $args['has_archive'] ) ? $args['has_archive'] : true;
+		if ( true === $has_archive ) {
+			$has_archive = $slug;
+		}
+
 		$defaults = array(
 			'public'       => true,
-			'has_archive'  => true,
+			'has_archive'  => $has_archive,
 			'show_in_rest' => true,
 		);
 
@@ -85,41 +117,72 @@ function umtd_register_post_types() {
 		);
 
 		$computed = array(
-			'rewrite'      => array( 'slug' => $args['slug'] ),
+			'rewrite'      => array( 'slug' => $slug ),
 			'supports'     => isset( $args['supports'] )     ? $args['supports']     : array( 'title' ),
 			'show_in_menu' => isset( $args['show_in_menu'] ) ? $args['show_in_menu'] : true,
 		);
 
-		// Only pass through config keys that are valid register_post_type() args
-		// and intended as per-CPT overrides of the defaults above.
+		// has_archive handled above — remove from passthrough to prevent override conflict.
 		$overrides = array_intersect_key( $args, array_flip( $passthrough_keys ) );
+		unset( $overrides['has_archive'] );
 
 		register_post_type(
 			$type,
 			array_merge( $defaults, $labels, $computed, $overrides )
 		);
+
+		// Supplementary rewrite rules for non-default active languages.
+		foreach ( $i18n['languages'] as $lang ) {
+			if ( $lang === $default_lang ) {
+				continue;
+			}
+			$lang_slug = isset( $i18n['slugs'][ $type ][ $lang ] )
+				? $i18n['slugs'][ $type ][ $lang ]
+				: $base_slug;
+
+			// Archive: /{lang}/{lang_slug}/
+			add_rewrite_rule(
+				'^' . $lang . '/' . $lang_slug . '/?$',
+				'index.php?post_type=' . $type . '&lang=' . $lang,
+				'top'
+			);
+
+			// Single: /{lang}/{lang_slug}/{post-name}/
+			add_rewrite_rule(
+				'^' . $lang . '/' . $lang_slug . '/([^/]+)/?$',
+				'index.php?post_type=' . $type . '&name=$matches[1]&lang=' . $lang,
+				'top'
+			);
+		}
 	}
 }
 
 /**
  * Register all taxonomies defined in config/taxonomies.php.
  *
- * Reads the config array, applies the umtd_taxonomies filter, then registers
- * each enabled taxonomy. All registration args are derived directly from the
- * config — there are no passthrough keys; the config is the complete definition.
- *
- * Called on 'init' and explicitly during activation (before 'init' fires).
+ * Primary rewrite slug is {default_lang}/{slug} — e.g. 'fr/type-oeuvre'.
+ * Additional active languages generate supplementary rewrite rules.
  *
  * @see config/taxonomies.php
+ * @see config/i18n.php
  * @see umtd_activate()
  */
 function umtd_register_taxonomies() {
 	$taxonomies = apply_filters( 'umtd_taxonomies', require UMTD_PATH . 'config/taxonomies.php' );
+	$i18n       = umtd_get_i18n();
+
+	$default_lang = $i18n['default_lang'];
 
 	foreach ( $taxonomies as $taxonomy => $args ) {
 		if ( empty( $args['enabled'] ) ) {
 			continue;
 		}
+
+		$base_slug = isset( $i18n['slugs'][ $taxonomy ][ $default_lang ] )
+			? $i18n['slugs'][ $taxonomy ][ $default_lang ]
+			: $taxonomy;
+		$slug = $default_lang . '/' . $base_slug;
+
 		register_taxonomy(
 			$taxonomy,
 			$args['post_types'],
@@ -135,9 +198,25 @@ function umtd_register_taxonomies() {
 				'public'            => true,
 				'show_in_rest'      => true,
 				'show_admin_column' => true,
-				'rewrite'           => array( 'slug' => $args['slug'] ),
+				'rewrite'           => array( 'slug' => $slug ),
 			)
 		);
+
+		// Supplementary rewrite rules for non-default active languages.
+		foreach ( $i18n['languages'] as $lang ) {
+			if ( $lang === $default_lang ) {
+				continue;
+			}
+			$lang_slug = isset( $i18n['slugs'][ $taxonomy ][ $lang ] )
+				? $i18n['slugs'][ $taxonomy ][ $lang ]
+				: $base_slug;
+
+			add_rewrite_rule(
+				'^' . $lang . '/' . $lang_slug . '/([^/]+)/?$',
+				'index.php?' . $taxonomy . '=$matches[1]&lang=' . $lang,
+				'top'
+			);
+		}
 	}
 }
 
@@ -197,6 +276,11 @@ function umtd_seed_terms() {
 add_filter( 'acf/settings/load_json', function( $paths ) {
     $paths[] = UMTD_PATH . 'acf-json';
     return $paths;
+} );
+
+add_filter( 'query_vars', function( $vars ) {
+    $vars[] = 'lang';
+    return $vars;
 } );
 
 // Schema.org JSON-LD output for umtd_works singles.
