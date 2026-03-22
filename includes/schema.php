@@ -2,6 +2,14 @@
 /**
  * Schema.org JSON-LD output.
  *
+ * Currently outputs VisualArtwork schema for umtd_works singles only.
+ * Schema for umtd_agents and umtd_events not yet implemented.
+ * Sitewide Organization schema not yet implemented.
+ * Refactor to a config-driven engine covering all CPTs is deferred.
+ * See DEFERRED.md — Config-driven Schema.org Engine.
+ *
+ * Output is injected into <head> via wp_head. No theme involvement required.
+ *
  * @package umt-studio
  */
 
@@ -12,7 +20,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'wp_head', 'umtd_output_visual_artwork_schema' );
 
 /**
- * Outputs JSON-LD Schema.org VisualArtwork markup for umtd_works singles.
+ * Output JSON-LD VisualArtwork schema for umtd_works singles.
+ *
+ * Builds a schema.org VisualArtwork object from ACF field values and prints
+ * it as a <script type="application/ld+json"> block in <head>.
+ *
+ * Agent handling:
+ * - Reads the 'agent' relationship field, which returns an array of WP_Post objects.
+ * - Each agent is typed as Person or Organization based on the 'agent_type' field.
+ * - sameAs links are built from wikidata_id and ulan_id fields. wikidata_id may
+ *   be stored with or without the 'Q' prefix — both are handled.
+ * - If only one creator, schema.creator is a single object. If multiple, an array.
+ *
+ * array_filter() is applied to both individual creator objects and the top-level
+ * schema to strip null/empty fields from the output.
+ *
+ * Note: agent role (artist, author, etc.) is not represented in the schema output.
+ * This is a limitation of the current data model. See DEFERRED.md — Agent Role Model.
+ *
+ * @return void
  */
 function umtd_output_visual_artwork_schema() {
 	if ( ! is_singular( 'umtd_works' ) ) {
@@ -46,7 +72,7 @@ function umtd_output_visual_artwork_schema() {
 
 			$creator = [
 				'@type' => ( 'organization' === $agent_type ) ? 'Organization' : 'Person',
-				'name'  => get_the_title( $agent_id ),
+				'name'  => get_field( 'name_display', $agent_id ),
 			];
 
 			if ( $bio = get_field( 'biography', $agent_id ) ) {
@@ -57,6 +83,8 @@ function umtd_output_visual_artwork_schema() {
 				$creator['url'] = esc_url( $website );
 			}
 
+			// Build sameAs from Wikidata and ULAN identifiers.
+			// wikidata_id may be stored with or without 'Q' prefix — normalise to full ID.
 			$same_as = [];
 			if ( $wikidata = get_field( 'wikidata_id', $agent_id ) ) {
 				$q_id      = ( strpos( $wikidata, 'Q' ) === 0 ) ? $wikidata : 'Q' . $wikidata;

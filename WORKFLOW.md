@@ -1,15 +1,14 @@
 # UMT Studio — New Client Workflow
 
-This document covers everything required to onboard a new client onto the umt.studio CMS platform. It assumes the base plugin (`umt-studio`) and base theme (`umt-design`) are stable and deployed to the new server.
+This document covers the code-side steps to onboard a new client: creating the child plugin and child theme, configuring ACF, and setting up WordPress pages and menus. Server provisioning (nginx, MariaDB, WordPress install, git clone, SSL) is covered in `INFRASTRUCTURE.md` — Client Deploy Process.
 
 ---
 
 ## Prerequisites
 
-- SSH access to the new server (EC2 or equivalent)
-- Fresh WordPress install on the client server
-- `umt-studio` and `umt-design` repos cloned and activated on the client server
-- ACF free (or Pro) installed and activated
+- Server provisioned and WordPress installed per `INFRASTRUCTURE.md`
+- `umt-studio` and `umt-design` cloned and activated on the client server
+- ACF (free or Pro) installed and activated
 - Git repos initialized for `umt-studio-{client}` and `umt-design-{client}`
 
 ---
@@ -17,8 +16,6 @@ This document covers everything required to onboard a new client onto the umt.st
 ## Step 1 — Create the Child Plugin
 
 Create a new repo: `umt-studio-{client}`.
-
-Minimum file structure:
 
 ```
 umt-studio-{client}/
@@ -38,26 +35,25 @@ Copy `umt-studio-piroir.php` as the starting point. Update:
 
 ### `config/terms.php`
 
-Define the client's work type whitelist — a subset of the base plugin vocabulary by term name:
+Define the client's work type whitelist — a subset of the base vocabulary by term **name**:
 
 ```php
 return array(
     'umtd_work_type' => array(
-        '300041273' => 'Print',
+        'Print',
+        'Artist Book',
         // add terms relevant to this client
     ),
 );
 ```
 
-Reference the full vocabulary in `umt-studio/config/terms.php`. Keys are AAT numeric IDs, values are display names. Term identity is the **name** — do not change names of existing terms, as this will break existing assignments.
+A flat indexed array of term names — AAT IDs are omitted because comparison in `umtd_piroir_activate()` is by name only. This differs from the base `config/terms.php` format (`AAT_ID => name`) by design. Term names must exactly match the base vocabulary in `umt-studio/config/terms.php`. Do not rename existing values — this breaks existing term assignments.
 
-> ⚠️ **Hung lantern — agent roles:** the base plugin ACF field group currently includes `agents_artists` and `agents_authors` relationship fields. These are Piroir-specific and encode agent roles as field names — a hack pending ACF Pro Repeater migration. For a new client, either: (a) leave them in place and ignore them, (b) hide them via a child plugin ACF override, or (c) wait until ACF Pro is in place and the role model is refactored. See `DEFERRED.md`.
+> ⚠️ The base ACF field group includes `agents_artists` and `agents_authors` relationship fields. These are Piroir-specific hacks encoding agent role as field name, pending ACF Pro Repeater migration. For a new client: (a) leave them in place and ignore them, (b) hide via child plugin ACF override, or (c) wait for the role model refactor. See `DEFERRED.md`.
 
-### Activate the child plugin
+### Activate
 
-On the client server, activate `umt-studio-{client}` after `umt-studio`. The activation hook will seed whitelisted terms and remove non-whitelisted ones.
-
-**Dependency:** `umt-studio` must be active before `umt-studio-{client}` is activated. The child plugin requires `UMTD_PATH` to be defined.
+Activate `umt-studio-{client}` **after** `umt-studio`. The activation hook seeds whitelisted terms and deletes non-whitelisted ones. The child plugin requires `UMTD_PATH` — `umt-studio` must be active first.
 
 ---
 
@@ -65,15 +61,13 @@ On the client server, activate `umt-studio-{client}` after `umt-studio`. The act
 
 Create a new repo: `umt-design-{client}`.
 
-Minimum file structure:
-
 ```
 umt-design-{client}/
-├── style.css       — theme header, Version, Template: umt-design
-└── functions.php   — enqueue child styles, client overrides
+├── style.css
+└── functions.php
 ```
 
-### `style.css` header
+### `style.css`
 
 ```css
 /*
@@ -102,11 +96,11 @@ function umt_design_{client}_enqueue() {
 }
 ```
 
-The `array( 'umt-design' )` dependency ensures the base theme stylesheet loads first.
+`array( 'umt-design' )` ensures the base stylesheet loads first.
 
-### Activate the child theme
+### Activate
 
-On the client server, activate `umt-design-{client}`. The base theme `umt-design` does not need to be separately activated — WordPress loads it automatically as the parent.
+Activate `umt-design-{client}`. WordPress loads `umt-design` as the parent automatically — it does not need to be separately activated.
 
 ---
 
@@ -114,15 +108,15 @@ On the client server, activate `umt-design-{client}`. The base theme `umt-design
 
 Base plugin field groups load automatically from `umt-studio/acf-json/`. No action required.
 
-> ⚠️ **Hung lantern — ACF save path:** base field groups are read-only on all deployed installs. **Never edit ACF field groups on a client server.** Changes to base field groups must be made on localhost, committed to `umt-studio`, and deployed. See `ARCHITECTURE.md` — ACF Field Groups.
+> ⚠️ **Never edit ACF field groups on a client server.** Base field groups are read-only on all deployed installs — no save path is registered. See `ARCHITECTURE.md`.
 
-If the client requires additional or modified ACF fields, register them in the child plugin via `acf_add_local_field_group()` on `acf/init`. Do not modify base plugin JSON files on the client server.
+If the client requires additional or modified ACF fields, register them in the child plugin via `acf_add_local_field_group()` on `acf/init`.
 
 ---
 
 ## Step 4 — WordPress Pages and Nav Menus
 
-The client's editorial nav is built from WordPress pages with custom page templates. Create the following pages and assign templates:
+Create the following pages and assign templates:
 
 | Page title | Slug | Template |
 |---|---|---|
@@ -132,52 +126,45 @@ The client's editorial nav is built from WordPress pages with custom page templa
 | Artists | `/artists/` | Artists Archive |
 | Studio | `/studio/` | Default |
 
-Adjust page titles, slugs, and templates to match the client's nav structure.
+Adjust to match the client's nav structure.
 
-After creating pages, go to **Appearance → Menus**:
-1. Create a Primary menu — assign to the `primary` location
-2. Create a Footer menu — assign to the `footer` location
-3. Add the relevant pages to each menu
+Then **Appearance → Menus**: create a Primary menu (location: `primary`) and Footer menu (location: `footer`), and add the relevant pages to each.
 
 ---
 
 ## Step 5 — Flush Rewrite Rules
 
-After activating plugins and theme, flush rewrite rules to ensure CPT and page slugs resolve correctly:
-
-**Settings → Permalinks → Save Changes** (no actual changes needed — just saving flushes rules).
-
-Or deactivate and reactivate `umt-studio` to trigger the activation hook.
+After activating plugins and theme: **Settings → Permalinks → Save Changes**. No changes needed — saving flushes rewrite rules and ensures CPT and page slugs resolve correctly.
 
 ---
 
 ## Step 6 — Verify
 
-- [ ] `/events/`, `/prints/`, `/books/`, `/artists/` all resolve
-- [ ] `/works/`, `/agents/`, `/events/` single post URLs resolve
+- [ ] `/events/`, `/prints/`, `/books/`, `/artists/` resolve
+- [ ] `/works/{slug}/`, `/agents/{slug}/`, `/events/{slug}/` resolve
 - [ ] ACF field groups appear on Works, Agents, Events edit screens
-- [ ] Work type terms are seeded correctly — check **Posts → Works → Work Types**
-- [ ] Nav menus appear in front-end header and footer
+- [ ] Work type terms seeded — check **Posts → Works → Work Types**
+- [ ] Nav menus in front-end header and footer
 - [ ] Child theme stylesheet loading — check browser devtools network tab
 
 ---
 
 ## Modifying Base Field Groups
 
-1. On **localhost only**, open the ACF field group editor
-2. Make changes — ACF will not save automatically (no save path registered)
-3. To save: temporarily add a save path to `umt-studio.php` locally, save, then remove it
-4. Commit the updated JSON in `umt-studio/acf-json/`
-5. Deploy to client servers via `git pull`
+Base field groups must be edited on localhost only:
 
-> This workflow is awkward. The correct fix is ACF Pro, which supports save paths per plugin and makes local JSON management reliable. See `DEFERRED.md`.
+1. Open the ACF field group editor on localhost
+2. To save: temporarily add a save path to `umt-studio.php`, save the field group, then remove it
+3. Commit the updated JSON in `umt-studio/acf-json/`
+4. Deploy to client servers via `git pull`
+
+ACF Pro would make this cleaner by supporting per-plugin save paths. See `DEFERRED.md`.
 
 ---
 
-## Adding a New Work Type Term to the Base Vocabulary
+## Adding a New Work Type Term
 
-1. Add the term to `umt-studio/config/terms.php` with its AAT ID as key and display name as value
-2. Add it to the client whitelist in `umt-studio-{client}/config/terms.php` if the client needs it
+1. Add to `umt-studio/config/terms.php` — AAT ID as key, display name as value
+2. Add to `umt-studio-{client}/config/terms.php` if the client needs it
 3. Deploy both plugins
-4. Re-run `umtd_seed_terms()` — deactivate and reactivate `umt-studio` on the client server, or insert the term manually via WP admin under **Works → Work Types**
-
+4. Re-seed: deactivate and reactivate `umt-studio`, or insert the term manually via **Posts → Works → Work Types**

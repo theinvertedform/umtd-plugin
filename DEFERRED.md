@@ -134,3 +134,20 @@ Not generated. Required before any translation work.
 ## Caching
 
 Irrelevant at Piroir scale. Revisit if traffic warrants.
+
+## WP Admin Menu Placement
+
+`show_in_menu` on CPTs controls sidebar placement in the WP admin. Currently unset — CPTs appear at the top level. Requires deciding on a menu structure and slug convention before implementing.
+
+## PHP/JS Style Guide
+
+No formal style guide defined. Current conventions in use:
+- Indentation: tabs
+- PHP arrays: `array()` not `[]` (schema.php uses `[]` — inconsistent, should be normalized)
+- ACF field access: `get_field()` never `get_the_title()` for agents
+- Strict comparison: `===` throughout, `in_array( $val, $arr, true )`
+
+Recommend adopting WordPress Coding Standards formally:
+https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/
+
+Consider adding a `.editorconfig` and optionally `phpcs.xml` with `WordPress-Core` ruleset for automated enforcement.

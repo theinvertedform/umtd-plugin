@@ -9,6 +9,34 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- fix(schema): replace get_the_title() with get_field('name_display') for agent names
+- docs(schema): add PHPDoc to includes/schema.php
+- docs(piroir): add file-level docblock to config/terms.php
+- style(piroir): normalize indentation to tabs in config/terms.php
+- fix(piroir): add UMTD_PATH guard with admin notice — fatal error on missing dependency now fails visibly
+- fix(piroir): add Requires Plugins header field — WordPress 6.5+ enforces activation order
+- fix(piroir): add strict comparison to in_array() in umtd_piroir_activate()
+- docs(piroir): add PHPDoc to umt-studio-piroir.php
+- style(piroir): normalize indentation to tabs
+- docs(terms): add file-level docblock to config/terms.php
+- style(terms): normalize indentation to tabs in config/terms.php
+- docs(taxonomies): add file-level docblock to config/taxonomies.php
+- chore(cpts): remove commented-out show_in_menu lines from config/post-types.php
+- docs(cpts): add file-level docblock and inline comments to config/post-types.php
+- style(cpts): normalize indentation to tabs in config/post-types.php
+- docs(admin): add JSDoc to assets/js/admin-fields.js — field key coupling, nameUserEdited behaviour, display vs sort-key distinction
+- docs(admin): add PHPDoc to includes/admin.php — recursion guard explanation, sort-key rule, fallback logic
+- fix(plugin): remove redundant anonymous activation hook — umtd_activate() is a strict superset
+- docs(plugin): add PHPDoc to umt-studio.php — all functions, constants, inline rules
+- fix(plugin): update plugin header description
+
+## [0.2.0] — 2026-03-22
+
+### umt-studio
+
+- fix(acf): remove save_json filter from umt-studio.php — base field groups read-only on deployed installs
+- fix(piroir): remove duplicate base plugin ACF JSON files from umt-studio-piroir/acf-json/
+- fix(plugin): rename require_once includes/agents.php → includes/admin.php in umt-studio.php
 - feat(agents): add `name_first`, `name_last`, `name_display` fields to Agent Metadata ACF group
 - feat(agents): `umtd_sync_agent_title()` — sets post title to `Last, First` for persons, `name_display` for organizations on `acf/save_post`
 - refactor(admin): rename `includes/agents.php` → `includes/admin.php`
@@ -25,6 +53,7 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-design
 
+- fix(templates): events-archive.php — change meta_query type DATE → CHAR for start_date and end_date
 - feat(theme): `functions.php` — register `primary` and `footer` nav menu locations
 - feat(theme): `functions.php` — move `add_theme_support` calls to `after_setup_theme` hook
 - feat(theme): `functions.php` — replace hardcoded version string with `wp_get_theme()->get('Version')`
@@ -53,8 +82,16 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### docs
 
-- docs: add `ARCHITECTURE.md` — full system architecture, bootstrap sequence, field tables, query patterns, term identity rules, URL architecture
+- docs: revise `ARCHITECTURE.md` — add bootstrap sequence, full field tables, ACF save path discipline, query patterns
+- docs: add WORKFLOW.md — new client onboarding checklist with hung lanterns
+- docs: add CHANGELOG.md
 - docs: add `DEFERRED.md` — custom date entry UI, agent role model, junction table, full deferred register
+
+### chore
+
+- chore: split wp-content monorepo into four independent repos via git filter-repo
+- chore: update wp-content/.gitignore — exclude split repos and third-party plugins
+- chore: set up GitHub remotes for umt-studio, umt-studio-piroir, umt-design
 
 ---
 

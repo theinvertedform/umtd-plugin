@@ -2,6 +2,10 @@
 /**
  * Admin script enqueue and agent name sync.
  *
+ * Handles two concerns:
+ * - Syncing the post title and slug from ACF name fields on save (umtd_agents only).
+ * - Enqueueing admin-fields.js on edit screens for configured post types.
+ *
  * @package umt-studio
  */
 
@@ -10,8 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Post types that require admin JS enqueued on edit screens.
- * Add post types here as new admin scripts are needed.
+ * Post types that require admin-fields.js enqueued on their edit screens.
+ *
+ * Declared as a global so umtd_enqueue_admin_scripts() can reference it without
+ * being coupled to a hardcoded list. Add post types here as new admin script
+ * dependencies arise.
+ *
+ * Note: global scope is a known limitation — a future refactor to a config array
+ * passed via filter would be cleaner. See DEFERRED.md — Class-based Plugin Architecture.
  */
 $umtd_admin_script_post_types = array(
 	'umtd_agents',
@@ -19,10 +29,25 @@ $umtd_admin_script_post_types = array(
 );
 
 /**
- * Sync post title and slug from controlled name fields on save.
+ * Sync post title and slug from ACF name fields on save.
  *
- * For persons:       title = "Last, First"
- * For organizations: title = name_display
+ * Fires on acf/save_post at priority 20 (after ACF has written field values,
+ * which run at priority 10).
+ *
+ * Post title is the sort key, not the display name:
+ * - Person:       "Last, First" (or last name only if no first name)
+ * - Organization: name_display
+ *
+ * Templates must always use get_field( 'name_display', $id ) for output —
+ * never get_the_title(), which returns the sort key.
+ *
+ * The remove_action / add_action wrapper around wp_update_post() prevents
+ * infinite recursion: wp_update_post() triggers save_post, which would
+ * re-trigger acf/save_post and call this function again. Temporarily
+ * unhooking breaks the loop.
+ *
+ * @param int $post_id WP post ID.
+ * @return void
  */
 add_action( 'acf/save_post', 'umtd_sync_agent_title', 20 );
 
@@ -38,8 +63,10 @@ function umtd_sync_agent_title( $post_id ) {
 		$first = trim( get_field( 'name_first', $post_id ) );
 		$last  = trim( get_field( 'name_last', $post_id ) );
 		if ( $last ) {
+			// Standard sort format: "Last, First". First name optional.
 			$title = $first ? $last . ', ' . $first : $last;
 		} else {
+			// No last name — fall back to name_display rather than leaving title empty.
 			$title = $name_display;
 		}
 	} else {
@@ -50,6 +77,7 @@ function umtd_sync_agent_title( $post_id ) {
 		return;
 	}
 
+	// Temporarily unhook to prevent infinite recursion via wp_update_post → save_post → acf/save_post.
 	remove_action( 'acf/save_post', 'umtd_sync_agent_title', 20 );
 
 	wp_update_post( array(
@@ -62,7 +90,14 @@ function umtd_sync_agent_title( $post_id ) {
 }
 
 /**
- * Enqueue admin scripts on edit screens for configured post types.
+ * Enqueue admin-fields.js on edit screens for configured post types.
+ *
+ * Checks both the screen hook (post.php / post-new.php) and the post type
+ * against $umtd_admin_script_post_types before enqueueing. UMTD_VERSION is
+ * used as the cache-busting version string.
+ *
+ * @param string $hook Current admin page hook suffix.
+ * @return void
  */
 add_action( 'admin_enqueue_scripts', 'umtd_enqueue_admin_scripts' );
 
