@@ -13,6 +13,10 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs: revise ARCHITECTURE.md — remove inline vocabulary listings, rewrite rule code block, translation model roadmap (moved to DEFERRED.md), metabox suppression code block; consolidate URL table to Theme Architecture section with FR/EN examples; collapse taxonomy query subsections; 491 → 398 lines
+- fix(templates): single-umtd_works.php — variable shadowing bug in artists role loop (\$agent->ID → \$artist->ID)
+- fix(templates): front-page.php — meta_query type DATE → CHAR for start_date and end_date
+- fix(templates): events-archive.php — meta_query type DATE → CHAR for end_date clause
 - docs: update ARCHITECTURE.md — revise Work, Event, Image Metadata field tables; add native taxonomy metabox suppression pattern; add umtd_event_type and umtd_medium taxonomy documentation
 - docs: update DEFERRED.md — add agent_type as taxonomy, attachment modal field control, alt text auto-generation, medium conditional display, event title sync hook, language switcher and menu URL rewriting, related works field label
 - feat(taxonomies): register umtd_event_type taxonomy on umtd_events
@@ -153,4 +157,3 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 - feat: `includes/schema.php` — schema.org JSON-LD (`VisualArtwork`) on `umtd_works` singles
 - feat: ACF local JSON load/save paths registered in `umt-studio.php`
 - feat: `umt-studio-piroir` child plugin — work type whitelist, ACF JSON load path
-

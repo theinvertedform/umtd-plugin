@@ -1,6 +1,6 @@
-# UMT Studios — Business Plan
+# umt.studios---Business Plan
 
-*Founding document. Last revised: 2026-03-22.*
+*Founding document. Last revised: 2026-03-25.*
 *Sole proprietorship, Québec, Canada.*
 
 ---
