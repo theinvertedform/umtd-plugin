@@ -13,6 +13,8 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs: update ARCHITECTURE.md — revise Work, Event, Image Metadata field tables; add native taxonomy metabox suppression pattern; add umtd_event_type and umtd_medium taxonomy documentation
+- docs: update DEFERRED.md — add agent_type as taxonomy, attachment modal field control, alt text auto-generation, medium conditional display, event title sync hook, language switcher and menu URL rewriting, related works field label
 - feat(taxonomies): register umtd_event_type taxonomy on umtd_events
 - feat(taxonomies): register umtd_medium taxonomy on umtd_works
 - feat(terms): add umtd_event_type vocabulary — Exhibition, Opening, Workshop, Performance, Premiere, Fair, Market (AAT-aligned)

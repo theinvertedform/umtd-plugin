@@ -47,7 +47,7 @@ umt-studio/
 │   ├── terms.php           — full AAT-aligned controlled vocabulary
 │   └── i18n.php            — slug translations and language config
 ├── includes/
-│   ├── admin.php           — agent name sync hook, admin enqueue
+│   ├── admin.php           — agent name sync, admin enqueue, attachment UI control
 │   └── schema.php          — schema.org JSON-LD output
 ├── assets/
 │   └── js/
@@ -104,6 +104,19 @@ Defined in `config/post-types.php` as a data array. Slugs are not defined in thi
 
 Note: `slug` key is absent — slugs are owned by `config/i18n.php`.
 
+### Native Taxonomy Metabox Suppression
+
+WordPress automatically renders a sidebar metabox for every taxonomy registered on a CPT. For taxonomies managed via ACF taxonomy fields in the main form, the native metabox is redundant and is suppressed in `includes/admin.php`:
+
+```php
+add_action( 'admin_menu', function() {
+    remove_meta_box( 'tagsdiv-umtd_medium', 'umtd_works', 'side' );
+    remove_meta_box( 'umtd_event_typediv', 'umtd_events', 'side' );
+} );
+```
+
+Non-hierarchical taxonomies use the `tagsdiv-{taxonomy}` metabox ID. Hierarchical taxonomies use `{taxonomy}div`. Verify the correct ID via `error_log` on `add_meta_boxes` if adding new taxonomies.
+
 ### Controlled Vocabulary — Terms
 
 `config/terms.php` in the base plugin:
@@ -115,10 +128,30 @@ return array(
         '300028051' => 'Artist Book',
         // ...
     ),
+    'umtd_event_type' => array(
+        '300054766' => 'Exhibition',
+        // ...
+    ),
+    'umtd_medium' => array(
+        '300041338' => 'Intaglio',
+        // ...
+    ),
 );
 ```
 
 Keys are AAT numeric IDs; values are display names. Term identity is the **name** — renaming a term in config breaks existing assignments. The child whitelist uses the same structure; comparison on activation is by name (values), not AAT ID (keys).
+
+### Registered Taxonomies
+
+| Taxonomy | CPT | Hierarchical | Notes |
+|---|---|---|---|
+| `umtd_work_type` | `umtd_works` | true | AAT-aligned work type vocabulary |
+| `umtd_event_type` | `umtd_events` | true | AAT-aligned event type vocabulary |
+| `umtd_medium` | `umtd_works` | false | Coarse process categories — Intaglio, Relief, Planographic |
+
+**`umtd_event_type` vocabulary:** Exhibition (300054766), Opening (300266327), Workshop (300069765), Performance (300121445), Premiere (300069101), Fair (300054776), Market (300112347).
+
+**`umtd_medium` vocabulary:** Intaglio (300041338), Relief (300041391), Planographic (300178376). Intentionally coarse — narrower technique terms (Etching, Drypoint, etc.) can be added as children without breaking existing assignments.
 
 ---
 
@@ -138,18 +171,20 @@ All slug translations and language config live here. This is the only place slug
 
 ```php
 return array(
-    'default_lang' => 'en',       // base default — child overrides via umtd_i18n filter
-    'languages'    => array( 'en' ), // active languages — child overrides
+    'default_lang' => 'en',
+    'languages'    => array( 'en' ), // child plugin overrides
     'slugs'        => array(
-        'umtd_works'     => array( 'en' => 'works',      'fr' => 'oeuvres',    ... ),
-        'umtd_agents'    => array( 'en' => 'artists',    'fr' => 'artistes',   ... ),
-        'umtd_events'    => array( 'en' => 'events',     'fr' => 'evenements', ... ),
-        'umtd_work_type' => array( 'en' => 'work-type',  'fr' => 'type-oeuvre', ... ),
+        'umtd_works'      => array( 'en' => 'works',      'fr' => 'oeuvres',        ... ),
+        'umtd_agents'     => array( 'en' => 'artists',    'fr' => 'artistes',       ... ),
+        'umtd_events'     => array( 'en' => 'events',     'fr' => 'evenements',     ... ),
+        'umtd_work_type'  => array( 'en' => 'work-type',  'fr' => 'type-oeuvre',    ... ),
+        'umtd_event_type' => array( 'en' => 'event-type', 'fr' => 'type-evenement', ... ),
+        'umtd_medium'     => array( 'en' => 'medium',     'fr' => 'technique',      ... ),
     ),
 );
 ```
 
-Adding a new CPT: add its slug translations here. Adding a new language to the platform: add a column here. Child plugins never modify this file.
+Adding a new CPT or taxonomy: add its slug translations here. Adding a new language to the platform: add a column here. Child plugins never modify this file.
 
 ### umtd_get_i18n()
 
@@ -213,7 +248,7 @@ No other changes required.
 
 ### Translation Model — Current State and Roadmap
 
-Current state: URL routing is language-aware but content is not. Templates do not yet differentiate content by `lang` query var. Bilingual content entry is deferred to the custom DB schema milestone.
+Current state: URL routing is language-aware but content is not. Templates do not yet differentiate content by `lang` query var. Outbound URL rewriting (menu links, language switcher) is not yet implemented — see DEFERRED.md. Bilingual content entry is deferred to the custom DB schema milestone.
 
 Polylang was evaluated and rejected. Its duplicate-post model is incompatible with the FRBR target architecture. Polylang Pro licensing (€99/site) does not scale for a multi-client product. The translation model will be implemented natively as part of the custom schema.
 
@@ -223,9 +258,9 @@ Target: a `umtd_translations` table — `post_id | lang | field_name | value`. T
 
 ## ACF Field Groups
 
-Base plugin fields load from `acf-json/`. **No save path is registered in the base plugin** — base field groups are read-only on all deployed installs. To modify: edit on localhost, commit updated JSON, deploy.
+Base plugin fields load from `acf-json/`. **No save path is registered in the base plugin** — base field groups are read-only on all deployed installs. To modify: temporarily add a save path to `umt-studio.php`, edit on localhost, save, remove the save path, commit updated JSON, deploy.
 
-Child plugin fields are registered via `acf_add_local_field_group()` on `acf/init`. Child plugin registers an `acf-json/` load path inside the `plugins_loaded` callback (alongside other dependency-sensitive registrations).
+Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path filter registered in the `plugins_loaded` callback.
 
 ### Field Groups
 
@@ -235,6 +270,7 @@ Child plugin fields are registered via `acf_add_local_field_group()` on `acf/ini
 | `group_69b04222d0542.json` | Event Metadata | `umtd_events` |
 | `group_69b0409962f04.json` | Work Metadata  | `umtd_works`  |
 | `group_69b9919e17cbb.json` | Image Metadata | attachments   |
+| `group_69baf2308c736.json` | Piroir Roles   | `umtd_works` (child plugin) |
 
 ### Agent Metadata Fields
 
@@ -267,15 +303,17 @@ Child plugin fields are registered via `acf_add_local_field_group()` on `acf/ini
 | `agent` | — | relationship | → `umtd_agents`, returns array of `WP_Post` objects |
 | `agents_artists` | — | relationship | → `umtd_agents`, Piroir hack — see DEFERRED.md |
 | `agents_authors` | — | relationship | → `umtd_agents`, Piroir hack — see DEFERRED.md |
-| `medium` | — | text | |
+| `medium` | — | taxonomy | `umtd_medium` — Intaglio / Relief / Planographic |
 | `date_display` | — | text | human-readable, e.g. `ca. 1987–89` |
 | `date_earliest` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `date_latest` | — | date picker | stored `Ymd`, returns `Y-m-d` |
-| `dimensions` | — | text | |
-| `current_location` | — | relationship | → `umtd_agents` |
-| `accession_number` | — | text | |
+| `dimensions_h` | — | number | height in `dimensions_unit` |
+| `dimensions_w` | — | number | width in `dimensions_unit` |
+| `dimensions_unit` | — | select | cm (default) / mm / in |
 | `description` | — | textarea | |
-| `related_works` | — | relationship | → `umtd_works` |
+| `related_works` | — | relationship | → `umtd_works`; label and semantics TBD — see DEFERRED.md |
+| `current_location` | — | relationship | → `umtd_agents`; at bottom of field group, semantics TBD |
+| `accession_number` | — | text | at bottom of field group, semantics TBD |
 
 ### Event Metadata Fields
 
@@ -283,29 +321,30 @@ Child plugin fields are registered via `acf_add_local_field_group()` on `acf/ini
 |---|---|---|---|
 | `start_date` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `end_date` | — | date picker | stored `Ymd`, returns `Y-m-d` |
+| `event_type` | — | taxonomy | `umtd_event_type` — Exhibition / Opening / Workshop / Performance / Premiere / Fair / Market |
+| `location` | — | relationship | → `umtd_agents`; intended for organizations; filtering limited by `agent_type` not being a taxonomy — see DEFERRED.md |
 | `organizing_agents` | — | relationship | → `umtd_agents` |
 | `participating_agents` | — | relationship | → `umtd_agents` |
 | `description` | — | textarea | |
-| `poster` | — | image | |
 | `event_link` | — | url | |
-| `event_type` | — | text | |
-| `location` | — | text | |
-| `related_works` | — | relationship | → `umtd_works` |
+| `related_works` | — | relationship | → `umtd_works`; label and semantics TBD — see DEFERRED.md |
 
 ### Image Metadata Fields
 
 Attaches to all WordPress attachments (`attachment == all`) — not a CPT. Fields are accessible via `get_field( 'field_name', $attachment_id )`.
 
+WordPress attachment title is suppressed via `remove_post_type_support( 'attachment', 'title' )`. Caption (`post_excerpt`) and description (`post_content`) are removed from the full attachment edit screen via `attachment_fields_to_edit` filter. Alt text (`_wp_attachment_image_alt`) is displayed read-only on the full edit screen — auto-generation from metadata is deferred (see DEFERRED.md). The media modal uses a separate JS rendering path — field suppression applies to the full edit screen only.
+
 | Field | Key | Type | Notes |
 |---|---|---|---|
-| `view_type` | — | select | recto / verso / detail / installation view / exhibition view / before treatment / after treatment |
-| `rights` | — | text | default `©` |
-| `rights_holder` | — | text | |
-| `license` | — | select | All Rights Reserved / CC BY / CC BY-SA / CC BY-NC / Public Domain |
-| `credit_line` | — | text | |
-| `image_source` | — | text | |
+| `view_type` | — | select | recto / verso / detail / installation view / exhibition view / before treatment / after treatment; default null |
+| `rights_holder` | — | text | VRA Core `rightsHolder` |
+| `license` | — | select | All Rights Reserved (default) / CC BY / CC BY-SA / CC BY-NC / Public Domain |
+| `source` | — | text | VRA Core `source` — origin of the image file (publication, vendor, photographer) |
 | `image_date` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `related_work` | — | relationship | → `umtd_works` |
+| `photographer` | — | relationship | → `umtd_agents` |
+| `event` | — | relationship | → `umtd_events` |
 
 ### Agent Name Logic
 
@@ -365,6 +404,14 @@ array(
 
 To find agents associated with works of a given type: `tax_query` → collect agent IDs via `get_field('agent', $work_id)` → `post__in`.
 
+### Medium Taxonomy
+
+Works classified by process via `umtd_medium`. Non-hierarchical. Stored as WordPress taxonomy terms, queryable via `tax_query` — no serialization issues. Three top-level process categories intentionally — narrower technique terms can be added as children without breaking existing assignments.
+
+### Event Type Taxonomy
+
+Events classified via `umtd_event_type`. Hierarchical. AAT-aligned where terms exist.
+
 ---
 
 ## Theme Architecture
@@ -396,7 +443,7 @@ umt-design/
 
 CPT archives (`archive-umtd_*.php`) exist but are not used for primary navigation. Client nav pages are WordPress pages with custom page templates (`templates/*.php`) running their own `WP_Query`. This decouples URL structure from CPT registration.
 
-`umtd_events` has `'has_archive' => false` to prevent URL conflict with the `/events/` page.
+`umtd_events` has `'has_archive' => false` to prevent URL conflict with the `/evenements/` page.
 
 Page templates are client-specific — the base theme ships minimal stubs. Child themes override with client-specific layout and design. Pages must be created manually in WP admin with the correct template assigned (or via `wp_insert_post()` on child plugin activation — see DEFERRED.md).
 
@@ -423,13 +470,13 @@ URLs are language-prefixed throughout. The table below shows Piroir (FR primary)
 | `/en/artists/{slug}/` | `single-umtd_agents.php` | Single agent (EN) |
 | `/fr/oeuvres/{slug}/` | `single-umtd_works.php` | Single work |
 | `/en/works/{slug}/` | `single-umtd_works.php` | Single work (EN) |
-| `/events/` | `templates/events-archive.php` | All events by year; current/upcoming ticker |
-| `/prints/` | `templates/prints-archive.php` | Agents with works of type `print` |
-| `/books/` | `templates/books-archive.php` | Agents with works of type `artist-book` |
-| `/artists/` | `templates/artists-archive.php` | All agents, persons/orgs split |
+| `/evenements/` | `templates/events-archive.php` | All events by year; current/upcoming ticker |
+| `/estampes/` | `templates/prints-archive.php` | Agents with works of type `print` |
+| `/livres/` | `templates/books-archive.php` | Agents with works of type `artist-book` |
+| `/artistes/` | `templates/artists-archive.php` | All agents, persons/orgs split |
 | `/studio/` | `page.php` | Static editorial page |
 
-Page template URLs (`/events/`, `/prints/`, etc.) are WordPress pages — their slugs are set in WP admin and are not language-prefixed in the current implementation. CPT single URLs are language-prefixed via the i18n rewrite system.
+Page template URLs are WordPress pages with French slugs set manually in WP admin. CPT single URLs are language-prefixed via the i18n rewrite system. Nav menu links and language switcher outbound URL rewriting not yet implemented — see DEFERRED.md.
 
 ---
 
@@ -442,4 +489,3 @@ Version defined in plugin header and as `UMTD_VERSION` constant. Semantic versio
 - `PATCH` — bugfix
 
 Stay at `0.x` until filter hooks and field keys are stable. Tag releases `git tag v0.x.x`. Child plugins should document which base version they target.
-

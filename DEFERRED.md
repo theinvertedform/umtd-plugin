@@ -187,3 +187,86 @@ PHP 8.5 local vs PHP 8.4 production. MariaDB 12.0.2 local vs production. Address
 ## Backup Automation
 
 No automated backups configured. Run manual backup before major changes. See `INFRASTRUCTURE.md` — Maintenance for manual backup commands.
+
+## Agent Type as WordPress Taxonomy
+
+`agent_type` is currently an ACF radio field stored as postmeta (`person` / `organization`).
+ACF relationship fields can only filter by registered WordPress taxonomies — not postmeta values.
+This means the `location` field on Events cannot be filtered to show only organization agents in
+the ACF UI. Registering `umtd_agent_type` as a proper taxonomy would enable this filtering and
+also make agent type queryable via `tax_query` rather than `meta_query`.
+
+Dependency: requires migrating existing `agent_type` postmeta values to taxonomy terms on all
+existing agent records. Do before production data import.
+
+---
+
+## Attachment Modal Field Control
+
+`attachment_fields_to_edit` filter only applies to the full attachment edit screen — not the
+WordPress media modal. Caption and description fields are still editable in the modal. Alt text
+is also editable in the modal despite being read-only on the full edit screen.
+
+Suppressing fields in the modal requires overriding core WordPress JS templates (`wp.media` views).
+Deferred — acceptable for now since primary metadata entry happens on the full edit screen via
+ACF fields.
+
+---
+
+## Alt Text Auto-generation
+
+Hook on `acf/save_post` for attachments to auto-generate `_wp_attachment_image_alt` from
+structured metadata. Proposed formula:
+
+- Work image: `{agent name_display}, {work title}, {date_display}, {view_type}`
+- Installation/exhibition view: `Installation view, {event title}, {location}, {date}`
+
+Reads `related_work`, `photographer`, `view_type`, `image_date` from ACF fields on the
+attachment, constructs the string, writes to `_wp_attachment_image_alt` via `update_post_meta`.
+
+Not yet written. Related: `attachment_fields_to_edit` makes the field read-only on the full
+edit screen once this is implemented.
+
+---
+
+## Medium Taxonomy Conditional Display
+
+`umtd_medium` terms are process categories (Intaglio, Relief, Planographic) independent of work
+type. A future refinement would show only relevant medium terms based on the selected
+`umtd_work_type` — e.g. Intaglio terms only when Print is selected. Requires JS on the work
+edit screen. Deferred — acceptable at current vocabulary size (3 terms).
+
+---
+
+## Event Title Sync Hook
+
+No `acf/save_post` hook exists for `umtd_events` equivalent to `umtd_sync_agent_title()` for
+agents. Event titles are free text set directly as the WordPress post title. Editorial pattern
+established: `Artist(s) — Event Title` for solo shows, `Exhibition Title` for group shows.
+A sync hook enforcing this format is deferred — editorial discipline is the current control.
+
+---
+
+## Language Switcher and Menu URL Rewriting
+
+Inbound URL routing is complete — `/fr/artistes/slug/` and `/en/artists/slug/` both resolve,
+`lang` query var is set. Outbound URL generation is not implemented:
+
+- `umtd_localize_url( $url, $lang )` — rewrites any URL to a target language. Not written.
+- `wp_nav_menu_objects` filter — rewrites menu item URLs through `umtd_localize_url()`. Not written.
+- `umtd_language_switcher()` — generates `[lang => url]` map for current page. Not written.
+- `pages` map in `config/i18n.php` — slug translation table for WordPress pages. Not added.
+
+Until implemented, nav menu links always point to the default language URL regardless of current
+language context, and there is no UI for switching languages.
+
+---
+
+## Related Works Field Label
+
+`related_works` on both Work Metadata and Event Metadata groups uses a generic label. The
+intended meaning was never decided:
+- On Works: editions, series variants, or related objects?
+- On Events: works exhibited, works documented?
+
+Label and semantics to be decided with client input before production data entry.
