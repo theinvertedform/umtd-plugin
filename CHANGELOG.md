@@ -7,8 +7,26 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### umt-studio-piroir
+
+- feat(terms): add umtd_event_type and umtd_medium whitelists to config/terms.php
+
 ### umt-studio
 
+- feat(taxonomies): register umtd_event_type taxonomy on umtd_events
+- feat(taxonomies): register umtd_medium taxonomy on umtd_works
+- feat(terms): add umtd_event_type vocabulary — Exhibition, Opening, Workshop, Performance, Premiere, Fair, Market (AAT-aligned)
+- feat(terms): add umtd_medium vocabulary — Intaglio, Relief, Planographic (AAT-aligned)
+- feat(i18n): add slug translations for umtd_event_type and umtd_medium
+- fix(admin): remove_post_type_support attachment title — moved to includes/admin.php
+- fix(admin): remove native taxonomy sidebar metaboxes for umtd_medium and umtd_event_type
+- feat(admin): attachment_fields_to_edit — remove caption and description fields, make alt text read-only on full edit screen
+- fix(acf): Event Metadata — change event_type from text to taxonomy field (umtd_event_type), change location from text to relationship → umtd_agents, remove poster field (redundant with featured image)
+- fix(acf): Work Metadata — remove medium text field, add medium taxonomy field (umtd_medium), move current_location and accession_number to bottom
+- feat(acf): Image Metadata — add photographer relationship → umtd_agents, add event relationship → umtd_events, remove rights and credit_line fields, rename image_source → source (VRA Core alignment), set view_type allow_null, set license default to All Rights Reserved
+- fix(acf): Agent Metadata — exported with current field definitions
+- fix(acf): Piroir Roles — exported with current field definitions
+- chore(admin): remove debug error_log from add_meta_boxes hook in includes/admin.php
 - feat(acf): Image Metadata — add photographer relationship field → umtd_agents
 - feat(acf): Image Metadata — add event relationship field → umtd_events
 - fix(acf): Image Metadata — remove rights field (bare © default, meaningless alone)

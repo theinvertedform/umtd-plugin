@@ -32,6 +32,11 @@ add_action( 'init', function() {
     remove_post_type_support( 'attachment', 'title' );
 }, 99 );
 
+add_action( 'admin_menu', function() {
+    remove_meta_box( 'tagsdiv-umtd_medium', 'umtd_works', 'side' );
+    remove_meta_box( 'umtd_event_typediv', 'umtd_events', 'side' );
+} );
+
 /**
  * Sync post title and slug from ACF name fields on save.
  *

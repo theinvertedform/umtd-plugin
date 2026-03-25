@@ -19,10 +19,24 @@ return array(
 		'enabled'      => true,
 		'plural'       => 'Work Types',
 		'singular'     => 'Work Type',
-		'slug'         => 'work-type',
 		'hierarchical' => true,
 		'post_types'   => array( 'umtd_works' ),
 	),
 
+	'umtd_event_type' => array(
+		'enabled'      => true,
+		'plural'       => 'Event Types',
+		'singular'     => 'Event Type',
+		'hierarchical' => true,
+		'post_types'   => array( 'umtd_events' ),
+	),
+
+	'umtd_medium' => array(
+	    'enabled'      => true,
+	    'plural'       => 'Mediums',
+	    'singular'     => 'Medium',
+	    'hierarchical' => false,
+	    'post_types'   => array( 'umtd_works' ),
+	),
 );
 

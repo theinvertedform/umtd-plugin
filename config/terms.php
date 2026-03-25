@@ -32,5 +32,21 @@ return array(
 		'300069200' => 'Performance',
 		'300028682' => 'Video',
 	),
+
+	'umtd_event_type' => array(
+		'300054766'	=>	'Exhibition',
+    	'300266327'	=>	'Opening',
+    	'300069765'	=>	'Workshop',
+    	'300121445'	=>	'Performance',
+    	'300069101'	=>	'Premiere',
+		'300054776'	=>	'Fair',
+		'300112347'	=>	'Market',
+),
+
+	'umtd_medium' => array(
+		'300041338' =>	'Intaglio',
+		'300041391'	=>	'Relief',
+		'300178376'	=>	'Planographic',
+	),
 );
 

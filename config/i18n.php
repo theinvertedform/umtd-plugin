@@ -57,6 +57,18 @@ return array(
 			'de' => 'werktyp',
 		),
 
-	),
+		'umtd_event_type' => array(
+			'en' => 'event-type',
+			'fr' => 'type-evenement',
+			'es' => 'tipo-evento',
+			'de' => 'veranstaltungstyp',
+		),
 
+		'umtd_medium' => array(
+			'en' => 'medium',
+			'fr' => 'technique',
+			'es' => 'tecnica',
+			'de' => 'technik',
+		),
+	),
 );

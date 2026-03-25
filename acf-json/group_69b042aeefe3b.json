@@ -225,7 +225,7 @@
             "label": "Place of Birth",
             "name": "place_of_birth",
             "aria-label": "",
-            "type": "textarea",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -245,16 +245,16 @@
             "default_value": "",
             "maxlength": "",
             "allow_in_bindings": 0,
-            "rows": "",
             "placeholder": "",
-            "new_lines": ""
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_69b8320a57d21",
             "label": "Place of Death",
             "name": "place_of_death",
             "aria-label": "",
-            "type": "textarea",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": [
@@ -274,9 +274,9 @@
             "default_value": "",
             "maxlength": "",
             "allow_in_bindings": 0,
-            "rows": "",
             "placeholder": "",
-            "new_lines": ""
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_69b042d73980f",
@@ -533,5 +533,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1774463600
+    "modified": 1774473420
 }
