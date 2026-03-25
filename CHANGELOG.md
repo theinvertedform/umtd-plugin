@@ -9,6 +9,22 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- feat(acf): Image Metadata — add photographer relationship field → umtd_agents
+- feat(acf): Image Metadata — add event relationship field → umtd_events
+- fix(acf): Image Metadata — remove rights field (bare © default, meaningless alone)
+- fix(acf): Image Metadata — remove credit_line field (replaced by structured rights + photographer fields)
+- fix(acf): Image Metadata — rename image_source → source, aligns with VRA Core source element
+- fix(acf): Image Metadata — set view_type allow_null: 1, remove default value
+- fix(acf): Image Metadata — set license default to All Rights Reserved
+- feat(acf): Work Metadata — add dimensions_h, dimensions_w, dimensions_unit fields replacing dimensions text field
+- feat(admin): remove_post_type_support attachment title — title field no longer editable on attachment edit screen
+- feat(admin): attachment_fields_to_edit filter — remove caption and description fields, make alt text read-only
+- chore(admin): move remove_post_type_support call to includes/admin.php
+- docs: add BUSINESS.md — founding business plan, sole proprietorship QC, all sections present, financials TBD
+- fix(templates): front-page.php — change meta_query type DATE → CHAR for start_date and end_date
+- fix(templates): single-umtd_events.php — replace get_the_title() with get_field('name_display') for organizers and participants
+- fix(templates): front-page.php — replace get_the_title() with get_field('name_display') for event agents
+- fix(parts): card-event.php — replace get_the_title() with get_field('name_display') for organizers
 - feat(i18n): add config/i18n.php — centralized slug translations and language config
 - feat(i18n): add umtd_get_i18n() and umtd_i18n filter hook
 - refactor(cpts): umtd_register_post_types() — language-prefixed primary slugs, supplementary rewrite rules per active language

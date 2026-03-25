@@ -28,6 +28,10 @@ $umtd_admin_script_post_types = array(
 	'umtd_works',
 );
 
+add_action( 'init', function() {
+    remove_post_type_support( 'attachment', 'title' );
+}, 99 );
+
 /**
  * Sync post title and slug from ACF name fields on save.
  *
@@ -120,3 +124,21 @@ function umtd_enqueue_admin_scripts( $hook ) {
 		true
 	);
 }
+
+
+add_filter( 'attachment_fields_to_edit', function( $form_fields, $post ) {
+    // Remove caption and description entirely
+    unset( $form_fields['post_excerpt'] );
+    unset( $form_fields['post_content'] );
+
+    // Make alt text read-only
+    if ( isset( $form_fields['image-alt'] ) ) {
+        $alt = get_post_meta( $post->ID, '_wp_attachment_image_alt', true );
+        $form_fields['image-alt']['input'] = 'html';
+        $form_fields['image-alt']['html'] = '<input type="text" readonly value="' . esc_attr( $alt ) . '" style="background:#f0f0f0;cursor:default;" />';
+    }
+
+    return $form_fields;
+}, 10, 2 );
+
+
