@@ -150,13 +150,28 @@ Additional time beyond this scope is billed separately at the applicable hourly 
 
 White-label WordPress CMS framework — base plugin (`umt-studio`) + base theme (`umt-design`), extended per client via child plugin + child theme.
 
-**Core capabilities:**
+**Core capabilities (current, v0.x):**
 - Custom post types: Works, Agents, Events (FRBR-aligned)
 - ACF field groups: archival metadata aligned with CDWA, VRA Core, schema.org
 - Controlled vocabulary: AAT-aligned work type taxonomy, seeded on activation
 - Agent name logic: sort key vs display name, Person/Organization typed
 - Schema.org JSON-LD output: VisualArtwork (Works); Events and Agents planned
 - CI/CD ready: git-based deploy, GitHub Actions → AWS SSM
+
+**Platform roadmap — three-year arc:**
+
+The platform is developed in versioned milestones toward full-stack parity with commercial gallery software (principally Artlogic) by EOY3, built on a correct archival data model that competitors cannot replicate without rebuilding from scratch. Each version adds a coherent service layer and expands the competitive surface.
+
+| Version | Target | Service layer added |
+|---|---|---|
+| v0.x | Y1, 2026 | Archive + public website, bilingual, commerce (WooCommerce), newsletter (listmonk), DAM, press management |
+| v1.0 | Y1–Y2, 2026–2027 | CRM foundations — collector contacts, inquiry tracking, acquisition history, private viewing |
+| v1.x | Y2, 2027 | Financial layer — invoicing, consignment, artist payables, edition inventory |
+| v2.0 | Y2–Y3, 2027–2028 | Marketing platform — listmonk deep integration, campaign scheduling, online viewing rooms, analytics |
+| v2.x | Y3, 2028 | Full sales pipeline — offer tracking, collector preference profiling, pipeline dashboard |
+| v3.0 | EOY3, 2028 | Platform parity — REST API, Artlogic migration tooling, Artsy integration, DR infrastructure |
+
+By v3.0, the platform covers: archive, commerce, CRM, invoicing, marketing automation, analytics, and sales pipeline — all built on AAT/FRBR/VRA Core-aligned data. Mobile/iOS access is explicitly deferred post-v3.0. See ROADMAP.md for full version detail.
 
 **Licensing model:** GPL. The base plugin and theme are released under the GNU General Public License. This is consistent with WordPress ecosystem norms and does not preclude charging for the specialist work of configuring and deploying the system for a specific client. The onboarding fee (§3.1.2) is a service fee, not a licence fee.
 
@@ -188,22 +203,44 @@ The MAP Collections Management grant covers up to 75% of eligible project costs 
 
 ### 4.3 Problem Statement
 
-Cultural institutions manage collections that have archival requirements — provenance, attribution, controlled vocabulary, rights metadata — but are typically served by generic CMS solutions (WordPress with off-the-shelf themes, Squarespace, Cargo) that treat all content as blog posts. The result is data that cannot be queried, exported, or integrated with library and museum systems.
+Cultural institutions manage collections that have archival requirements — provenance, attribution, controlled vocabulary, rights metadata — but are typically served by two inadequate alternatives.
 
-At the other end, museum-grade collection management software (CollectiveAccess, Omeka, TMS) is expensive, complex to operate, and requires dedicated staff. There is a gap for institutions too small for enterprise CMS but who want to treat their data more seriously than with a blog platform.
+At the generic end: WordPress with off-the-shelf themes, Squarespace, Cargo. These treat all content as blog posts. Data cannot be queried, exported, or integrated with library and museum systems. When the platform contract lapses or the template becomes obsolete, the institutional record goes with it.
+
+At the sector-specific end: Artlogic and its competitors (Arternal, ArtBase) dominate the commercial gallery software market. These platforms are built on a sales-and-inventory paradigm — a work record is an inventory item, not a cultural document. Artlogic explicitly positions its website product as a sales catalogue integrated with a CRM. When a work sells, it moves toward invisible. Historical exhibitions, past agents, the 40-year program of a gallery like Blouin Division — none of this is a first-class object in an inventory model. Artlogic does allow data export (CSV/XLSX for artworks, contacts, invoices, and offers), but the export is flat rows with no standards alignment: no AAT IDs, no FRBR relationships, no schema.org structure. The data comes out; the data model does not.
+
+At the institutional end: museum-grade collection management software (CollectiveAccess, Omeka, TMS) is expensive, complex to operate, and requires dedicated staff. It serves large institutions with permanent collections management staff. It is not available to a mid-size commercial gallery or artist-run centre.
+
+The gap is real and unserved: institutions that take their data seriously but cannot staff a museum IT department, and who need a platform that treats their archive as a permanent public record — not a rolling catalogue of what is currently available — while also supporting the commercial operations (commerce, CRM, marketing) that keep the institution funded.
+
+UMT Studios builds that platform. The proposition is not archive *or* commerce. It is archive *as* the foundation for commerce — a correct data model that makes every subsequent feature (inquiry, invoice, newsletter, analytics) more valuable because the underlying record is standards-aligned, permanently legible, and institutionally durable.
 
 ### 4.4 Competitive Landscape
+
+**Commercial gallery software (primary competitors)**
+
+| Competitor | Founded | Positioning | Their gap vs UMT Studios |
+|---|---|---|---|
+| Artlogic | 1994, London | Dominant all-in-one gallery platform — inventory, CRM, website, marketing, payments. 126 staff, ~$16M USD revenue, 6,000+ clients in 70 countries. Absorbed ArtBase, exhibit-E, galleryManager (2022) and ArtCloud (2025). | Sales-oriented inventory model. No archival standards (AAT, FRBR, VRA Core, CDWA). Website is a sales catalogue, not an institutional record. Sold works disappear from the public record. Data exports as flat CSV/XLSX with no standards alignment — rows come out, the data model does not. Template websites are visually indistinct. No API. |
+| Arternal | 2015, New York | Pure CRM-first — collector relationship management, sales pipeline, invoicing, offers. Explicitly markets against archival thinking: "your software was built to archive art, not to sell it." Does not offer a public website. | No public-facing website. No archival standards. No controlled vocabulary. Reinforces the paradigm that archive and commerce are in opposition — UMT Studios refutes this. |
+| ArtBase | 1993, New York | Desktop/cloud database for galleries, museums, dealers. Absorbed by Artlogic 2022. | Now subsumed into Artlogic. Historically served museums but with no standards alignment. |
+
+**Adjacent software (secondary reference points)**
 
 | Competitor | Positioning | Gap |
 |---|---|---|
 | Generic WordPress agencies | Fast, cheap, template-driven | No data modelling; no IA depth |
-| CollectiveAccess / Omeka | Museum-grade CMS | Expensive, complex, requires dedicated staff |
+| CollectiveAccess / Omeka | Museum-grade CMS | Expensive, complex, requires dedicated staff; no managed hosting |
 | LibraryHost (managed Omeka/AtoM) | Managed archival hosting, \$34–\$179 USD/month | No design; no public-facing website; generic templates; metered support |
 | Cargo / Squarespace | Portfolio/artist sites | No metadata, no queryable data, no longevity |
 | Freelance developers | Cost-competitive | No domain knowledge in cultural heritage |
 | Museum IT departments | Institutional expertise | Not available to small institutions |
 
-**UMT Studios sits between freelance WordPress shop and museum IT.** The differentiator is domain knowledge in information architecture, metadata standards, and controlled vocabulary, combined with the technical depth to build and operate production infrastructure, and the design sensibility to produce a public-facing site that represents the institution.
+**Positioning**
+
+UMT Studios occupies the intersection of archival rigour and commercial viability that none of these competitors hold. Against Artlogic and Arternal: the platform is archive-first, built on correct data models and open standards, with commerce, CRM, and marketing as additional layers — not the foundation. Against generic WordPress and Squarespace: production-grade infrastructure, specialist domain knowledge, and data that outlasts the platform. Against CollectiveAccess and Omeka: managed infrastructure, design sensibility, and a public-facing website that serves both institutional and commercial needs.
+
+The three-year platform roadmap (see ROADMAP.md) closes the feature gap with Artlogic progressively. By v3.0, the platform offers parity on all non-mobile service lines. The archival data model is a structural advantage that Artlogic cannot replicate without rebuilding from scratch — their existing client base and revenue model prevent it.
 
 ### 4.5 Positioning Statement
 
@@ -327,14 +364,20 @@ The monthly subscription is the primary retention mechanism. Every onboarding en
 
 ### 8.1 Revenue Streams
 
-| Stream | Type | Pricing Model |
-|---|---|---|
-| CMS Onboarding | Project | Assessed fixed quote |
-| Data Import | Project | T&M with floor and client-approved ceiling |
-| Monthly Subscription | Retainer | Flat monthly, tiered by storage |
-| Newsletter add-on | Retainer | Monthly flat, tiered by subscriber count / send volume |
-| Ecommerce add-on | Retainer | Monthly flat — TBD tiers |
-| Web Design | Project | T&M with minimum |
+| Stream | Type | Pricing model | Available |
+|---|---|---|---|
+| CMS Onboarding | Project | Assessed fixed quote | Now |
+| Data Import | Project | T&M with floor and client-approved ceiling | Now |
+| Monthly Subscription | Retainer | Flat monthly, tiered by storage | Now |
+| Web Design | Project | T&M with minimum | Now |
+| Commerce add-on (WooCommerce) | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v0.x]** | v0.x |
+| Newsletter add-on (listmonk) | Retainer | Monthly flat, tiered by subscriber count / send volume — **[TBD — see ROADMAP.md §v0.x]** | v0.x |
+| CRM add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v1.0]** | v1.0 |
+| Invoicing / financial add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v1.x]** | v1.x |
+| Marketing platform add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v2.0]** | v2.0 |
+| Full sales pipeline add-on | Retainer | TBD — may consolidate into Professional tier — **[see ROADMAP.md §v2.x]** | v2.x |
+
+Add-on pricing is TBD for all service lines not yet in production. Pricing research is built into the roadmap milestone at which each line becomes available. TBD items here are not oversights — they are sequenced work. No pricing commitment is made to clients for service lines not yet delivered.
 
 ### 8.2 Pricing
 
@@ -376,12 +419,16 @@ Storage limits are soft internal thresholds. Clients will not be penalized for m
 
 #### Add-ons (available on any subscription tier)
 
-| Add-on | Notes | Pricing |
+| Add-on | Available | Pricing |
 |---|---|---|
-| Newsletter (listmonk) | Tiered by subscriber count and monthly send volume | TBD |
-| Ecommerce | TBD platform | TBD |
+| Commerce (WooCommerce + Stripe) | v0.x | **[TBD — pricing research scheduled for ROADMAP.md §v0.x, before first commerce client onboarding]** |
+| Newsletter (listmonk) | v0.x | **[TBD — pricing research scheduled for ROADMAP.md §v0.x, tiered by subscriber count and monthly send volume]** |
+| CRM (collector contacts, inquiry tracking, private viewing) | v1.0 | **[TBD — pricing research scheduled for ROADMAP.md §v1.0]** |
+| Invoicing / financial (invoices, consignment, artist payables) | v1.x | **[TBD — pricing research scheduled for ROADMAP.md §v1.x]** |
+| Marketing platform (campaign scheduling, viewing rooms, analytics) | v2.0 | **[TBD — pricing research scheduled for ROADMAP.md §v2.0]** |
+| Full sales pipeline (offers, preference profiling, pipeline dashboard) | v2.x | **[TBD — may consolidate into a Professional tier rather than standalone add-on. Research scheduled for ROADMAP.md §v2.x]** |
 
-Add-on pricing is TBD pending operational experience with provisioning and ongoing maintenance time per client.
+All add-on pricing is TBD. These are sequenced items — each will be priced during the development milestone at which it becomes available. No pricing commitment is made to clients for add-ons not yet in production.
 
 #### Web Design
 
@@ -478,45 +525,54 @@ Work product created for clients is client-owned upon final payment unless other
 
 ## 10. Milestones & Roadmap
 
-### 10.1 Current State
+See ROADMAP.md for full version detail, feature lists, and sequenced TBD items. This section summarizes the three-year business arc.
+
+### 10.1 Current State (March 2026)
 
 - v0.2.0 of umt-studio deployed
 - One active testing database based on Piroir's dataset
 - Infrastructure operational on AWS EC2, ca-central-1
 - CI/CD pipeline configured
-- Pricing model established (2026-03-26)
+- Pricing model established
 
-### 10.2 90-Day Targets
+### 10.2 Year 1 — Foundation (2026)
 
-- [ ] Pitch Piroir and three other potential clients
-- [ ] Complete Piroir child theme (umt-design-piroir)
-- [ ] Migrate Piroir data and set up infrastructure
-- [ ] Formalize proposal and contract templates
-- [ ] Establish bookkeeping setup
-- [ ] Write the new DB schema
-- [ ] Live version of the admin UI
-- [ ] Portfolio site live
-- [ ] Schema.org engine extended to Events and Agents
-- [ ] Staging environment established
-- [ ] Agent role model implemented (ACF Pro Repeater migration)
-- [ ] DAM capabilities within interface
-- [ ] Newsletter and ecommerce add-on pricing finalized
-- [ ] Web design rate and minimum finalized
+Platform target: v0.x complete. Commerce and newsletter add-ons live and priced. First client (Piroir) launched. Portfolio site live with case study.
 
-### 10.3 Year 1 Targets
+Business targets:
+- [ ] Piroir contract signed and delivered
+- [ ] Three additional onboardings closed
+- [ ] Subscription MRR: \$750–\$1,250 (3–5 clients)
+- [ ] Commerce and newsletter add-on pricing finalized (ROADMAP.md §v0.x)
+- [ ] Portfolio site live — case studies, methodology, public product page
+- [ ] Bookkeeping setup established
+- [ ] Business bank account opened
+- [ ] GST/QST registration if revenue threshold approached
 
-- [ ] Ten completed onboardings
-- [ ] \$1,000 MRR from subscriptions
-- [ ] GST/QST registration (if threshold met or anticipated)
-- [ ] Marketing scheduling within interface
+### 10.3 Year 2 — Expansion (2027)
 
-### 10.4 Year 3 Targets
+Platform target: v1.0 and v1.x complete. CRM and financial layer live. Platform credibly competes with Artlogic and Arternal on internal gallery operations for the first time. First commercial gallery client onboarding using CRM and invoicing.
 
-**[TBD]**
+Business targets:
+- [ ] Six additional onboardings (cumulative: ~10)
+- [ ] Subscription MRR: \$2,750 (11 clients)
+- [ ] CRM add-on and invoicing add-on pricing finalized (ROADMAP.md §v1.0, §v1.x)
+- [ ] First Artlogic migration completed — import tooling proven
+- [ ] First commercial gallery client (Blouin Division scale) under active pitch or contracted
+- [ ] Revenue sufficient to consider first subcontract engagement for design or front-end
 
-- [ ] \$3,000 MRR
-- [ ] International profile, travel
-- [ ] Anthropological research
+### 10.4 Year 3 — Platform Parity (2028)
+
+Platform target: v2.0, v2.x, and v3.0 complete. Full-stack parity with Artlogic on all non-mobile service lines. REST API live. Artsy integration available. All service line pricing established.
+
+Business targets:
+- [ ] Eight additional onboardings (cumulative: ~18)
+- [ ] Subscription MRR: \$5,000+ (20 clients across tiers and add-ons)
+- [ ] All add-on pricing finalized
+- [ ] International client or conference presence
+- [ ] Revenue projection: \$112,000 CAD (see §8.4)
+- [ ] Evaluate incorporation, first hire, or subcontractor structure
+- [ ] DR infrastructure operational (ROADMAP.md §v3.0)
 
 ---
 
@@ -526,14 +582,16 @@ Work product created for clients is client-owned upon final payment unless other
 |---|---|---|---|
 | Single founder — illness, burnout | Medium | High | Subscription contracts with clear SLAs; documented runbooks; subcontractor relationships |
 | Client concentration — one or two large clients | High (early stage) | High | Diversify client base; subscriptions spread risk |
-| Grant cycle dependency — clients can't pay until grant clears | High | Medium | Payment schedules aligned to grant disbursement; deposits on signing |
+| Grant cycle dependency — clients can't pay until grant clears | High | Medium | Payment schedules aligned to grant disbursement; deposits on signing. Note: grants are a secondary sales avenue; the business model does not depend on them |
 | AWS outage / data loss | Low | High | Regular backups; document recovery procedures |
 | ACF licensing change | Low | Medium | Minimize ACF Pro dependencies; document field groups in JSON for portability |
 | WordPress ecosystem deprecation | Low | High | Standards-based data model (field values, not WP-specific APIs) reduces lock-in |
-| Competitor offering similar archival-grade CMS | Low (current) | Medium | Methodology and domain knowledge are the moat, not the software |
+| Artlogic builds an archival product line | Low | Medium | Their sales-oriented client base and revenue model actively prevent it. Structural advantage — they cannot adopt FRBR/AAT without rebuilding their data model and breaking existing client data. Moat is architectural, not just strategic. |
+| Competitor offering similar archival-grade CMS | Low (current) | Medium | Methodology and domain knowledge are the moat, not the software. GPL licence encourages forks but not managed competitors — the value is in deployment and domain expertise, not the codebase alone. |
 | Scope creep on monthly subscription | High | Medium | Contract language explicitly limits support scope; extra work billed separately |
 | Client presses legal action over data loss or downtime | Low | High | E&O insurance required before first client contract; clear SLA and limitation of liability in contract |
 | Tax compliance — GST/QST threshold | Medium | Medium | Monitor revenue; register proactively before threshold |
+| Feature gap vs Artlogic during Y1–Y2 | High (early stage) | Medium | Addressed by three-year platform roadmap. Archive and public website are complete at v0.x; CRM and invoicing follow at v1.x. During Y1–Y2, pitch to clients where archive is the primary need and CRM is secondary or handled separately. |
 
 ---
 
@@ -598,7 +656,7 @@ Key clauses required:
 | System architecture | `ARCHITECTURE.md` |
 | Client onboarding workflow | `WORKFLOW.md` |
 | Infrastructure & server config | `INFRASTRUCTURE.md` |
-| Deferred items | `DEFERRED.md` |
+| Platform roadmap (versioned milestones) | `ROADMAP.md` |
 | Changelog | `CHANGELOG.md` |
 
 ### C. References & Standards

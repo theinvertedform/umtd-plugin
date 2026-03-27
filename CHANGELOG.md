@@ -26,6 +26,7 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs: add three-year platform roadmap and expand business plan competitive positioning
 - feat(business): fill in §8.3 fixed costs — remove E&O line, add Cloudflare (\$0), Claude (~\$20), domains (~\$2), total ~\$37/month
 - feat(business): fill in §8.4 revenue projections — conservative and realistic Y1/Y2/Y3 scenarios with assumptions documented
 - feat(business): fill in §8.5 break-even analysis — target draw ~\$4,400/month gross, ~30 billable hours at \$150/hr

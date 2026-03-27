@@ -1,8 +1,8 @@
 # UMT Studio — Roadmap
 
-This document is the authoritative record of planned work. It replaces `DEFERRED.md`. Items are either sequenced against the active client timeline (Active) or held in the Backlog without a delivery date.
+This document is the authoritative record of planned work. It has two parallel tracks: the active Piroir client engagement and the platform version roadmap covering the three-year product arc. TBD items within each version milestone reference the version at which they are scheduled to be resolved — they are not oversights, they are sequenced work.
 
-The client-facing Piroir project timeline runs 9–16 weeks from contract signing. Platform development items are sequenced to land before the client phase that depends on them. The two timelines are parallel and coordinated — platform work is not deferred until after the client engagement, it is built into it.
+The Artlogic benchmark: by v3.0 (EOY3, 2028), the umt.studio CMS will offer feature parity with Artlogic across all non-mobile service lines — archive, commerce, CRM, invoicing, marketing automation, analytics, and sales pipeline — built on a correct archival data model with AAT/FRBR/VRA Core alignment that Artlogic structurally cannot replicate. Mobile / iOS access is explicitly deferred post-v3.0.
 
 ---
 
@@ -66,7 +66,7 @@ Client phase: Staging review and client UAT.
 - [ ] Performance baseline — page load times acceptable on current EC2 instance
 - [ ] Accessibility pass — semantic HTML audit, keyboard navigation, screen reader spot-check
 
-### Week 13–16 — Production Deploy
+### Weeks 13–16 — Production Deploy
 
 Client phase: Production deploy.
 
@@ -81,56 +81,243 @@ Client phase: Production deploy.
 
 ---
 
+## Platform Roadmap
+
+Versions are sequenced development milestones, not calendar releases. Year targets are approximate. Each version represents a coherent feature layer that expands the platform's competitive surface. Pricing research for new service lines is built into the milestone at which that line becomes available — TBD pricing items are not oversights, they are scheduled work.
+
+---
+
+### v0.x — Archive + Public Platform
+
+**Target: Y1, 2026**
+
+The foundation. A standards-aligned archival CMS with a public-facing website, bilingual support, basic commerce, and newsletter infrastructure. This is the platform as delivered to Piroir and the basis for all subsequent client onboardings.
+
+**Archive & data model**
+- [x] CPTs: Works, Agents, Events (FRBR-aligned)
+- [x] ACF field groups: CDWA / VRA Core / schema.org aligned
+- [x] AAT-aligned controlled vocabulary, seeded on activation
+- [x] Agent name logic — sort key vs display name, Person / Organization typed
+- [x] Agent role model — `umtd_roles` vocabulary, relationship to works via junction table
+- [ ] Custom DB schema — `umtd_translations`, `umtd_work_media`, `umtd_work_agents`, `umtd_items` (edition/copy level)
+- [ ] `umtd_press` CPT — press clippings, linked to exhibitions and agents; essential for commercial gallery clients
+- [ ] `umtd_series` taxonomy on works
+- [ ] Custom date entry UI — Year / Month / Day / Qualifier / Range per EDTF and VRA Core 4.0; replaces ACF date pickers
+- [ ] Medium taxonomy conditional display
+
+**Schema.org & SEO**
+- [x] VisualArtwork JSON-LD on Works singles
+- [ ] ExhibitionEvent JSON-LD on Events singles
+- [ ] Person / Organization JSON-LD on Agents singles
+- [ ] Sitewide Organization schema
+
+**Bilingual**
+- [ ] Language switcher — `umtd_localize_url()`, nav menu filter
+- [ ] FR/EN slug architecture via `config/i18n.php`
+- [ ] `umtd_translations` custom table — `post_id | lang | field_name | value`
+
+**Public website**
+- [ ] `umt-design-piroir` child theme — typography, colour, branding
+- [ ] All archive and single templates using `umtd_get_field()` throughout
+- [ ] Accessibility audit — semantic HTML, keyboard navigation, screen reader
+
+**Commerce add-on (WooCommerce)**
+- [ ] WooCommerce integration scoped and specified
+- [ ] Work availability field — controlled vocabulary: Available, Sold, Not for Sale, On Loan, On Deposit
+- [ ] INQUIRE / Add to Cart conditional rendering based on availability and work type
+- [ ] WooCommerce product mirroring works records — availability sync on sale
+- [ ] Basic order management via WooCommerce admin
+- [ ] Stripe payment processing integration
+- [ ] **[Pricing research — commerce add-on monthly rate. To be established during v0.x and reflected in BUSINESS.md §8.2 before first commerce client onboarding.]**
+
+**Newsletter add-on (listmonk)**
+- [ ] listmonk provisioning documented and repeatable per client
+- [ ] Newsletter subscription form — WordPress shortcode or block, feeds listmonk list
+- [ ] Subscriber management accessible from WP admin (iframe or API link)
+- [ ] **[Pricing research — newsletter add-on tiered by subscriber count and monthly send volume. To be established during v0.x and reflected in BUSINESS.md §8.2 before first newsletter client onboarding.]**
+
+**DAM foundations**
+- [ ] Image metadata schema — view type, rights, license, credit line, image source, image date, related work
+- [ ] Alt text auto-generation hook — derives from agent name_display, work title, date_display, view_type on attachment save
+- [ ] Attachment modal field control — suppress caption/description/alt from media modal; enforce structured fields only
+- [ ] Canonical filename schema — derived from accession_number (v0.3+)
+
+**Admin UX**
+- [ ] Auto-populate Agent fields from ULAN / Wikidata — search, duplicate check, auto-populate on selection
+- [ ] Page generation on child plugin activation — `wp_insert_post()` creates required nav pages
+- [ ] WP admin menu placement — CPT sidebar structure finalized
+- [ ] PHP/JS style guide — `.editorconfig`, `phpcs.xml` with WordPress-Core ruleset
+
+**Infrastructure**
+- [ ] Staging environments — `staging.{client}.umt.world` pattern documented and repeatable
+- [ ] EBS snapshot automation — confirmed for all client databases
+- [ ] `wp i18n make-pot` — generated for base plugin and base theme
+- [ ] Portfolio site — case studies, methodology, public-facing product page
+
+---
+
+### v1.0 — CRM Foundations
+
+**Target: Y1–Y2, 2026–2027**
+
+The first service line that puts the platform in direct competition with Artlogic and Arternal on internal gallery operations. Collector contacts, inquiry tracking, and acquisition history are built on top of the existing agent and work data model — a collector is a typed agent; an inquiry is a relationship between a collector, a work, and a timestamp. No new architectural primitives required.
+
+**Collector contact management**
+- [ ] `umtd_collectors` CPT — or extend `umtd_agents` with a Collector agent_type; decision to be made during scoping
+- [ ] Collector profile fields — contact details, acquisition history (linked works), collector interests (linked taxonomy terms), communication log
+- [ ] Role-based access — collector records visible to gallery staff only, not public-facing
+- [ ] Collector import — CSV import path from Artlogic export format (CSV/XLSX) and Arternal
+
+**Inquiry tracking**
+- [ ] `umtd_inquiries` CPT — records inquiry event: collector → work, date, channel (web form / email / fair / in person), status (open / offered / sold / passed)
+- [ ] Inquiry created automatically on INQUIRE form submission from public website
+- [ ] Inquiry status workflow — gallery staff move inquiries through status pipeline from WP admin
+- [ ] Inquiry history visible on work record and collector record
+
+**Acquisition history**
+- [ ] Work → collector relationship — sold works linked to acquiring collector with date and price (internal only)
+- [ ] Acquisition history visible on work record (internal) and contributes to provenance chain (public)
+- [ ] Collector acquisition history — all works acquired, visible on collector record (internal)
+
+**Private viewing**
+- [ ] Password-protected exhibition template — curated work selection shared with a specific collector or group
+- [ ] Private view link generation from WP admin — expiring URL, optional password
+- [ ] Private view access log — which collector accessed, when, which works viewed
+
+**Pricing**
+- [ ] **[Pricing research — CRM add-on monthly rate. To be established during v1.0 development and reflected in BUSINESS.md §8.2 before first CRM client onboarding. Research comparables: Arternal pricing, Artlogic CRM tier pricing, standalone CRM market rates in the cultural sector.]**
+
+---
+
+### v1.x — Financial Layer
+
+**Target: Y2, 2027**
+
+Invoicing, consignment, and artist payables. This closes the primary administrative paperwork gap that Artlogic and Arternal both target. At v1.x, the platform covers the full operational lifecycle of a gallery transaction: inquiry → offer → sale → invoice → artist payable.
+
+**Invoicing**
+- [ ] `umtd_invoices` CPT — line items linked to works, collector, date, payment status
+- [ ] Invoice PDF generation — standard template, exportable
+- [ ] Invoice status — draft / sent / paid / overdue
+- [ ] QuickBooks / accounting export — CSV or direct integration (scoped during development)
+- [ ] GST/QST handling — Québec tax rates applied automatically based on client jurisdiction
+
+**Consignment tracking**
+- [ ] `umtd_consignments` CPT — work → consignor (agent), consignment terms, period, commission rate
+- [ ] Consignment status — active / returned / sold
+- [ ] Consignment visible on work record and agent record
+
+**Artist payables**
+- [ ] Artist payable generated on sale — commission split derived from consignment record
+- [ ] Payable PDF — artist statement of account
+- [ ] Payable status — pending / paid
+
+**Edition inventory (`umtd_items`)**
+- [ ] Physical exemplar tracking — copy number, condition, location, owner
+- [ ] Item linked to work record (FRBR Item level)
+- [ ] Item provenance chain — ownership history as ordered list of agent relationships with dates
+
+**Pricing**
+- [ ] **[Pricing research — invoicing / financial layer add-on monthly rate. To be established during v1.x development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic invoicing tier, QuickBooks pricing, Arternal financial features.]**
+
+---
+
+### v2.0 — Marketing Platform
+
+**Target: Y2–Y3, 2027–2028**
+
+Deep listmonk integration, campaign scheduling, and online viewing rooms. At v2.0, the platform covers the full public-facing marketing lifecycle of a gallery program: archive → newsletter → campaign → analytics.
+
+**listmonk deep integration**
+- [ ] Subscriber segmentation — by collector interests (linked taxonomy terms), acquisition history, geography
+- [ ] Campaign scheduling from WP admin — compose, schedule, send without leaving WordPress
+- [ ] Send history linked to works and exhibitions — which campaigns featured which works, open/click rates per work
+- [ ] Campaign analytics dashboard — open rates, click rates, unsubscribes, per-campaign and per-work
+
+**Online viewing rooms**
+- [ ] `umtd_viewing_rooms` CPT — curated work selection with editorial text, shareable URL
+- [ ] Viewing room templates — multiple layouts (grid, editorial, slideshow)
+- [ ] Viewing room analytics — visits, time on page, works clicked
+- [ ] Viewing room inquiry integration — INQUIRE button feeds `umtd_inquiries` CRM
+
+**Analytics layer**
+- [ ] Reporting dashboard in WP admin — works viewed, agents viewed, exhibitions viewed, inquiry volume, newsletter performance
+- [ ] Data sourced from existing records — no third-party analytics dependency for core metrics
+- [ ] Optional Matomo / self-hosted analytics integration for traffic data
+
+**Pricing**
+- [ ] **[Pricing research — marketing platform add-on monthly rate. To be established during v2.0 development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic marketing tier, listmonk pricing (self-hosted, effectively free), Hootsuite / Buffer pricing as proxy for scheduling value.]**
+
+---
+
+### v2.x — Full Sales Pipeline
+
+**Target: Y3, 2028**
+
+Offer tracking, collector preference profiling, and a sales pipeline dashboard. At v2.x, the platform covers the complete collector relationship lifecycle that Artlogic's PrivateViews and Arternal's CRM target — without requiring a separate tool.
+
+**Offer tracking**
+- [ ] `umtd_offers` CPT — work → collector, offered price, offer date, expiry, status (pending / accepted / declined / expired)
+- [ ] Offer history on work record and collector record
+- [ ] Offer email generation — formatted offer letter PDF, sent via listmonk or direct SMTP
+
+**Collector preference profiling**
+- [ ] Interest taxonomy on collector record — linked to `umtd_work_type`, `umtd_medium`, `umtd_agents`
+- [ ] Match engine — surfaces works matching a collector's interest profile
+- [ ] Preference derived automatically from acquisition and inquiry history
+
+**Sales pipeline dashboard**
+- [ ] Pipeline view — all open inquiries and offers, stage, value, assigned staff member
+- [ ] Pipeline analytics — conversion rate by stage, average time to close, revenue by agent/work type
+- [ ] Fair mode — filtered pipeline view for art fair context; works flagged for fair, inquiries captured at fair
+
+**Work relations**
+- [ ] `umtd_work_relations` table — explicit object-to-object relationships (isDerivedFrom, isDocumentedBy, isPartOf)
+- [ ] Relationship graph visible on work single — related works, source works, documentation
+
+**Pricing**
+- [ ] **[Pricing research — full sales pipeline add-on or revised all-inclusive tier. To be established during v2.x development. At this version, consider whether individual add-on pricing remains viable or whether a consolidated "Professional" tier covering CRM + invoicing + marketing + pipeline makes more commercial sense. Reference Artlogic's bundle pricing as primary comparable.]**
+
+---
+
+### v3.0 — Platform Parity
+
+**Target: EOY3, 2028**
+
+At v3.0, the umt.studio CMS reaches feature parity with Artlogic across all non-mobile service lines. All subsequent development is interface-level: UX refinement, performance, accessibility, design quality. The architectural moat — archival data model, AAT/FRBR/VRA Core alignment, GPL, Canadian infrastructure, data sovereignty — is fully established and cannot be replicated by competitors without rebuilding from scratch.
+
+**REST API**
+- [ ] Public read API — works, agents, events, exhibitions; paginated, filterable by taxonomy, date range, agent
+- [ ] Authenticated write API — for future headless front-end or third-party integrations
+- [ ] API documentation — OpenAPI spec, published with portfolio site
+
+**Artlogic migration path**
+- [ ] Documented import path from Artlogic CSV/XLSX export — field mapping spec, import script
+- [ ] Artlogic export covers: artworks (CSV/XLSX), contacts (CSV/XLSX), accounts, invoices, sales and offers. Import scripts handle each. Note: Artlogic exports flat rows with no standards alignment — AAT IDs, FRBR relationships, and schema.org structure are applied during import by the umt.studio migration tooling. This is a structural advantage over any other migration path.
+- [ ] Arternal migration path — similar field mapping from Arternal export
+
+**Artsy integration**
+- [ ] Artsy sync — works published to Artsy from WP admin (Artlogic offers this; it is a table-stakes feature for commercial galleries at this scale)
+- [ ] Artsy inquiry routing — inquiries received via Artsy routed into `umtd_inquiries`
+
+**Stabilization**
+- [ ] Schema migration versioning — version table and `dbDelta()`-based migration runner for clean schema changes across multiple client installs
+- [ ] DR instance — stopped EC2 in second region, updated from weekly AMI snapshots, activatable in ~20 minutes
+- [ ] Uninstall hook — clean removal of CPT data and taxonomy terms
+- [ ] Full WCAG 2.1 AA accessibility audit across all public templates
+
+**Mobile / iOS**
+- [ ] **[Deferred post-v3.0. A native iOS sales app (comparable to Artlogic PrivateViews and Arternal mobile) is a significant engineering investment. Evaluate after v3.0 based on client demand and revenue. May be addressed via a mobile-optimized responsive web app rather than native development.]**
+
+---
+
 ## Backlog
 
-Items without a delivery date. Sequenced after Piroir launch unless a second client engagement requires earlier delivery.
+Items without a version assignment. Held pending client demand or a second engagement that requires earlier delivery.
 
-### Data Model
-
-- **Item-level inventory (`umtd_items`)** — individual physical exemplars of a Work (copy number, condition, location). FRBR Item level. Prerequisite for replacing ArtworkArchive as inventory tool.
-- **Work relations (`umtd_work_relations`)** — explicit object-to-object relationships (isDerivedFrom, isDocumentedBy). Deferred until a client archive requires it; series membership is currently handled by `umtd_series` taxonomy.
-- **Schema migration versioning** — a version table and `dbDelta()`-based migration runner to manage schema changes across multiple client installs cleanly.
-
-### Admin UX
-
-- **Auto-populate Agent fields from ULAN / Wikidata** — search existing agents (duplicate check), Getty ULAN, Wikidata, Wikipedia on the agent edit screen; auto-populate available fields on selection. Estimated 4–6 hours.
-- **Custom date entry UI** — replace ACF date pickers for `date_earliest` / `date_latest` with Year / Month / Day / Qualifier / Range toggle. Qualifier vocabulary per EDTF and VRA Core 4.0. `date_display` derived on save.
-- **Medium taxonomy conditional display** — show only relevant `umtd_medium` terms based on selected `umtd_work_type` on the work edit screen.
-- **Event title convention** — no enforcement hook exists. Editorial pattern: `Artist(s) — Event Title` for solo shows, `Exhibition Title` for group shows. Enforce via `acf/save_post` hook or document as editorial convention.
-- **Page generation on child plugin activation** — `wp_insert_post()` creates required nav pages with correct slugs and page templates on activation. Currently done manually.
-- **Alt text auto-generation** — `acf/save_post` hook on attachments writes `_wp_attachment_image_alt` from structured metadata (agent `name_display`, work title, `date_display`, `view_type`).
-- **Attachment modal field control** — caption, description, and alt text remain editable in the WordPress media modal (separate JS rendering path from the full edit screen). Suppression requires overriding core JS templates.
-
-### Front-end
-
-- **REST API** — not started. Required for any external integrations or headless front-end.
-- **Search / filtering UI** — not started.
-- **Lazy-load JS** — `data-lazy` attribute stubbed on archive grids. No JS written.
-
-### Platform & Infrastructure
-
-- **DR instance** — a stopped EC2 instance in a second region, updated from weekly AMI snapshots, activatable in ~20 minutes if the primary instance fails. Deferred — EBS snapshots and staging environment are sufficient due diligence at current client count.
-- **Staging environments for future clients** — same-host subdomain pattern (`staging.{client}.umt.world`) applied to each new client on onboarding.
-- **Backup automation audit** — confirm EBS snapshot and `mysqldump` coverage for all client databases as client count grows.
-- **`wp i18n make-pot`** — not generated. Required before any third-party translation or localization work.
+- **Work relations (`umtd_work_relations`)** — explicit object-to-object relationships. Promoted to v2.x above; backlog entry retired.
+- **Auto-populate Agent fields from ULAN / Wikidata** — promoted to v0.x above.
 - **Caching** — irrelevant at current scale. Revisit if traffic warrants.
-- **WP admin menu placement** — `show_in_menu` on CPTs currently unset. Requires a menu structure decision before implementing.
 - **Class-based plugin architecture** — current procedural structure is acceptable. Revisit at scale.
-- **PHP/JS style guide** — formal `.editorconfig` and `phpcs.xml` with WordPress-Core ruleset. Currently conventions only.
-- **Uninstall hook** — plugin leaves orphaned CPT data and taxonomy terms on removal.
-
-### Business
-
-- **Portfolio site** — case studies, methodology documentation, public-facing umt.studio product page.
-- **Web design rate and minimum** — TBD pending first web-design-only engagement.
-- **Newsletter add-on pricing** — TBD pending operational experience with listmonk provisioning time per client.
-- **Ecommerce add-on** — platform TBD.
-- **Year 3 targets** — TBD.
-- **Founder bio (§6.1 BUSINESS.md)** — TBD.
-- **Advisors (§6.2 BUSINESS.md)** — TBD.
-- **Sales process (§7.2 BUSINESS.md)** — TBD.
-- **Revenue projections (§8.4 BUSINESS.md)** — TBD.
-- **Break-even analysis (§8.5 BUSINESS.md)** — TBD.
-- **Business bank account** — keep personal and business finances separated from first invoice.
-- **GST/QST registration** — mandatory at \$30,000 CAD annual revenue. Monitor and register proactively before threshold.
-- **REQ registration** — confirm whether sole proprietorship operating under legal name requires registration in Québec.
+- **Lazy-load JS** — `data-lazy` stubbed on archive grids. No JS written.
+- **`umtd_press` CPT** — promoted to v0.x above.
