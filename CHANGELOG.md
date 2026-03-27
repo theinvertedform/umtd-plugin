@@ -7,12 +7,31 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
-### umt-studio-piroir
+### BUSINESS.md
 
-- feat(terms): add umtd_event_type and umtd_medium whitelists to config/terms.php
+- feat(business): establish GPL as licensing model for umt-studio and umt-design
+- feat(business): collapse service lines — remove standalone sysadmin and IA; absorb into onboarding fee
+- feat(business): define onboarding fee — public floor \$5,000 CAD, confidential minimum \$3,500 CAD, assessed quote ceiling, rationale documented
+- feat(business): define data import pricing — technical rate \$150/hr, archival research rate \$250/hr, floor \$1,500 CAD, T&M with client-approved ceiling, scoping assessment requirement
+- feat(business): define monthly subscription tiers — Standard \$250/50GB, Plus \$350/150GB, Pro \$500/500GB; scope identical across tiers; rationale documented
+- feat(business): define add-on structure — newsletter and ecommerce available on any tier, pricing TBD pending operational experience
+- feat(business): document infrastructure cost basis — EC2 ~\$15 CAD/month, S3 ~\$0.03/GB; monthly fee priced on time not infrastructure
+- feat(business): add MAP grant context — Collections Management component, 75% coverage up to \$400,000, November 1 deadline, April–March fiscal year
+- feat(business): add competitive benchmarks — LibraryHost Omeka Standard ~\$88 CAD/month as reference ceiling for monthly subscription positioning
+- feat(business): add contract clause requirements — support scope limitation, limitation of liability, data portability, import completeness language, T&M ceiling approval
+- feat(business): update §9.1 IP — GPL decision recorded, proprietary methodology distinction documented
+- feat(business): update §8.3 cost structure — AWS line items populated with real numbers
+- chore(business): update revision date to 2026-03-26
+### umt-studio-piroir
 
 ### umt-studio
 
+- feat(schema): add SCHEMA.md — custom DB schema v0.3.0-planned; core entity tables, junction tables, vocabulary tables, translation table, child plugin configurability via umtd_schema_tables filter
+- feat(roadmap): add ROADMAP.md — replaces DEFERRED.md; active items week-sequenced against Piroir timeline, backlog items grouped by domain
+- docs(roadmap): pin pre-contract prerequisites — staging environment, EBS snapshots, contract template, limitation of liability
+- docs(roadmap): pin platform development items to client phases — schema implementation in Weeks 1–2, import tooling in Weeks 3–7, schema.org and i18n in Weeks 5–11
+- chore(deferred): DEFERRED.md retired — content migrated to ROADMAP.md
+- feat(terms): add umtd_event_type and umtd_medium whitelists to config/terms.php
 - docs: revise ARCHITECTURE.md — remove inline vocabulary listings, rewrite rule code block, translation model roadmap (moved to DEFERRED.md), metabox suppression code block; consolidate URL table to Theme Architecture section with FR/EN examples; collapse taxonomy query subsections; 491 → 398 lines
 - fix(templates): single-umtd_works.php — variable shadowing bug in artists role loop (\$agent->ID → \$artist->ID)
 - fix(templates): front-page.php — meta_query type DATE → CHAR for start_date and end_date

@@ -1,6 +1,6 @@
-# umt.studios---Business Plan
+# umt.studios — Business Plan
 
-*Founding document. Last revised: 2026-03-25.*
+*Founding document. Last revised: 2026-03-26.*
 *Sole proprietorship, Québec, Canada.*
 
 ---
@@ -62,7 +62,7 @@ UMT Studios designs archival infrastructure that turns institutional history int
 
 *Where is UMT Studios in five years?*
 
-UMT Studios will be working on grant-funded projects to catalogue and present information to the public. We will be designing catalogues with specific scope, conducting research, fact-checking, and undertaking original investigative work in order to collect data and design user experiences in the public interest. We will be contributing to research into culture through the creation of information-rich databases. We will be developing websites that function as public information repositories. providing services to galleries and other cultural institutions locally and internationally.
+UMT Studios will be working on grant-funded projects to catalogue and present information to the public. We will be designing catalogues with specific scope, conducting research, fact-checking, and undertaking original investigative work in order to collect data and design user experiences in the public interest. We will be contributing to research into culture through the creation of information-rich databases. We will be developing websites that function as public information repositories, providing services to galleries and other cultural institutions locally and internationally.
 
 The product itself will have evolved to be an integrated dashboard that manages data, inventory, digital assets, and communication. Social media campaign writing and scheduling will be done in-app, using data and assets from the collection. Optional integration of AI will analyze the database and analytics to suggest marketing campaigns derived from the company's information.
 
@@ -77,7 +77,7 @@ The product itself will have evolved to be an integrated dashboard that manages 
 
 I have this sense, the end of the *Phenomenology*, that somewhere in there is a hidden set of relations that could fulfill the ultimate, impossible promise of language and effectuate a real movement between author and reader. Of course, I always tend to fanboyishly want to believe that any highly complex object holds the potential for Absolute Knowledge.
 
-Libraries are precisely the kind of complex systems that I am drawn to. It took me a long time, but I realized that I could put the knowledge and experience gained in systems and network administration, web design, programming, researching bibliographic standards, and studying dialectics actually converged at a single point. This studio is the result of that.
+Libraries are precisely the kind of complex systems that I am drawn to. It took me a long time, but I realized that the knowledge and experience gained in systems and network administration, web design, programming, researching bibliographic standards, and studying dialectics actually converged at a single point. This studio is the result of that.
 
 ---
 
@@ -85,44 +85,66 @@ Libraries are precisely the kind of complex systems that I am drawn to. It took 
 
 ### 3.1 Service Lines
 
+The business has four client-facing service lines. Systems administration and information architecture are not sold as standalone services — they are absorbed into the product onboarding fee (§3.1.2).
+
 #### 3.1.1 Web Design & Development
 
-Custom website design and development. Static sites, WordPress, bespoke CMS integrations. Emphasis on semantic markup, accessibility, and performance.
+Custom website design and development. Static sites, WordPress, bespoke front-end. Emphasis on semantic markup, accessibility, and performance.
 
 - **Deliverables:** Design system, HTML/CSS/JS front-end, CMS integration, documentation
-- **Typical engagement:** Fixed-scope project, 4–16 weeks
+- **Typical engagement:** T&M with a project minimum
 - **Target client:** Small cultural institutions, galleries, artist-run centres, independent practitioners, cinemas, libraries, museums, fashion designers, clothing stores
+- **Note:** Web design is optional and separate from the CMS product. A client can take the CMS without commissioning design work, and vice versa.
 
-#### 3.1.2 WordPress Development
+#### 3.1.2 umt.studio CMS Onboarding
 
-Plugin and theme development, custom post types, ACF field groups, REST API, performance, security hardening. Both greenfield and legacy site overhauls.
+Configuration and deployment of the umt.studio CMS for a specific client. This is the primary intellectual and creative work of the practice. It absorbs information architecture, metadata schema design, collection survey, controlled vocabulary curation, and infrastructure provisioning into a single fixed-fee engagement.
 
-- **Deliverables:** Plugin(s), theme, field group JSON, deployment runbook
-- **Typical engagement:** Fixed-scope or retainer
-- **Differentiator:** Archival-grade data modelling (FRBR-aligned CPTs, controlled vocabulary, schema.org JSON-LD), combined with a purpose-built UI with marketing integration
+- **Deliverables:** Collection survey and IA document, client-specific YAML config, child plugin, provisioned infrastructure, deployed staging and production environments, documentation
+- **Pricing:** Assessed quote. Public floor: \$5,000 CAD. Ceiling: scales with collection complexity, breadth, and institutional prestige. The client never sees the internal rate logic — they receive a fixed quote.
+- **Rationale:** This fee compensates for R&D amortized across clients. GPL on the software does not preclude charging for the specialist work of configuring and deploying it. The onboarding is the most valuable work we do — it is equivalent to what a freelance registrar or information architect would charge for a collection survey and schema design engagement. Comparable day rates in the sector run \$700–1,000 CAD. A small, clean collection at floor price represents approximately 5–7 days of combined technical and intellectual work.
 
-#### 3.1.3 Systems Administration & Infrastructure
+#### 3.1.3 Data Import
 
-Linux server provisioning and maintenance (Ubuntu/Debian, AWS EC2, nginx, PHP-FPM, MariaDB, PostgreSQL). SSL, CI/CD pipelines, backup strategy, service monitoring.
+Migration of a client's existing collection data into the umt.studio CMS. Billed as T&M against a client-approved ceiling, established during a scoping assessment.
 
-- **Deliverables:** Provisioned server, documentation, runbook, ongoing retainer
-- **Typical engagement:** Project + monthly retainer
-- **Target client:** Existing clients who need hosting; small orgs without internal sysadmin
+Two billable rates apply depending on the nature of the work:
 
-#### 3.1.4 Information Architecture & Content Strategy
+| Work type | Rate (CAD/hr) |
+|---|---|
+| Technical import — scripted migration, field mapping, WP-CLI, QA | $150 |
+| Archival research — sourcing bios, verifying attribution, citing provenance | $250 |
 
-Taxonomy design, metadata schema development, controlled vocabulary curation (AAT, ULAN, Wikidata alignment), data modelling for collections and archives.
+- **Floor:** \$1,500 CAD
+- **Ceiling:** Negotiated per engagement after scoping assessment. Client approves the ceiling before work begins.
+- **Scoping assessment:** Small fixed fee (may be bundled into onboarding). Produces a record count, data quality assessment, source platform analysis, and ceiling estimate.
+- **Rationale:** Import complexity varies too widely for fixed pricing. A structured ArtworkArchive CSV export is largely scriptable; Squarespace portfolio pages require semantic parsing record by record. Clean, well-structured data costs the client less — this is intentional. The \$250/hr archival research rate reflects the specialist nature of the work: verifying attribution, sourcing bios from academic archives and primary sources, and citing everything. This is journalism and archival work, not data entry.
+- **Contract language for completeness:** The contract states that the contractor will make reasonable efforts to populate available fields using verifiable sources. Fields for which no verifiable source can be identified will be left blank or flagged for client review. Completeness is not guaranteed — it is bounded by what the historical record contains.
 
-- **Deliverables:** IA document, taxonomy specification, field map, migration guide
-- **Typical engagement:** Discovery/strategy phase of a larger project, or standalone engagement
-- **Differentiator:** FRBR, CDWA, VRA Core 4.0, schema.org fluency; not generic IA
+#### 3.1.4 Monthly Subscription
 
-#### 3.1.5 Ongoing Maintenance & Support
+Managed hosting, maintenance, and support on UMT Studios infrastructure. Billed monthly. This is the recurring revenue mechanism of the business.
 
-Monthly retainer covering plugin updates, security monitoring, content entry support, minor feature additions, server maintenance.
+See §8.2 for full pricing and add-on structure.
 
-- **Deliverables:** Monthly report, response SLA, ticketing channel
-- **Tiers:** TBD (see §8)
+**Scope (identical across all tiers):**
+- Hosting on UMT Studios-managed AWS EC2, ca-central-1
+- Supervised automated updates (WordPress core, plugins) run weekly
+- Breakfix — faults resolved within agreed SLA
+- Support — questions answered within 1 business day
+
+**Scope explicitly excluded (all tiers):**
+- Feature additions or changes
+- Content entry
+- Design work
+- Consulting or strategic sessions
+- Any work beyond answering questions and fixing breakage
+
+Additional time beyond this scope is billed separately at the applicable hourly rate. No subscription tier purchases more human time than any other. A higher-tier client does not receive faster responses or more hours.
+
+**Rationale for scope limitation:** The subscription funds availability and infrastructure continuity, not bespoke service. Keeping scope identical across tiers protects the founder's time and prevents higher-paying clients from treating the monthly fee as a retainer for consulting access.
+
+---
 
 ### 3.2 Product: umt.studio CMS
 
@@ -136,7 +158,7 @@ White-label WordPress CMS framework — base plugin (`umt-studio`) + base theme 
 - Schema.org JSON-LD output: VisualArtwork (Works); Events and Agents planned
 - CI/CD ready: git-based deploy, GitHub Actions → AWS SSM
 
-**Licensing model:** **[TBD]** — currently deployed as bespoke per-client. Future options: (a) remain bespoke white-label, (b) open-source base with paid child plugin support, (c) hosted SaaS. Decision deferred until client base justifies the overhead.
+**Licensing model:** GPL. The base plugin and theme are released under the GNU General Public License. This is consistent with WordPress ecosystem norms and does not preclude charging for the specialist work of configuring and deploying the system for a specific client. The onboarding fee (§3.1.2) is a service fee, not a licence fee.
 
 **Current status:** v0.2.0, testing with data from potential client Piroir. Base repos: `umt-studio`, `umt-design`.
 
@@ -146,11 +168,11 @@ White-label WordPress CMS framework — base plugin (`umt-studio`) + base theme 
 
 ### 4.1 Target Market
 
-**Primary:** Small to mid-size cultural institutions in Québec and Canada — artist-run centres, commercial galleries, print studios, small museums, media companies, archives, foundations, cinemas, media companies, retailers producing editorial content
+**Primary:** Small to mid-size cultural institutions in Québec and Canada — artist-run centres, commercial galleries, print studios, small museums, media companies, archives, foundations, cinemas, retailers producing editorial content
 
 **Secondary:** Individual artists, writers, and practitioners who need archival-grade personal websites
 
-**Tertiary:** Organizations in adjacent fields — libraries, heritage organizations, academic research projects with public-facing collections.
+**Tertiary:** Organizations in adjacent fields — libraries, heritage organizations, academic research projects with public-facing collections
 
 ### 4.2 Market Context
 
@@ -159,7 +181,10 @@ White-label WordPress CMS framework — base plugin (`umt-studio`) + base theme 
 - Number of artist-run centres in Canada: TBD (ARCA member count as proxy)
 - Number of commercial galleries in Québec: TBD
 - Typical web budget range for target clients: TBD
-- Grant funding landscape: Canada Council for the Arts, CALQ, CAC digital infrastructure grants — many target clients are grant-funded, meaning budget is real but timing is grant-cycle dependent
+- Grant funding landscape: Canada Council for the Arts, CALQ, Museums Assistance Program (MAP) — many target clients are grant-funded, meaning budget is real but timing is grant-cycle dependent
+
+**Grant opportunity — Museums Assistance Program (MAP), Collections Management component:**
+The MAP Collections Management grant covers up to 75% of eligible project costs to a maximum of \$400,000 per project. Eligible expenses include consultant fees, purchase and implementation of collections management systems, cataloguing, staff training, and software. The umt.studio onboarding and data import services map directly onto eligible expense categories. The annual application deadline is November 1; funded projects run April 1–March 31. Grant funding is a secondary sales avenue — the primary model does not depend on it — but clients should be made aware of it. Best approached in August–September to allow time for scoping and application before the November deadline. Note: MAP grants are highly competitive; approval should not be treated as guaranteed by either party.
 
 ### 4.3 Problem Statement
 
@@ -173,11 +198,12 @@ At the other end, museum-grade collection management software (CollectiveAccess,
 |---|---|---|
 | Generic WordPress agencies | Fast, cheap, template-driven | No data modelling; no IA depth |
 | CollectiveAccess / Omeka | Museum-grade CMS | Expensive, complex, requires dedicated staff |
-| Cargo / Squarespace | Portfolio/artist sites | No metadata, no queryable data, no longevity, hostile interface |
+| LibraryHost (managed Omeka/AtoM) | Managed archival hosting, \$34–\$179 USD/month | No design; no public-facing website; generic templates; metered support |
+| Cargo / Squarespace | Portfolio/artist sites | No metadata, no queryable data, no longevity |
 | Freelance developers | Cost-competitive | No domain knowledge in cultural heritage |
 | Museum IT departments | Institutional expertise | Not available to small institutions |
 
-**UMT Studios sits between freelance WordPress shop and museum IT.** The differentiator is domain knowledge in information architecture, metadata standards, controlled vocabulary, combined with the technical depth required to build and operate production infrastructure.
+**UMT Studios sits between freelance WordPress shop and museum IT.** The differentiator is domain knowledge in information architecture, metadata standards, and controlled vocabulary, combined with the technical depth to build and operate production infrastructure, and the design sensibility to produce a public-facing site that represents the institution.
 
 ### 4.5 Positioning Statement
 
@@ -192,7 +218,7 @@ Draft: UMT Studios builds archival web infrastructure for institutions that take
 | Gallery director | Permanent, queryable record of the collection; not a marketing site that rots |
 | Curator / registrar | Proper metadata, controlled vocabulary, exportable data |
 | Artist / practitioner | Archival-grade personal site without enterprise overhead |
-| Grant committee | Standards-aligned, durable, open-source-compatible |
+| Grant committee | Standards-aligned, durable, GPL-licensed |
 
 ---
 
@@ -214,9 +240,9 @@ Draft: UMT Studios builds archival web infrastructure for institutions that take
 
 ### 5.2 Infrastructure Model
 
-Production: AWS EC2, ca-central-1. One instance per client group (current) or per client (scaling). Full documentation maintained in `INFRASTRUCTURE.md` per client deployment.
+Production: AWS EC2, ca-central-1. One instance hosts multiple clients. Infrastructure cost is near-zero per marginal client at current scale — AWS EC2 runs approximately \$10–15 CAD/month; S3 Standard storage costs ~\$0.03 CAD/GB/month; SES costs ~\$0.10 CAD/1,000 emails. The monthly subscription fee is priced to reflect availability and the founder's time, not infrastructure cost recovery.
 
-Client sites are hosted on UMT Studios-managed infrastructure — not handed off to clients on shared hosting. This is both a quality decision and a recurring revenue mechanism (§8).
+Client sites are hosted on UMT Studios-managed infrastructure, not handed off to clients on shared hosting. This is a quality decision, a security decision, and a recurring revenue mechanism.
 
 ### 5.3 Delivery Process
 
@@ -225,7 +251,7 @@ Client sites are hosted on UMT Studios-managed infrastructure — not handed off
 3. **Development** — child plugin, child theme, ACF overrides, content migration
 4. **Staging review** — client UAT on staging environment
 5. **Production deploy** — DNS cutover, SSL, CI/CD pipeline
-6. **Handoff** — documentation, training, retainer onboarding
+6. **Handoff** — documentation, training, subscription onboarding
 
 ### 5.4 Documentation Standard
 
@@ -289,11 +315,11 @@ Typical sales cycle for cultural institution clients: long (3–12 months from f
 
 ### 7.3 Proposal & Contract
 
-**[TBD — describe proposal format, contract type (fixed-scope vs T&M), deposit structure, payment schedule.]**
+**[TBD — describe proposal format, contract type, deposit structure, payment schedule.]**
 
 ### 7.4 Client Retention
 
-Maintenance retainers are the primary retention mechanism. Every project should conclude with a retainer offer. Target: TBD% of project clients on retainer within 12 months of delivery.
+The monthly subscription is the primary retention mechanism. Every onboarding engagement concludes with a subscription offer. Target: TBD% of onboarding clients on subscription within 12 months of delivery.
 
 ---
 
@@ -303,29 +329,70 @@ Maintenance retainers are the primary retention mechanism. Every project should 
 
 | Stream | Type | Pricing Model |
 |---|---|---|
-| Web design & development | Project | Fixed-scope or T&M |
-| WordPress development | Project | Fixed-scope or T&M |
-| Systems administration | Project + retainer | Day rate + monthly flat |
-| IA / content strategy | Project | Fixed-scope |
-| Hosting & infrastructure | Retainer | Monthly flat per client |
-| Maintenance & support | Retainer | Monthly flat, tiered |
-| umt.studio CMS licensing | TBD | TBD (see §3.2) |
+| CMS Onboarding | Project | Assessed fixed quote |
+| Data Import | Project | T&M with floor and client-approved ceiling |
+| Monthly Subscription | Retainer | Flat monthly, tiered by storage |
+| Newsletter add-on | Retainer | Monthly flat, tiered by subscriber count / send volume |
+| Ecommerce add-on | Retainer | Monthly flat — TBD tiers |
+| Web Design | Project | T&M with minimum |
 
 ### 8.2 Pricing
 
-**[TBD — set actual rates. Suggested structure below as placeholder.]**
+#### Onboarding Fee
 
-| Service | Rate |
+| | |
 |---|---|
-| Day rate (design / development) | TBD / day |
-| Day rate (sysadmin) | TBD / day |
-| Day rate (IA / strategy) | TBD / day |
-| Hosting retainer (per client, per month) | TBD / month |
-| Maintenance retainer — Basic | TBD / month |
-| Maintenance retainer — Standard | TBD / month |
-| Maintenance retainer — Priority | TBD / month |
+| **Public floor** | $5,000 CAD |
+| **Confidential minimum** | $3,500 CAD (for strategic clients where relationship justifies it) |
+| **Ceiling** | Assessed quote — no published maximum |
 
-**Québec tax obligations:** GST (5%) + QST (9.975%) apply to services rendered to clients in Québec. Small supplier threshold: \$30,000 CAD revenue before mandatory registration. **[TBD: confirm current registration status and threshold.]**
+Pricing is assessed per client and delivered as a fixed quote. The client never sees hourly math. Internal pricing logic: collection complexity × estimated days × blended rate, adjusted for institutional prestige and strategic value. Onboarding pricing is confidential — do not publish or share between clients.
+
+#### Data Import
+
+| Work type | Rate (CAD/hr) |
+|---|---|
+| Technical import | $150 |
+| Archival research | $250 |
+
+| | |
+|---|---|
+| **Floor** | $1,500 CAD |
+| **Ceiling** | Negotiated per engagement after scoping assessment |
+
+The scoping assessment is a small fixed-fee engagement (may be bundled into onboarding) that produces a record count, data quality assessment, source platform analysis, and ceiling estimate. Hours are tracked and reported. The client approves the ceiling before work begins and is billed actual hours up to that ceiling.
+
+#### Monthly Subscription
+
+| Tier | Storage | Monthly (CAD) |
+|---|---|---|
+| Standard | Up to 50 GB | $250 |
+| Plus | Up to 150 GB | $350 |
+| Pro | Up to 500 GB | $500 |
+
+Storage limits are soft internal thresholds. Clients will not be penalized for minor overages. Clients with very large DAM requirements (e.g. high-resolution TIFF archives) are quoted separately. All tiers include identical service scope: hosting, weekly supervised updates, breakfix, 1-business-day support response. No tier purchases additional human time.
+
+**Rationale:** Infrastructure cost per client is near-zero (see §5.2). Tiers reflect institutional size as a pricing signal, not cost recovery. The \$250 floor was benchmarked against: Squarespace Business (~\$45 CAD/month, no data model, self-serve); LibraryHost Omeka Standard (~\$88 CAD/month, no design, metered support); and the founder's minimum acceptable hourly return on maintenance time (~3–4 hours/month per client at \$150/hr = ~\$500 marginal cost across a small client base, amortized as client count grows). The band is intentionally narrow (\$250–\$500) to avoid clients at higher tiers feeling entitled to disproportionate human attention.
+
+#### Add-ons (available on any subscription tier)
+
+| Add-on | Notes | Pricing |
+|---|---|---|
+| Newsletter (listmonk) | Tiered by subscriber count and monthly send volume | TBD |
+| Ecommerce | TBD platform | TBD |
+
+Add-on pricing is TBD pending operational experience with provisioning and ongoing maintenance time per client.
+
+#### Web Design
+
+| | |
+|---|---|
+| **Rate** | TBD / hour |
+| **Project minimum** | TBD |
+
+Web design is optional and separate from the CMS product. T&M with a project minimum. Rate and minimum TBD.
+
+**Québec tax obligations:** GST (5%) + QST (9.975%) apply to services rendered to clients in Québec. Small supplier exemption threshold: \$30,000 CAD revenue. **[TBD: confirm current registration status.]**
 
 ### 8.3 Cost Structure
 
@@ -333,11 +400,12 @@ Maintenance retainers are the primary retention mechanism. Every project should 
 
 | Item | Cost (CAD/month) |
 |---|---|
-| AWS EC2 (production) | TBD |
-| AWS data transfer / SES | TBD |
+| AWS EC2 (production, ca-central-1) | ~$15 |
+| AWS S3 storage (~$0.03/GB) | Negligible at current scale |
+| AWS SES (~$0.10/1,000 emails) | Negligible at current scale |
 | Domain registrations | TBD |
 | Software / SaaS subscriptions | TBD |
-| Accounting software (Wave or equivalent) | TBD |
+| Accounting software | TBD |
 | Professional insurance (E&O) | TBD (annualized / 12) |
 | **Total fixed** | **TBD** |
 
@@ -350,12 +418,14 @@ Maintenance retainers are the primary retention mechanism. Every project should 
 
 ### 8.4 Revenue Projections
 
-**[TBD — Y1, Y2, Y3. Structure as: number of projects × average project value + number of retainer clients × average MRR.]**
+**[TBD — Y1, Y2, Y3. Structure as: number of onboardings × average onboarding value + number of subscription clients × average MRR.]**
 
 | | Y1 | Y2 | Y3 |
 |---|---|---|---|
-| Project revenue | TBD | TBD | TBD |
-| Retainer MRR (end of year) | TBD | TBD | TBD |
+| Onboarding revenue | TBD | TBD | TBD |
+| Import revenue | TBD | TBD | TBD |
+| Subscription MRR (end of year) | TBD | TBD | TBD |
+| Web design revenue | TBD | TBD | TBD |
 | Total revenue | TBD | TBD | TBD |
 | Total costs | TBD | TBD | TBD |
 | Net | TBD | TBD | TBD |
@@ -369,7 +439,7 @@ Maintenance retainers are the primary retention mechanism. Every project should 
 | Fixed costs | TBD |
 | Founder draw (target) | TBD |
 | **Break-even revenue** | **TBD** |
-| At day rate of TBD: days/month required | TBD |
+| At $150/hr: hours/month required | TBD |
 
 ---
 
@@ -377,16 +447,11 @@ Maintenance retainers are the primary retention mechanism. Every project should 
 
 ### 9.1 umt.studio CMS Framework
 
-The base plugin (`umt-studio`) and base theme (`umt-design`) constitute the primary proprietary asset. Per-client child plugins and child themes are derivatives.
+The base plugin (`umt-studio`) and base theme (`umt-design`) are released under the GNU General Public License (GPL). This is consistent with WordPress ecosystem norms. GPL does not preclude charging for configuration, deployment, and ongoing management services.
 
-**Current status:** Proprietary, all rights reserved. No open-source licence assigned.
+The proprietary assets are: the methodology for configuring and deploying the system for a specific client, the documentation, and the accumulated domain knowledge. These are not open-sourced.
 
-**Considerations:**
-- Open-sourcing the base would increase visibility and attract contributors but would require formalizing the API surface and committing to backward compatibility
-- Keeping it proprietary preserves optionality for SaaS or licensing models
-- GPL is the default for WordPress plugins distributed publicly — if ever distributed via wp.org, GPL compliance is mandatory
-
-**Decision deferred.** Revisit at: TBD milestone.
+Per-client child plugins and child themes are derivatives of the base, also GPL. Client work product is client-owned upon final payment. Base framework components remain UMT Studios property.
 
 ### 9.2 Documentation & Methodology
 
@@ -408,6 +473,7 @@ Work product created for clients is client-owned upon final payment unless other
 - One active testing database based on Piroir's dataset
 - Infrastructure operational on AWS EC2, ca-central-1
 - CI/CD pipeline configured
+- Pricing model established (2026-03-26)
 
 ### 10.2 90-Day Targets
 
@@ -423,11 +489,13 @@ Work product created for clients is client-owned upon final payment unless other
 - [ ] Staging environment established
 - [ ] Agent role model implemented (ACF Pro Repeater migration)
 - [ ] DAM capabilities within interface
+- [ ] Newsletter and ecommerce add-on pricing finalized
+- [ ] Web design rate and minimum finalized
 
 ### 10.3 Year 1 Targets
 
-- [ ] Ten completed projects
-- [ ] \$1000 MRR from retainers
+- [ ] Ten completed onboardings
+- [ ] \$1,000 MRR from subscriptions
 - [ ] GST/QST registration (if threshold met or anticipated)
 - [ ] Marketing scheduling within interface
 
@@ -435,7 +503,7 @@ Work product created for clients is client-owned upon final payment unless other
 
 **[TBD]**
 
-- [ ] \$3000 MRR
+- [ ] \$3,000 MRR
 - [ ] International profile, travel
 - [ ] Anthropological research
 
@@ -445,14 +513,15 @@ Work product created for clients is client-owned upon final payment unless other
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| Single founder — illness, burnout | Medium | High | Retainer contracts with clear SLAs; documented runbooks; subcontractor relationships |
-| Client concentration — one or two large clients | High (early stage) | High | Diversify client base; retainers spread risk |
+| Single founder — illness, burnout | Medium | High | Subscription contracts with clear SLAs; documented runbooks; subcontractor relationships |
+| Client concentration — one or two large clients | High (early stage) | High | Diversify client base; subscriptions spread risk |
 | Grant cycle dependency — clients can't pay until grant clears | High | Medium | Payment schedules aligned to grant disbursement; deposits on signing |
-| AWS outage / data loss | Low | High | Regular backups; document recovery procedures; consider multi-AZ or multi-region |
+| AWS outage / data loss | Low | High | Regular backups; document recovery procedures |
 | ACF licensing change | Low | Medium | Minimize ACF Pro dependencies; document field groups in JSON for portability |
 | WordPress ecosystem deprecation | Low | High | Standards-based data model (field values, not WP-specific APIs) reduces lock-in |
 | Competitor offering similar archival-grade CMS | Low (current) | Medium | Methodology and domain knowledge are the moat, not the software |
-| Scope creep — cultural institution clients | High | Medium | Fixed-scope contracts with clear change order process |
+| Scope creep on monthly subscription | High | Medium | Contract language explicitly limits support scope; extra work billed separately |
+| Client presses legal action over data loss or downtime | Low | High | E&O insurance required before first client contract; clear SLA and limitation of liability in contract |
 | Tax compliance — GST/QST threshold | Medium | Medium | Monitor revenue; register proactively before threshold |
 
 ---
@@ -475,11 +544,19 @@ Work product created for clients is client-owned upon final payment unless other
 
 ### 12.4 Contracts
 
-**[TBD — standard client contract covering: scope, deliverables, payment schedule, IP ownership, limitation of liability, change order process, termination.]**
+**[TBD — standard client contract covering: scope, deliverables, payment schedule, IP ownership, limitation of liability, change order process, termination, data portability on offboarding.]**
+
+Key clauses required:
+- Explicit definition of support scope (questions + breakfix only; no feature work)
+- Limitation of liability
+- Data portability — client's right to export their data on termination
+- IP ownership — client owns their content and data; UMT Studios owns the base framework
+- Import completeness — contractor makes reasonable efforts; no guarantee of field completeness
+- T&M ceiling approval — client signs off on import ceiling before work begins
 
 ### 12.5 Banking
 
-**[TBD — separate business bank account. Recommended: keep personal and business finances strictly separated from day one.]**
+**[TBD — separate business bank account. Keep personal and business finances strictly separated from day one.]**
 
 ---
 
@@ -495,6 +572,8 @@ Work product created for clients is client-owned upon final payment unless other
 | CPT | Custom Post Type (WordPress) |
 | EDTF | Extended Date/Time Format (ISO 8601-2) |
 | FRBR | Functional Requirements for Bibliographic Records — entity model for works, agents, events |
+| GPL | GNU General Public License |
+| MAP | Museums Assistance Program (Canadian Heritage) |
 | MRR | Monthly Recurring Revenue |
 | REQ | Registraire des entreprises du Québec |
 | T&M | Time and Materials |
@@ -521,3 +600,5 @@ Work product created for clients is client-owned upon final payment unless other
 - EDTF / ISO 8601-2: https://www.loc.gov/standards/datetime/
 - WordPress Coding Standards: https://developer.wordpress.org/coding-standards/
 - Registraire des entreprises du Québec: https://www.registreentreprises.gouv.qc.ca/
+- Museums Assistance Program — Collections Management: https://www.canada.ca/en/canadian-heritage/services/funding/museums-assistance/collections-management.html
+- LibraryHost (comparable managed archival hosting): https://libraryhost.com/pricing/
