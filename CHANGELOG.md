@@ -26,6 +26,14 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- feat(business): fill in §8.3 fixed costs — remove E&O line, add Cloudflare (\$0), Claude (~\$20), domains (~\$2), total ~\$37/month
+- feat(business): fill in §8.4 revenue projections — conservative and realistic Y1/Y2/Y3 scenarios with assumptions documented
+- feat(business): fill in §8.5 break-even analysis — target draw ~\$4,400/month gross, ~30 billable hours at \$150/hr
+- feat(business): fill in §8.2 web design rate — \$200 CAD/hr
+- feat(business): remove subcontracting row from variable costs
+- feat(business): update §8.2 GST/QST status — not yet registered, threshold monitoring noted
+- feat(business): update §12.2 GST/QST — consistent with §8.2
+- feat(business): update §12.3 E&O — deferred, limitation of liability clause is operative substitute
 - docs(workflow): remove hack language from agents_artists/agents_authors warning, point to ROADMAP.md; remove ACF Pro complaint from field group editing section; remove "free or Pro" from prerequisites
 - docs(infrastructure): remove Docker warning, fix stale deploy-* directory listing, fix wrong DB name in backup command, replace "no automated backup" with forward reference to ROADMAP.md pre-contract checklist
 - docs(architecture): replace negative framing with forward references to SCHEMA.md and ROADMAP.md — remove unsourced scale claim, remove "hack" language from agents_artists/agents_authors and Work–Agent section, update related_works and location field notes, update translation deferral note

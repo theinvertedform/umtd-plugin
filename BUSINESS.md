@@ -387,12 +387,12 @@ Add-on pricing is TBD pending operational experience with provisioning and ongoi
 
 | | |
 |---|---|
-| **Rate** | TBD / hour |
+| **Rate** | $200 CAD / hour |
 | **Project minimum** | TBD |
 
-Web design is optional and separate from the CMS product. T&M with a project minimum. Rate and minimum TBD.
+Web design is optional and separate from the CMS product. T&M with a project minimum. Minimum TBD pending first web-design-only engagement.
 
-**Québec tax obligations:** GST (5%) + QST (9.975%) apply to services rendered to clients in Québec. Small supplier exemption threshold: \$30,000 CAD revenue. **[TBD: confirm current registration status.]**
+**Québec tax obligations:** GST (5%) + QST (9.975%) apply to services rendered to clients in Québec. Small supplier exemption threshold: \$30,000 CAD revenue. Registration not yet required — monitor revenue against threshold and register proactively before crossing it.
 
 ### 8.3 Cost Structure
 
@@ -403,43 +403,54 @@ Web design is optional and separate from the CMS product. T&M with a project min
 | AWS EC2 (production, ca-central-1) | ~$15 |
 | AWS S3 storage (~$0.03/GB) | Negligible at current scale |
 | AWS SES (~$0.10/1,000 emails) | Negligible at current scale |
-| Domain registrations | TBD |
-| Software / SaaS subscriptions | TBD |
-| Accounting software | TBD |
-| Professional insurance (E&O) | TBD (annualized / 12) |
-| **Total fixed** | **TBD** |
+| Cloudflare (DNS, CDN, DDoS) | $0 — free tier sufficient at current client scale |
+| Domain registrations (~$15–20 CAD/year per domain) | ~$2 amortized |
+| Claude (AI assistant) | ~$20 |
+| Software / SaaS subscriptions | $0 — all other tools are free tier or open source |
+| Accounting | $0 — ledger-based, no software subscription |
+| **Total fixed** | **~$37 CAD/month** |
 
 **Variable costs (per project):**
 
 | Item | Notes |
 |---|---|
-| Subcontracted design / development | TBD % of project revenue |
-| Stock assets, fonts, licensed software | Project-specific |
+| Stock assets, fonts, licensed software | Project-specific; passed through to client at cost |
 
 ### 8.4 Revenue Projections
 
-**[TBD — Y1, Y2, Y3. Structure as: number of onboardings × average onboarding value + number of subscription clients × average MRR.]**
+Revenue projections are structured as: number of onboardings × average onboarding value + import work + subscription MRR × months active. Y1 runs April–December 2026 (9 months following first contract). Subscription revenue is prorated — clients onboarded mid-year contribute partial-year MRR.
 
-| | Y1 | Y2 | Y3 |
-|---|---|---|---|
-| Onboarding revenue | TBD | TBD | TBD |
-| Import revenue | TBD | TBD | TBD |
-| Subscription MRR (end of year) | TBD | TBD | TBD |
-| Web design revenue | TBD | TBD | TBD |
-| Total revenue | TBD | TBD | TBD |
-| Total costs | TBD | TBD | TBD |
-| Net | TBD | TBD | TBD |
+Conservative case assumes 3 onboardings at floor price and slow subscription uptake. Realistic case assumes 5 onboardings with Piroir as public case study driving referrals, all clients on Standard subscription tier.
+
+| | Y1 (Conservative) | Y1 (Realistic) | Y2 | Y3 |
+|---|---|---|---|---|
+| Onboardings closed | 3 | 5 | 6 | 8 |
+| Onboarding revenue | $15,000 | $25,000 | $30,000 | $40,000 |
+| Import revenue | $4,500 | $7,500 | $9,000 | $12,000 |
+| Web design revenue | $0 | $4,000 | $8,000 | $12,000 |
+| Subscription MRR (end of year) | $750 | $1,250 | $2,750 | $5,000 |
+| Subscription revenue (in-year) | $2,250 | $5,000 | $24,000 | $48,000 |
+| **Total revenue** | **$21,750** | **$41,500** | **$71,000** | **$112,000** |
+| Total fixed costs | $444 | $444 | $444 | $444 |
+| **Net (pre-tax)** | **~$21,300** | **~$41,000** | **~$70,500** | **~$111,500** |
+
+Notes: All figures CAD. No salaries or subcontractor costs at current stage. GST/QST registration required if Y1 realistic or Y2 conservative revenue is achieved — monitor against $30,000 threshold. Y2 and Y3 subscription revenue assumes clients retained from prior years.
 
 ### 8.5 Break-Even Analysis
 
-**[TBD — minimum monthly revenue to cover fixed costs + founder draw.]**
+Break-even is the minimum monthly revenue to cover fixed costs and founder draw. As a sole proprietorship, draw is 100% of net profit — there is no salary/dividend distinction. The target draw is set to clear the Montreal single-person low-income threshold (MBM ~$28,000 CAD/year after tax), with a comfortable margin.
+
+Gross revenue required to net ~$40,000 after Québec provincial + federal income tax and QPP contributions at sole proprietor rates: approximately $52,000–$55,000 CAD/year, or **~$4,400/month**.
 
 | Item | Amount (CAD/month) |
 |---|---|
-| Fixed costs | TBD |
-| Founder draw (target) | TBD |
-| **Break-even revenue** | **TBD** |
-| At $150/hr: hours/month required | TBD |
+| Fixed costs | ~$37 |
+| Founder draw (target gross) | ~$4,400 |
+| **Break-even revenue** | **~$4,437** |
+| At $150/hr (import/technical): hours/month required | ~30 hours |
+| At $200/hr (web design): hours/month required | ~22 hours |
+
+In practice, revenue is not hourly — onboarding fees and subscriptions are the primary mechanisms. At 5 subscription clients ($1,250 MRR) plus one onboarding per quarter ($5,000 / 3 months = $1,667/month equivalent), monthly revenue is approximately $2,900. Break-even on subscriptions alone requires approximately 18 clients at Standard tier — a Year 3 target, not Year 1. Onboarding revenue bridges the gap in Y1 and Y2.
 
 ---
 
@@ -535,12 +546,12 @@ Work product created for clients is client-owned upon final payment unless other
 ### 12.2 Tax
 
 - **Income tax:** Personal income tax as sole proprietor (T1 / TP-1). Business income reported on T2125 / TP-80.
-- **GST/QST:** **[TBD — registration status. Mandatory at \$30,000 CAD revenue.]**
+- **GST/QST:** Not yet registered. Mandatory at \$30,000 CAD revenue — monitor and register proactively before threshold.
 - **Fiscal year:** Calendar year (January–December)
 
 ### 12.3 Insurance
 
-**[TBD — Professional liability (E&O) insurance. Required before any client contract. Source: TBD broker or association.]**
+**Professional liability (E&O) insurance:** Deferred. Not obtained at current stage due to capital constraints. Limitation of liability clause in the standard client contract is the operative protection. Revisit when revenue allows.
 
 ### 12.4 Contracts
 
