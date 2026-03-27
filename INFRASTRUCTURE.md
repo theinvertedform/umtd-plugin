@@ -1,6 +1,6 @@
 # UMT Studio — Infrastructure
 
-Last updated: 2026-03-21
+Last updated: 2026-03-27
 
 ---
 
@@ -204,6 +204,7 @@ SSH deploy key: `/home/ubuntu/.ssh/github_deploy` (ed25519, account-level GitHub
 
 Single generic script at `/usr/local/bin/deploy`, chmod 755, root-owned. Takes target path as argument. Called by SSM as root with no login shell — `HOME` and `GIT_SSH_COMMAND` must be set explicitly.
 
+```bash
 #!/bin/bash
 set -e
 TARGET="$1"
@@ -218,6 +219,7 @@ cd "$TARGET"
 git pull
 chown -R www-data:www-data "$TARGET"
 chown -R ubuntu:ubuntu "$TARGET/.git"
+```
 
 ### Actions Workflow
 
@@ -247,10 +249,12 @@ SSM `--parameters` must be a single line — nested quoting across YAML → bash
 
 ### Repos
 
-| theinvertedform/listmonk | deploy /var/www/listmonk | /var/www/listmonk |
-| theinvertedform/umt-design | deploy /var/www/piroir/htdocs/wp-content/themes/umt-design | /var/www/piroir/htdocs/wp-content/themes/umt-design |
-| theinvertedform/umt-studio | deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio | /var/www/piroir/htdocs/wp-content/plugins/umt-studio |
-| theinvertedform/umt-studio-piroir | deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir | /var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir |
+| Repo | Deploy command | Target path |
+|---|---|---|
+| `theinvertedform/listmonk` | `deploy /var/www/listmonk` | `/var/www/listmonk` |
+| `theinvertedform/umt-design` | `deploy /var/www/piroir/htdocs/wp-content/themes/umt-design` | `/var/www/piroir/htdocs/wp-content/themes/umt-design` |
+| `theinvertedform/umt-studio` | `deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio` | `/var/www/piroir/htdocs/wp-content/plugins/umt-studio` |
+| `theinvertedform/umt-studio-piroir` | `deploy /var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir` | `/var/www/piroir/htdocs/wp-content/plugins/umt-studio-piroir` |
 
 ---
 
@@ -344,7 +348,7 @@ sudo nginx -t && sudo systemctl reload nginx
 sudo certbot --nginx -d clientdomain.com
 ```
 
-**8. To add a new repo: add `.github/workflows/deploy.yml` to the repo with the correct path argument. No new server scripts required.
+**8. CI/CD** — Add `.github/workflows/deploy.yml` to the repo with the correct path argument. No new server scripts required.
 
 ---
 
@@ -396,7 +400,6 @@ cp /var/www/shlink/data/database.sqlite ~/shlink-$(date +%Y%m%d).sqlite
 | shlink | `journalctl -u shlink` |
 | PostgreSQL | `/var/log/postgresql/` |
 | certbot | `/var/log/letsencrypt/letsencrypt.log` |
-| WordPress | `/var/www/piroir/htdocs/wp-content/debug.log` (requires `WP_DEBUG_LOG=true`) |
+| WordPress | `/var/www/{client}/htdocs/wp-content/debug.log` (requires `WP_DEBUG_LOG=true`) |
 
 Automated EBS snapshots and nightly `mysqldump` → S3 are configured as part of the pre-contract checklist. See `ROADMAP.md` — Pre-contract. Run manual backup before major changes outside the automated schedule.
-

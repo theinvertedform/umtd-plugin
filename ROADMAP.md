@@ -26,6 +26,7 @@ These items are prerequisites for signing. No contract is issued until they are 
 
 - [ ] Staging environment live — `staging.{client}.umt.world`, same EC2 host, separate nginx server block, separate MariaDB database
 - [ ] EBS snapshots configured — automated daily, 7-day retention, via AWS Data Lifecycle Manager
+- [ ] PHP and MariaDB versions confirmed — local dev environment matches production (PHP 8.4, MariaDB production version)
 - [ ] Professional liability (E&O) insurance obtained
 - [ ] Limitation of liability clause confirmed in contract template
 - [ ] Contract template finalized — scope, deliverables, payment schedule, IP ownership, data portability, T&M ceiling approval language
@@ -45,6 +46,7 @@ Client phase: Scoping assessment and design brief.
 - [ ] `agent_type` ENUM column — Person, Organization, Venue
 - [ ] All templates updated — replace all remaining `get_field()` calls with `umtd_get_field()`
 - [ ] Nightly `mysqldump` → S3 — automated via cron; client-accessible from WP admin
+- [ ] Related Works field label semantics confirmed with client — on Works: series variants or related objects? On Events: works exhibited or works documented?
 - [ ] Staging environment SSL confirmed
 
 ### Weeks 3–7 — Data Import
@@ -159,6 +161,7 @@ The foundation. A standards-aligned archival CMS with a public-facing website, b
 - [ ] Page generation on child plugin activation — `wp_insert_post()` creates required nav pages
 - [ ] WP admin menu placement — CPT sidebar structure finalized
 - [ ] PHP/JS style guide — `.editorconfig`, `phpcs.xml` with WordPress-Core ruleset
+- [ ] Lazy-load JS — `data-lazy` attribute stubbed on archive grids; implement scroll-based image loading
 
 **Infrastructure**
 - [ ] Staging environments — `staging.{client}.umt.world` pattern documented and repeatable
@@ -196,8 +199,10 @@ The first service line that puts the platform in direct competition with Artlogi
 - [ ] Private view link generation from WP admin — expiring URL, optional password
 - [ ] Private view access log — which collector accessed, when, which works viewed
 
-**Pricing**
-- [ ] **[Pricing research — CRM add-on monthly rate. To be established during v1.0 development and reflected in BUSINESS.md §8.2 before first CRM client onboarding. Research comparables: Arternal pricing, Artlogic CRM tier pricing, standalone CRM market rates in the cultural sector.]**
+**Search and filtering**
+- [ ] Front-end search and filtering UI — works filterable by agent, work type, medium, date range; events filterable by type and date
+
+**Pricing** To be established during v1.0 development and reflected in BUSINESS.md §8.2 before first CRM client onboarding. Research comparables: Arternal pricing, Artlogic CRM tier pricing, standalone CRM market rates in the cultural sector.
 
 ---
 
@@ -230,7 +235,7 @@ Invoicing, consignment, and artist payables. This closes the primary administrat
 - [ ] Item provenance chain — ownership history as ordered list of agent relationships with dates
 
 **Pricing**
-- [ ] **[Pricing research — invoicing / financial layer add-on monthly rate. To be established during v1.x development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic invoicing tier, QuickBooks pricing, Arternal financial features.]**
+- [ ] Pricing research — invoicing / financial layer add-on monthly rate. To be established during v1.x development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic invoicing tier, QuickBooks pricing, Arternal financial features.
 
 ---
 
@@ -328,16 +333,8 @@ At v3.0, the umt.studio CMS reaches feature parity with Artlogic across all non-
 - [ ] DR instance — stopped EC2 in second region, updated from weekly AMI snapshots, activatable in ~20 minutes
 - [ ] Uninstall hook — clean removal of CPT data and taxonomy terms
 - [ ] Full WCAG 2.1 AA accessibility audit across all public templates
+- [ ] Caching layer — evaluate and implement if traffic warrants; irrelevant at current scale
+- [ ] Class-based plugin architecture — current procedural structure is acceptable; refactor if complexity justifies it post-v3.0
 
 **Mobile / iOS**
-- [ ] **[Deferred post-v3.0. Evaluate based on client demand and revenue after v3.0. Likely addressed via mobile-optimized responsive web app rather than native development.]**
-
----
-
-## Backlog
-
-Items without a version assignment. Held pending client demand or a second engagement that requires earlier delivery.
-
-- **Caching** — irrelevant at current scale. Revisit if traffic warrants.
-- **Class-based plugin architecture** — current procedural structure is acceptable. Revisit at scale.
-- **Lazy-load JS** — `data-lazy` stubbed on archive grids. No JS written.
+- [ ] Deferred post-v3.0. Evaluate based on client demand and revenue after v3.0. Likely addressed via mobile-optimized responsive web app rather than native development.

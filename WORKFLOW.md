@@ -71,8 +71,6 @@ add_action( 'plugins_loaded', function() {
 
 Slug translations for all languages are defined in the base plugin `config/i18n.php` — the child plugin only declares which languages are active.
 
-> ⚠️ The base ACF field group includes `agents_artists` and `agents_authors` relationship fields. These are interim role-encoding fields specific to Piroir, superseded by the `umtd_work_agents` junction table in v0.3.0. For a new client onboarded before v0.3.0: (a) leave them in place and ignore them, or (b) hide via child plugin ACF override. See `ROADMAP.md`.
-
 ### Adding a New Language to the Platform
 
 To add a language that doesn't yet have slug translations in the base plugin:
@@ -158,7 +156,7 @@ Add `.github/workflows/deploy.yml` to the repo with the correct path:
 
 Base plugin field groups load automatically from `umt-studio/acf-json/`. No action required.
 
-> ⚠️ **Never edit ACF field groups on a client server.** Base field groups are read-only on all deployed installs — no save path is registered. See `ARCHITECTURE.md`.
+**Never edit ACF field groups on a client server.** Base field groups are read-only on all deployed installs — no save path is registered. See `ARCHITECTURE.md`.
 
 If the client requires additional or modified ACF fields, register them in the child plugin via `acf_add_local_field_group()` on `acf/init`, inside the `plugins_loaded` callback.
 
@@ -170,13 +168,13 @@ Create pages and assign templates to match the client's nav structure. Example f
 
 | Page title | Slug | Template |
 |---|---|---|
-| Événements | `/events/` | Events Archive |
-| Estampes | `/prints/` | Prints Archive |
-| Livres | `/books/` | Books Archive |
-| Artistes | `/artists/` | Artists Archive |
+| Events | `/events/` | Events Archive |
+| Prints | `/prints/` | Prints Archive |
+| Books | `/books/` | Books Archive |
+| Artists | `/artists/` | Artists Archive |
 | Studio | `/studio/` | Default |
 
-Note: page slugs are not language-prefixed in the current implementation — only CPT single URLs are language-prefixed via the i18n rewrite system. Page template URL structure is a client decision.
+Page slugs are not language-prefixed — only CPT single URLs are language-prefixed via the i18n rewrite system. Page template URL structure is a client decision.
 
 Then **Appearance → Menus**: create a Primary menu (location: `primary`) and Footer menu (location: `footer`), and add the relevant pages to each.
 
@@ -184,7 +182,7 @@ Then **Appearance → Menus**: create a Primary menu (location: `primary`) and F
 
 ## Step 5 — Flush Rewrite Rules
 
-After activating plugins and theme: **Settings → Permalinks → Save Changes**. This is required after any plugin activation that registers CPTs, taxonomies, or custom rewrite rules. The i18n rewrite rules are registered on `init` — they are not flushed automatically on activation.
+After activating plugins and theme: **Settings → Permalinks → Save Changes**. Required after any activation that registers CPTs, taxonomies, or custom rewrite rules — the i18n rewrite rules are not flushed automatically on activation.
 
 ---
 
@@ -206,7 +204,7 @@ After activating plugins and theme: **Settings → Permalinks → Save Changes**
 Base field groups must be edited on localhost only:
 
 1. Open the ACF field group editor on localhost
-2. To save: temporarily add a save path to `umt-studio.php`, save the field group, then remove it
+2. Temporarily add a save path to `umt-studio.php`, save the field group, then remove it
 3. Commit the updated JSON in `umt-studio/acf-json/`
 4. Deploy to client servers via `git push` → GitHub Actions
 

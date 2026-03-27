@@ -26,6 +26,24 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs(architecture): remove DEFERRED.md refs, replace with ROADMAP.md and SCHEMA.md throughout
+- docs(architecture): remove self-deprecating language — country field note, version pins on junction table refs
+- docs(architecture): add umtd_schema_config filter note — to be documented in SCHEMA.md
+- docs(workflow): remove agents_artists/agents_authors warning block — superseded by custom schema
+- docs(workflow): align page slug examples to English throughout
+- docs(workflow): remove ACF Pro references
+- docs(roadmap): add PHP/MariaDB version pinning to pre-contract checklist
+- docs(roadmap): add Related Works field label semantics to Weeks 1–2 scoping
+- docs(roadmap): add lazy-load JS to v0.x Admin UX
+- docs(roadmap): add search/filtering UI to v1.0
+- docs(roadmap): add caching and class-based architecture to v3.0 Stabilization
+- docs(roadmap): remove Backlog section — all items assigned to versioned milestones
+- docs(infrastructure): update last-updated date
+- docs(infrastructure): fix deploy script missing code fence
+- docs(infrastructure): fix Repos table formatting — add header row
+- docs(infrastructure): fix step 8 formatting in Client Deploy Process
+- docs(infrastructure): generalize WordPress log path from Piroir-specific to {client}
+- chore: delete DEFERRED.md — all items accounted for in ROADMAP.md or SCHEMA.md
 - docs(ROADMAP): abstract active engagement track — generic, client-agnostic, week-relative; rename from "Active — Piroir Engagement" to "First Client Onboarding"
 - docs(ROADMAP): add current status section — prototype stage, founding client slot, business development phase
 - docs(ROADMAP): add social publishing feature block to v2.0 — Meta Graph API, post composer, scheduling queue, engagement analytics
