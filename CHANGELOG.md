@@ -26,6 +26,39 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs(ROADMAP): abstract active engagement track — generic, client-agnostic, week-relative; rename from "Active — Piroir Engagement" to "First Client Onboarding"
+- docs(ROADMAP): add current status section — prototype stage, founding client slot, business development phase
+- docs(ROADMAP): add social publishing feature block to v2.0 — Meta Graph API, post composer, scheduling queue, engagement analytics
+- docs(ROADMAP): add AI-assisted campaign suggestions to v2.x
+- docs(ROADMAP): reframe Artsy integration as partner API negotiation at v3.0
+- docs(ROADMAP): remove defensive TBD preamble from intro and platform roadmap section header
+- docs(ROADMAP): clean backlog — remove retired entries
+- docs(BUSINESS): write §1 executive summary
+- docs(BUSINESS): write §6.1 founder bio — Uriah Marc Todoroff
+- docs(BUSINESS): replace §2.5 history & context — remove personal journaling, replace with single bridging sentence
+- docs(BUSINESS): replace §4.2 market context — remove TBD table, qualitative rewrite, clean MAP note
+- docs(BUSINESS): commit §4.5 positioning statement — remove draft label
+- docs(BUSINESS): fill §5.5 capacity
+- docs(BUSINESS): remove §6.2 advisors — no advisors at current stage
+- docs(BUSINESS): fill §6.2 hiring plan — replace TBD triggers with concrete phase descriptions
+- docs(BUSINESS): fill §7.2 sales process
+- docs(BUSINESS): fill §7.3 proposal and contract
+- docs(BUSINESS): replace §7.4 client retention TBD metric
+- docs(BUSINESS): set web design project minimum — \$3,000 CAD
+- docs(BUSINESS): rewrite §9.2 documentation and methodology — remove wishful hedging
+- docs(BUSINESS): remove §9.3 client work — duplicate of §12.4
+- docs(BUSINESS): consolidate add-on pricing TBD language in §8.1 and §8.2
+- docs(BUSINESS): remove MBM low-income threshold reference from §8.5 break-even
+- docs(BUSINESS): reframe §12.1 business registration
+- docs(BUSINESS): reframe §12.3 insurance — deferred framing replaced with pre-contract requirement
+- docs(BUSINESS): fill §12.4 contracts — remove TBD label
+- docs(BUSINESS): fill §12.5 banking
+- docs(BUSINESS): fix "testing database" and "potential client" language in §3.2 and §10.1
+- docs(BUSINESS): update §2.3 vision — rewrite AI campaign assistance line
+- docs(BUSINESS): update §3.2 platform roadmap table — add social publishing to v2.0 row
+- docs(BUSINESS): update §10.3 and §10.4 milestone targets — social publishing and marketing platform pricing
+- docs(BUSINESS): designate BUSINESS.md private — not for public repo
+- docs: add README.md — public-facing derived document for umt-studio repo
 - docs: add three-year platform roadmap and expand business plan competitive positioning
 - feat(business): fill in §8.3 fixed costs — remove E&O line, add Cloudflare (\$0), Claude (~\$20), domains (~\$2), total ~\$37/month
 - feat(business): fill in §8.4 revenue projections — conservative and realistic Y1/Y2/Y3 scenarios with assumptions documented

@@ -25,16 +25,19 @@
 
 ## 1. Executive Summary
 
-*Written last. Summarizes the entire document in ~1 page. Audience: investor, grant committee, strategic partner.*
+**UMT Studios** builds archival web infrastructure for cultural institutions — artist-run centres, galleries, print studios, and small museums — that take their collections seriously.
 
-**[TBD — complete after all other sections are drafted.]**
+The problem is structural. Cultural institutions operate between two inadequate options: generic platforms (Squarespace, WordPress off-the-shelf) that treat collection records as blog posts, and commercial gallery software (Artlogic, Arternal) built on a sales-and-inventory paradigm where the archive is a byproduct of the CRM. Neither produces a durable, queryable, standards-aligned institutional record. When the platform lapses or the vendor pivots, the collection history goes with it.
 
-Key points to cover:
-- What UMT Studios does and for whom
-- The problem it solves
-- The product/service differentiator
-- Revenue model summary
-- Current stage and immediate funding or growth target (if any)
+UMT Studios addresses this with a managed WordPress CMS — the **umt.studio platform** — built on archival data standards (AAT, FRBR, CDWA, VRA Core, schema.org) from the ground up. Works, Agents, and Events are first-class archival objects with controlled vocabulary, proper metadata, exportable data, and schema.org output. The platform is licensed under the GPL and deployed on UMT Studios-managed Canadian infrastructure, with full data portability on exit. It is not a template. It is not a marketing site. It is a permanent institutional record that also supports commerce, CRM, newsletters, and marketing — built on a data model that makes every subsequent feature more valuable.
+
+That marketing layer is a core part of the platform vision. At v2.0, the platform integrates campaign scheduling for Meta platforms (Facebook, Instagram) directly from the WordPress admin — composing and publishing posts that draw on collection data, exhibition records, and digital assets already in the system, without leaving the platform. The institutional archive becomes the source of the marketing calendar. No third-party scheduling tool, no data re-entry, no disconnection between what is in the collection and what is being communicated publicly about it.
+
+The business model is SaaS: a one-time onboarding fee (from $5,000 CAD) covers information architecture, schema design, and deployment; a monthly subscription ($250–$500 CAD) covers managed hosting, maintenance, and support. Data import is billed separately on a time-and-materials basis. The recurring subscription is the primary revenue mechanism and the basis for long-term client relationships.
+
+The platform is in active development at v0.2.0, deployed on AWS EC2 infrastructure in ca-central-1, with Atelier-Galerie A. Piroir as the founding reference client. The three-year roadmap delivers progressive feature parity with Artlogic — archive and public website in Year 1, CRM and invoicing in Year 2, full sales pipeline, social publishing, and REST API by EOY Year 3 — built on a correct archival data model that competitors cannot replicate without rebuilding from scratch.
+
+UMT Studios is a Montréal-based sole proprietorship founded in 2026 by Uriah Marc Todoroff, an information architect and systems administrator with twenty years of Linux infrastructure experience, a background in art history and archival research, and seven months of hands-on collection management at Atelier-Galerie A. Piroir.
 
 ---
 
@@ -64,7 +67,7 @@ UMT Studios designs archival infrastructure that turns institutional history int
 
 UMT Studios will be working on grant-funded projects to catalogue and present information to the public. We will be designing catalogues with specific scope, conducting research, fact-checking, and undertaking original investigative work in order to collect data and design user experiences in the public interest. We will be contributing to research into culture through the creation of information-rich databases. We will be developing websites that function as public information repositories, providing services to galleries and other cultural institutions locally and internationally.
 
-The product itself will have evolved to be an integrated dashboard that manages data, inventory, digital assets, and communication. Social media campaign writing and scheduling will be done in-app, using data and assets from the collection. Optional integration of AI will analyze the database and analytics to suggest marketing campaigns derived from the company's information.
+The product itself will have evolved to be an integrated dashboard that manages data, inventory, digital assets, and communication. Social media campaign writing and scheduling will be done in-app, using data and assets from the collection. The platform will optionally surface AI-assisted campaign suggestions derived from collection data and engagement analytics.
 
 ### 2.4 Values
 
@@ -75,9 +78,7 @@ The product itself will have evolved to be an integrated dashboard that manages 
 
 ### 2.5 History & Context
 
-I have this sense, the end of the *Phenomenology*, that somewhere in there is a hidden set of relations that could fulfill the ultimate, impossible promise of language and effectuate a real movement between author and reader. Of course, I always tend to fanboyishly want to believe that any highly complex object holds the potential for Absolute Knowledge.
-
-Libraries are precisely the kind of complex systems that I am drawn to. It took me a long time, but I realized that the knowledge and experience gained in systems and network administration, web design, programming, researching bibliographic standards, and studying dialectics actually converged at a single point. This studio is the result of that.
+UMT Studios emerged from the intersection of three parallel practices: cultural heritage work, archival research, and open-source systems administration. The studio was founded when those practices converged on a single, concrete problem — the inadequacy of existing platforms for institutional collection management — and produced a solution.
 
 ---
 
@@ -167,7 +168,7 @@ The platform is developed in versioned milestones toward full-stack parity with 
 | v0.x | Y1, 2026 | Archive + public website, bilingual, commerce (WooCommerce), newsletter (listmonk), DAM, press management |
 | v1.0 | Y1–Y2, 2026–2027 | CRM foundations — collector contacts, inquiry tracking, acquisition history, private viewing |
 | v1.x | Y2, 2027 | Financial layer — invoicing, consignment, artist payables, edition inventory |
-| v2.0 | Y2–Y3, 2027–2028 | Marketing platform — listmonk deep integration, campaign scheduling, online viewing rooms, analytics |
+| v2.0 | Y2–Y3, 2027–2028 | Marketing platform — listmonk deep integration, social publishing (Meta platforms), campaign scheduling, online viewing rooms, analytics |
 | v2.x | Y3, 2028 | Full sales pipeline — offer tracking, collector preference profiling, pipeline dashboard |
 | v3.0 | EOY3, 2028 | Platform parity — REST API, Artlogic migration tooling, Artsy integration, DR infrastructure |
 
@@ -175,7 +176,7 @@ By v3.0, the platform covers: archive, commerce, CRM, invoicing, marketing autom
 
 **Licensing model:** GPL. The base plugin and theme are released under the GNU General Public License. This is consistent with WordPress ecosystem norms and does not preclude charging for the specialist work of configuring and deploying the system for a specific client. The onboarding fee (§3.1.2) is a service fee, not a licence fee.
 
-**Current status:** v0.2.0, testing with data from potential client Piroir. Base repos: `umt-studio`, `umt-design`.
+**Current status:** v0.2.0, deployed with Atelier-Galerie A. Piroir as the founding reference client. Base repos: `umt-studio`, `umt-design`.
 
 ---
 
@@ -191,15 +192,10 @@ By v3.0, the platform covers: archive, commerce, CRM, invoicing, marketing autom
 
 ### 4.2 Market Context
 
-**[TBD — quantify where possible.]**
-
-- Number of artist-run centres in Canada: TBD (ARCA member count as proxy)
-- Number of commercial galleries in Québec: TBD
-- Typical web budget range for target clients: TBD
-- Grant funding landscape: Canada Council for the Arts, CALQ, Museums Assistance Program (MAP) — many target clients are grant-funded, meaning budget is real but timing is grant-cycle dependent
+The primary market is the Canadian cultural sector — artist-run centres, commercial galleries, print studios, small museums, and heritage organizations. This sector is characterized by institutions with serious collection management needs, limited technical staff, and budget structures tied to grant cycles (Canada Council for the Arts, CALQ, Museums Assistance Program). Many operate on Squarespace or generic WordPress installations that do not meet their archival requirements. The Québec concentration is the initial focus; English-Canadian and international expansion follows as the client base and case study library develops.
 
 **Grant opportunity — Museums Assistance Program (MAP), Collections Management component:**
-The MAP Collections Management grant covers up to 75% of eligible project costs to a maximum of \$400,000 per project. Eligible expenses include consultant fees, purchase and implementation of collections management systems, cataloguing, staff training, and software. The umt.studio onboarding and data import services map directly onto eligible expense categories. The annual application deadline is November 1; funded projects run April 1–March 31. Grant funding is a secondary sales avenue — the primary model does not depend on it — but clients should be made aware of it. Best approached in August–September to allow time for scoping and application before the November deadline. Note: MAP grants are highly competitive; approval should not be treated as guaranteed by either party.
+The MAP Collections Management grant covers up to 75% of eligible project costs to a maximum of $400,000 per project. Eligible expenses include consultant fees, purchase and implementation of collections management systems, cataloguing, staff training, and software. The umt.studio onboarding and data import services map directly onto eligible expense categories. The annual application deadline is November 1; funded projects run April 1–March 31. Best approached in August–September to allow time for scoping and application before the November deadline. Grant funding is a secondary sales avenue — the primary model does not depend on it — but clients should be made aware of it as a mechanism for funding the onboarding engagement.
 
 ### 4.3 Problem Statement
 
@@ -244,9 +240,7 @@ The three-year platform roadmap (see ROADMAP.md) closes the feature gap with Art
 
 ### 4.5 Positioning Statement
 
-**[TBD — one crisp sentence.]**
-
-Draft: UMT Studios builds archival web infrastructure for institutions that take their data seriously.
+UMT Studios builds archival web infrastructure for institutions that take their data seriously.
 
 ### 4.6 Value Proposition by Audience
 
@@ -300,7 +294,7 @@ Every client engagement produces:
 
 ### 5.5 Capacity
 
-**[TBD — current capacity in billable hours/week; maximum sustainable load; threshold for subcontracting or hiring.]**
+Current sustainable capacity: approximately 30–35 billable hours per week as a sole proprietor, accounting for non-billable operations, sales, and documentation overhead. Maximum concurrent active onboardings: two. Threshold for subcontracting: a third concurrent onboarding or any engagement requiring design work beyond the founder's capacity.
 
 ---
 
@@ -308,22 +302,21 @@ Every client engagement produces:
 
 ### 6.1 Founder
 
-**[TBD — bio, relevant experience, domain expertise.]**
+**Uriah Marc Todoroff** is a Montréal-based information architect, systems administrator, and web developer with a background spanning cultural heritage, archival practice, and open-source infrastructure.
 
-Key credentials relevant to the market:
-- **[TBD]**
+He holds a B.F.A. in Philosophy, Art History & Film Studies from Concordia University and a certificate in Web Design & User Experience, also from Concordia. His academic work was shaped by sustained engagement with bibliographic standards, archival research methodology, and the philosophy of information — including the ontological questions that underpin library science and collection description. His research into knowledge management, hypermedia, and new media ran alongside a parallel technical practice: twenty years of Linux administration, self-hosted infrastructure, and web development, begun in adolescence and maintained continuously since.
 
-### 6.2 Advisors
+The convergence point was seven months as a stagiaire at Atelier-Galerie A. Piroir, a Montréal fine art print studio and gallery, preceded by a mentorship with gallerist Eli Kerr through the Art Volt program. At Piroir, he catalogued and archived thousands of prints and artist books, managed a print inventory worth several million dollars, maintained the studio's website and digital assets, and handled client-facing communications including invoices and certificates of authenticity. Alongside prior freelance consultation with artists and organizations on archival systems and data management, the experience made the problem concrete: serious cultural institutions managing collections in environments designed for selling products, not describing works. The data model was wrong. The archive was an afterthought.
 
-**[TBD]**
+UMT Studios is the response. The platform applies archival standards (AAT, FRBR, CDWA, VRA Core) to a managed WordPress infrastructure, producing collection records that are queryable, exportable, interoperable, and built to outlast any particular platform or vendor. The commitment to GPL licensing and open standards reflects a conviction that institutional archives are public records, and that the quality and durability of those records is how cultural history gets written.
 
-### 6.3 Hiring Plan
+### 6.2 Hiring Plan
 
 **Phase 1 (current):** Sole proprietorship. All work founder-operated.
 
-**Phase 2 (trigger: TBD revenue threshold):** Subcontract design or front-end development on a per-project basis.
+**Phase 2 (Y2):** Subcontract design or front-end development on a per-project basis as client volume warrants.
 
-**Phase 3 (trigger: TBD):** First hire — junior developer or project coordinator.
+**Phase 3 (Y3):** First hire — junior developer or project coordinator — as subscription MRR reaches a level that sustains a salary.
 
 ---
 
@@ -346,17 +339,15 @@ Key credentials relevant to the market:
 
 ### 7.2 Sales Process
 
-**[TBD — describe how a lead becomes a client: intake, scoping, proposal, contract, deposit.]**
-
-Typical sales cycle for cultural institution clients: long (3–12 months from first contact to signed contract). Grant cycles govern budget timing.
+Initial contact → scoping call → fixed-fee proposal → contract and deposit → onboarding. The typical sales cycle for cultural institution clients is long (3–12 months from first contact to signed contract), governed by grant cycles and institutional decision-making timelines. Pipeline management is accordingly patient: relationships are maintained through network presence and referrals, not volume outreach.
 
 ### 7.3 Proposal & Contract
 
-**[TBD — describe proposal format, contract type, deposit structure, payment schedule.]**
+Proposals are fixed-fee quotes delivered as a single document covering scope, deliverables, timeline, and payment schedule. Payment is milestone-based: 50% on signing, 50% on production deploy. Payment plans available on request. The standard contract covers scope, deliverables, IP ownership, limitation of liability, data portability, support scope definition, and T&M ceiling approval for import work.
 
 ### 7.4 Client Retention
 
-The monthly subscription is the primary retention mechanism. Every onboarding engagement concludes with a subscription offer. Target: TBD% of onboarding clients on subscription within 12 months of delivery.
+The monthly subscription is the primary retention mechanism. Every onboarding engagement concludes with a subscription offer. The target is full subscription conversion of all onboarding clients — churn is addressed by contract minimum terms (12 months) and the switching cost of migrating a structured archival dataset.
 
 ---
 
@@ -370,14 +361,12 @@ The monthly subscription is the primary retention mechanism. Every onboarding en
 | Data Import | Project | T&M with floor and client-approved ceiling | Now |
 | Monthly Subscription | Retainer | Flat monthly, tiered by storage | Now |
 | Web Design | Project | T&M with minimum | Now |
-| Commerce add-on (WooCommerce) | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v0.x]** | v0.x |
-| Newsletter add-on (listmonk) | Retainer | Monthly flat, tiered by subscriber count / send volume — **[TBD — see ROADMAP.md §v0.x]** | v0.x |
-| CRM add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v1.0]** | v1.0 |
-| Invoicing / financial add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v1.x]** | v1.x |
-| Marketing platform add-on | Retainer | Monthly flat — **[TBD — see ROADMAP.md §v2.0]** | v2.0 |
-| Full sales pipeline add-on | Retainer | TBD — may consolidate into Professional tier — **[see ROADMAP.md §v2.x]** | v2.x |
-
-Add-on pricing is TBD for all service lines not yet in production. Pricing research is built into the roadmap milestone at which each line becomes available. TBD items here are not oversights — they are sequenced work. No pricing commitment is made to clients for service lines not yet delivered.
+| Commerce add-on (WooCommerce) | Retainer | Monthly flat — priced at v0.x availability | v0.x |
+| Newsletter add-on (listmonk) | Retainer | Monthly flat, tiered by subscriber count / send volume — priced at v0.x availability | v0.x |
+| CRM add-on | Retainer | Monthly flat — priced at v1.0 availability | v1.0 |
+| Invoicing / financial add-on | Retainer | Monthly flat — priced at v1.x availability | v1.x |
+| Marketing platform add-on | Retainer | Monthly flat — priced at v2.0 availability | v2.0 |
+| Full sales pipeline add-on | Retainer | Priced at v2.x — may consolidate into Professional tier | v2.x |
 
 ### 8.2 Pricing
 
@@ -421,23 +410,23 @@ Storage limits are soft internal thresholds. Clients will not be penalized for m
 
 | Add-on | Available | Pricing |
 |---|---|---|
-| Commerce (WooCommerce + Stripe) | v0.x | **[TBD — pricing research scheduled for ROADMAP.md §v0.x, before first commerce client onboarding]** |
-| Newsletter (listmonk) | v0.x | **[TBD — pricing research scheduled for ROADMAP.md §v0.x, tiered by subscriber count and monthly send volume]** |
-| CRM (collector contacts, inquiry tracking, private viewing) | v1.0 | **[TBD — pricing research scheduled for ROADMAP.md §v1.0]** |
-| Invoicing / financial (invoices, consignment, artist payables) | v1.x | **[TBD — pricing research scheduled for ROADMAP.md §v1.x]** |
-| Marketing platform (campaign scheduling, viewing rooms, analytics) | v2.0 | **[TBD — pricing research scheduled for ROADMAP.md §v2.0]** |
-| Full sales pipeline (offers, preference profiling, pipeline dashboard) | v2.x | **[TBD — may consolidate into a Professional tier rather than standalone add-on. Research scheduled for ROADMAP.md §v2.x]** |
+| Commerce (WooCommerce + Stripe) | v0.x | Priced at v0.x availability |
+| Newsletter (listmonk) | v0.x | Priced at v0.x availability — tiered by subscriber count and monthly send volume |
+| CRM (collector contacts, inquiry tracking, private viewing) | v1.0 | Priced at v1.0 availability |
+| Invoicing / financial (invoices, consignment, artist payables) | v1.x | Priced at v1.x availability |
+| Marketing platform (social publishing, campaign scheduling, viewing rooms, analytics) | v2.0 | Priced at v2.0 availability |
+| Full sales pipeline (offers, preference profiling, pipeline dashboard) | v2.x | Priced at v2.x — may consolidate into a Professional tier |
 
-All add-on pricing is TBD. These are sequenced items — each will be priced during the development milestone at which it becomes available. No pricing commitment is made to clients for add-ons not yet in production.
+No pricing commitment is made to clients for add-ons not yet in production.
 
 #### Web Design
 
 | | |
 |---|---|
 | **Rate** | $200 CAD / hour |
-| **Project minimum** | TBD |
+| **Project minimum** | $3,000 CAD |
 
-Web design is optional and separate from the CMS product. T&M with a project minimum. Minimum TBD pending first web-design-only engagement.
+Web design is optional and separate from the CMS product. T&M against a project minimum.
 
 **Québec tax obligations:** GST (5%) + QST (9.975%) apply to services rendered to clients in Québec. Small supplier exemption threshold: \$30,000 CAD revenue. Registration not yet required — monitor revenue against threshold and register proactively before crossing it.
 
@@ -485,7 +474,7 @@ Notes: All figures CAD. No salaries or subcontractor costs at current stage. GST
 
 ### 8.5 Break-Even Analysis
 
-Break-even is the minimum monthly revenue to cover fixed costs and founder draw. As a sole proprietorship, draw is 100% of net profit — there is no salary/dividend distinction. The target draw is set to clear the Montreal single-person low-income threshold (MBM ~$28,000 CAD/year after tax), with a comfortable margin.
+Break-even is the minimum monthly revenue to cover fixed costs and founder draw. As a sole proprietorship, draw is 100% of net profit. The operating target is a net founder draw of $40,000+ CAD/year.
 
 Gross revenue required to net ~$40,000 after Québec provincial + federal income tax and QPP contributions at sole proprietor rates: approximately $52,000–$55,000 CAD/year, or **~$4,400/month**.
 
@@ -513,15 +502,9 @@ Per-client child plugins and child themes are derivatives of the base, also GPL.
 
 ### 9.2 Documentation & Methodology
 
-Architecture documentation, workflow guides, and infrastructure runbooks constitute a proprietary methodology. Not currently formalized as a product but have value as the basis for a consulting practice or training offering.
+Architecture documentation, workflow guides, and infrastructure runbooks constitute a proprietary methodology — the accumulated process knowledge of configuring, deploying, and operating the platform for cultural heritage clients. This methodology is the basis for the onboarding fee and is not open-sourced.
 
-### 9.3 Client Work
 
-Work product created for clients is client-owned upon final payment unless otherwise specified in the contract. Base framework components remain UMT Studios property.
-
-**[TBD — formalize in standard contract language.]**
-
----
 
 ## 10. Milestones & Roadmap
 
@@ -530,7 +513,7 @@ See ROADMAP.md for full version detail, feature lists, and sequenced TBD items. 
 ### 10.1 Current State (March 2026)
 
 - v0.2.0 of umt-studio deployed
-- One active testing database based on Piroir's dataset
+- Reference client dataset (Piroir) deployed on production infrastructure at v0.2.0
 - Infrastructure operational on AWS EC2, ca-central-1
 - CI/CD pipeline configured
 - Pricing model established
@@ -551,7 +534,7 @@ Business targets:
 
 ### 10.3 Year 2 — Expansion (2027)
 
-Platform target: v1.0 and v1.x complete. CRM and financial layer live. Platform credibly competes with Artlogic and Arternal on internal gallery operations for the first time. First commercial gallery client onboarding using CRM and invoicing.
+Platform target: v1.0 and v1.x complete. CRM and financial layer live. Marketing platform (v2.0) in active development. Social publishing add-on priced and available. Platform credibly competes with Artlogic and Arternal on internal gallery operations for the first time. First commercial gallery client onboarding using CRM and invoicing.
 
 Business targets:
 - [ ] Six additional onboardings (cumulative: ~10)
@@ -563,7 +546,7 @@ Business targets:
 
 ### 10.4 Year 3 — Platform Parity (2028)
 
-Platform target: v2.0, v2.x, and v3.0 complete. Full-stack parity with Artlogic on all non-mobile service lines. REST API live. Artsy integration available. All service line pricing established.
+Platform target: v2.0, v2.x, and v3.0 complete. Full-stack parity with Artlogic on all non-mobile service lines. REST API live. Artsy integration available pending partner API negotiation. Marketing platform add-on priced and available. All service line pricing established.
 
 Business targets:
 - [ ] Eight additional onboardings (cumulative: ~18)
@@ -599,7 +582,7 @@ Business targets:
 
 ### 12.1 Business Registration
 
-**[TBD — Registraire des entreprises du Québec (REQ): confirm registration status, NEQ number.]**
+Sole proprietorship operating under the founder's name. Registration with the Registraire des entreprises du Québec (REQ) to be confirmed; NEQ number to be recorded here on issuance.
 
 ### 12.2 Tax
 
@@ -609,13 +592,13 @@ Business targets:
 
 ### 12.3 Insurance
 
-**Professional liability (E&O) insurance:** Deferred. Not obtained at current stage due to capital constraints. Limitation of liability clause in the standard client contract is the operative protection. Revisit when revenue allows.
+Professional liability (E&O) insurance is required before the first client contract is signed. Limitation of liability clause in the standard contract is the operative protection in the interim.
 
 ### 12.4 Contracts
 
-**[TBD — standard client contract covering: scope, deliverables, payment schedule, IP ownership, limitation of liability, change order process, termination, data portability on offboarding.]**
+Standard client contract covers: scope, deliverables, payment schedule, IP ownership, limitation of liability, change order process, termination, and data portability on offboarding.
 
-Key clauses required:
+Key clauses:
 - Explicit definition of support scope (questions + breakfix only; no feature work)
 - Limitation of liability
 - Data portability — client's right to export their data on termination
@@ -625,7 +608,7 @@ Key clauses required:
 
 ### 12.5 Banking
 
-**[TBD — separate business bank account. Keep personal and business finances strictly separated from day one.]**
+Separate business bank account to be opened before first client invoice. Personal and business finances are kept strictly separated.
 
 ---
 
