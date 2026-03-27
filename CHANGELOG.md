@@ -26,6 +26,9 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- docs(workflow): remove hack language from agents_artists/agents_authors warning, point to ROADMAP.md; remove ACF Pro complaint from field group editing section; remove "free or Pro" from prerequisites
+- docs(infrastructure): remove Docker warning, fix stale deploy-* directory listing, fix wrong DB name in backup command, replace "no automated backup" with forward reference to ROADMAP.md pre-contract checklist
+- docs(architecture): replace negative framing with forward references to SCHEMA.md and ROADMAP.md — remove unsourced scale claim, remove "hack" language from agents_artists/agents_authors and Work–Agent section, update related_works and location field notes, update translation deferral note
 - feat(schema): add SCHEMA.md — custom DB schema v0.3.0-planned; core entity tables, junction tables, vocabulary tables, translation table, child plugin configurability via umtd_schema_tables filter
 - feat(roadmap): add ROADMAP.md — replaces DEFERRED.md; active items week-sequenced against Piroir timeline, backlog items grouped by domain
 - docs(roadmap): pin pre-contract prerequisites — staging environment, EBS snapshots, contract template, limitation of liability

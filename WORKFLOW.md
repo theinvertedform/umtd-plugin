@@ -8,7 +8,7 @@ This document covers the code-side steps to onboard a new client: creating the c
 
 - Server provisioned and WordPress installed per `INFRASTRUCTURE.md`
 - `umt-studio` and `umt-design` cloned and activated on the client server
-- ACF (free or Pro) installed and activated
+- ACF installed and activated
 - Git repos initialized for `umt-studio-{client}` and `umt-design-{client}`
 
 ---
@@ -71,7 +71,7 @@ add_action( 'plugins_loaded', function() {
 
 Slug translations for all languages are defined in the base plugin `config/i18n.php` — the child plugin only declares which languages are active.
 
-> ⚠️ The base ACF field group includes `agents_artists` and `agents_authors` relationship fields. These are Piroir-specific hacks encoding agent role as field name, pending ACF Pro Repeater migration. For a new client: (a) leave them in place and ignore them, (b) hide via child plugin ACF override, or (c) wait for the role model refactor. See `DEFERRED.md`.
+> ⚠️ The base ACF field group includes `agents_artists` and `agents_authors` relationship fields. These are interim role-encoding fields specific to Piroir, superseded by the `umtd_work_agents` junction table in v0.3.0. For a new client onboarded before v0.3.0: (a) leave them in place and ignore them, or (b) hide via child plugin ACF override. See `ROADMAP.md`.
 
 ### Adding a New Language to the Platform
 
@@ -209,8 +209,6 @@ Base field groups must be edited on localhost only:
 2. To save: temporarily add a save path to `umt-studio.php`, save the field group, then remove it
 3. Commit the updated JSON in `umt-studio/acf-json/`
 4. Deploy to client servers via `git push` → GitHub Actions
-
-ACF Pro would make this cleaner by supporting per-plugin save paths. See `DEFERRED.md`.
 
 ---
 

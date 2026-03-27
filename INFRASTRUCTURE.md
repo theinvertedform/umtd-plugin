@@ -24,7 +24,7 @@ PPAs: `ppa:ondrej/php` (PHP 8.4), `ppa:ondrej/nginx` (nginx 1.28.x).
 
 ## Services
 
-All services run natively. Docker is installed but disabled at boot — do not re-enable without stopping native services first (port conflicts on 80, 443, 5432, 8080).
+All services run natively.
 
 | Service | Runtime | Port | Unit |
 |---|---|---|---|
@@ -116,8 +116,7 @@ sudo chmod +x bin/rr
 
 /usr/local/bin/
     listmonk
-    deploy-listmonk
-    deploy-*                — CI/CD deploy scripts
+    deploy                  — generic CI/CD deploy script (takes target path as argument)
 ```
 
 ---
@@ -385,7 +384,7 @@ systemctl status nginx php8.4-fpm mariadb postgresql@16-main listmonk shlink cer
 
 # Backup
 sudo -u postgres pg_dump listmonk > ~/listmonk-$(date +%Y%m%d).sql
-mysqldump -u wordpress -p wordpress > ~/wordpress-$(date +%Y%m%d).sql
+mysqldump -u {clientname} -p {clientname} > ~/{clientname}-$(date +%Y%m%d).sql
 cp /var/www/shlink/data/database.sqlite ~/shlink-$(date +%Y%m%d).sqlite
 ```
 
@@ -399,4 +398,5 @@ cp /var/www/shlink/data/database.sqlite ~/shlink-$(date +%Y%m%d).sqlite
 | certbot | `/var/log/letsencrypt/letsencrypt.log` |
 | WordPress | `/var/www/piroir/htdocs/wp-content/debug.log` (requires `WP_DEBUG_LOG=true`) |
 
-No automated backup or EBS snapshots configured. Run manual backup before major changes.
+Automated EBS snapshots and nightly `mysqldump` → S3 are configured as part of the pre-contract checklist. See `ROADMAP.md` — Pre-contract. Run manual backup before major changes outside the automated schedule.
+

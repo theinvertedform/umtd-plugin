@@ -126,7 +126,7 @@ URL routing is language-prefixed throughout. All CPT single and archive URLs inc
 
 URL pattern: `/{lang}/{translated-slug}/{post-name}/` — e.g. `/fr/artistes/grubisic-katia/`, `/en/artists/grubisic-katia/`. Translated slugs are used because the slug itself communicates language. See URL Architecture table in Theme Architecture.
 
-The `lang` query var is set in rewrite rules and readable via `get_query_var( 'lang' )`. Content is not yet differentiated by language — outbound URL rewriting and the translation model are deferred. See DEFERRED.md — Translation Model.
+The `lang` query var is set in rewrite rules and readable via `get_query_var( 'lang' )`. Content differentiation by language and outbound URL rewriting are implemented as part of the custom database schema, which introduces a dedicated translations table and a `umtd_get_field()` access layer supporting per-language field resolution. See `SCHEMA.md` and `ROADMAP.md` for the delivery sequence.
 
 ### config/i18n.php
 
@@ -214,8 +214,8 @@ Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path fi
 | Field | Key | Type | Notes |
 |---|---|---|---|
 | `agent` | — | relationship | → `umtd_agents`, returns array of `WP_Post` objects |
-| `agents_artists` | — | relationship | → `umtd_agents`, Piroir hack — see DEFERRED.md |
-| `agents_authors` | — | relationship | → `umtd_agents`, Piroir hack — see DEFERRED.md |
+| `agents_artists` | — | relationship | → `umtd_agents`; interim role encoding, superseded by `umtd_work_agents` junction table in v0.3.0. See `ROADMAP.md`. |
+| `agents_authors` | — | relationship | → `umtd_agents`; interim role encoding, superseded by `umtd_work_agents` junction table in v0.3.0. See `ROADMAP.md`. |
 | `medium` | — | taxonomy | `umtd_medium` — Intaglio / Relief / Planographic |
 | `date_display` | — | text | human-readable, e.g. `ca. 1987–89` |
 | `date_earliest` | — | date picker | stored `Ymd`, returns `Y-m-d` |
@@ -224,7 +224,7 @@ Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path fi
 | `dimensions_w` | — | number | width in `dimensions_unit` |
 | `dimensions_unit` | — | select | cm (default) / mm / in |
 | `description` | — | textarea | |
-| `related_works` | — | relationship | → `umtd_works`; semantics TBD — see DEFERRED.md |
+| `related_works` | — | relationship | → `umtd_works`; series membership handled by `umtd_series` taxonomy in v0.3.0; explicit object relations deferred. See `ROADMAP.md`. |
 | `current_location` | — | relationship | → `umtd_agents` |
 | `accession_number` | — | text | |
 
@@ -235,12 +235,12 @@ Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path fi
 | `start_date` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `end_date` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `event_type` | — | taxonomy | `umtd_event_type` — Exhibition / Opening / Workshop / Performance / Premiere / Fair / Market |
-| `location` | — | relationship | → `umtd_agents`; intended for organizations; ACF cannot filter by `agent_type` postmeta — see DEFERRED.md |
+| `location` | — | relationship | → `umtd_agents`; venue agents (subtype `venue`) are the intended target. `agent_type` filtering in the ACF UI is resolved in v0.3.0 via the `umtd_agents` custom table. See `SCHEMA.md`. |
 | `organizing_agents` | — | relationship | → `umtd_agents` |
 | `participating_agents` | — | relationship | → `umtd_agents` |
 | `description` | — | textarea | |
 | `event_link` | — | url | |
-| `related_works` | — | relationship | → `umtd_works`; semantics TBD — see DEFERRED.md |
+| `related_works` | — | relationship | → `umtd_works`; works exhibited or documented at this event. Superseded by `umtd_event_works` junction table in v0.3.0. See `SCHEMA.md`. |
 
 ### Image Metadata Fields
 
@@ -297,9 +297,7 @@ array(
 )
 ```
 
-`meta_query` with `LIKE` on serialized data does not scale beyond ~1000 records. Future target: junction table `work_id | agent_id | role_id` as part of the custom DB schema.
-
-Agent role is currently encoded in parallel fields `agents_artists` / `agents_authors` — a Piroir-specific hack pending ACF Pro Repeater migration (see DEFERRED.md).
+This query pattern is appropriate for the current collection size. The v0.3.0 custom database schema replaces it with a normalized `umtd_work_agents` junction table (`work_id | agent_id | role_id`), which supports indexed relational queries and role-differentiated agent credits. Agent role is currently encoded in the interim `agents_artists` / `agents_authors` fields; these are superseded by the junction table in v0.3.0. See `SCHEMA.md` and `ROADMAP.md`.
 
 ### Taxonomy Queries
 
@@ -313,7 +311,7 @@ array(
 )
 ```
 
-To find agents associated with works of a given type: `tax_query` → collect agent IDs via `get_field('agent', $work_id)` → second query with `post__in`. This two-query pattern is required because agent IDs are serialized in postmeta and not directly joinable.
+To find agents associated with works of a given type: `tax_query` → collect agent IDs via `get_field('agent', $work_id)` → second query with `post__in`. This two-query pattern is used with the current postmeta storage model. The v0.3.0 schema replaces it with a direct JOIN on `umtd_work_agents`.
 
 `umtd_medium` and `umtd_event_type` are standard WordPress taxonomies — queryable directly via `tax_query` with no serialization issues.
 
