@@ -6,55 +6,67 @@ The Artlogic benchmark: by v3.0 (EOY3, 2028), the umt.studio CMS will offer feat
 
 ---
 
-## Active — Piroir Engagement
+## Current Status
+
+The platform is at v0.2.0. Core archive functionality is complete and presentable: CPTs, ACF field groups, controlled vocabulary, schema.org output, CI/CD pipeline, and production infrastructure are all operational. The platform is in active prototype deployment and ready for a first client onboarding engagement.
+
+The next development phase is funded and sequenced around a founding client contract. Pre-contract prerequisites are listed below. On signing, the 16-week onboarding sequence begins.
+
+Business development (identity, portfolio site, sales) is the current operational priority alongside platform readiness. Platform development resumes full-time on contract signing.
+
+---
+
+## First Client Onboarding
 
 Week numbers are relative to contract signing (Week 0).
 
-### Pre-contract (before Week 0)
+### Pre-contract
 
 These items are prerequisites for signing. No contract is issued until they are complete.
 
-- [ ] Staging environment live — `staging.piroir.umt.world`, same EC2 host, separate nginx server block, separate MariaDB database
+- [ ] Staging environment live — `staging.{client}.umt.world`, same EC2 host, separate nginx server block, separate MariaDB database
 - [ ] EBS snapshots configured — automated daily, 7-day retention, via AWS Data Lifecycle Manager
+- [ ] Professional liability (E&O) insurance obtained
 - [ ] Limitation of liability clause confirmed in contract template
 - [ ] Contract template finalized — scope, deliverables, payment schedule, IP ownership, data portability, T&M ceiling approval language
+- [ ] Business bank account open
+- [ ] GST/QST registration status confirmed
 
 ### Weeks 1–2 — Scoping and Schema
 
 Client phase: Scoping assessment and design brief.
 
-- [ ] `SCHEMA.md` finalized — table definitions confirmed with Piroir data model in mind
+- [ ] `SCHEMA.md` finalized — table definitions confirmed with client data model
 - [ ] `umtd_register_tables()` — base plugin registers all custom tables via `dbDelta()` on activation; child plugin declares active subset via `umtd_schema_tables` filter
-- [ ] `acf/save_post` intercept hooks — redirect ACF writes to custom tables for all intercepted fields; suppress ACF's own postmeta writes for those fields
-- [ ] `umtd_get_field( $field, $post_id, $lang = null )` — reads from custom tables; falls back to `get_field()` for any field not yet covered; passes `$lang` to `umtd_translations`
+- [ ] `acf/save_post` intercept hooks — redirect ACF writes to custom tables; suppress ACF's own postmeta writes for intercepted fields
+- [ ] `umtd_get_field( $field, $post_id, $lang = null )` — reads from custom tables; falls back to `get_field()` for any field not yet covered
 - [ ] `umtd_roles` seeded — initial vocabulary: Artist, Author, Printer, Publisher, Photographer, Curator
-- [ ] `umtd_view_types` seeded — Recto, Verso, Detail, Installation View, Exhibition View, Before Treatment, After Treatment
 - [ ] `umtd_series` taxonomy registered on `umtd_works`
-- [ ] `agent_type` ENUM column — Person, Organization, Venue; venues excluded from public archive listings by default
-- [ ] All templates updated — replace all remaining `get_field()` calls with `umtd_get_field()`; no direct ACF calls in any theme template
-- [ ] Nightly `mysqldump` → S3 (`umt-temp-transfer` or dedicated client bucket) — automated via cron; client-accessible from WP admin UI
-- [ ] `staging.piroir.umt.world` SSL — certbot, added to existing cert or new cert
+- [ ] `agent_type` ENUM column — Person, Organization, Venue
+- [ ] All templates updated — replace all remaining `get_field()` calls with `umtd_get_field()`
+- [ ] Nightly `mysqldump` → S3 — automated via cron; client-accessible from WP admin
+- [ ] Staging environment SSL confirmed
 
 ### Weeks 3–7 — Data Import
 
 Client phase: Data import.
 
 - [ ] WP-CLI import scripts — field-mapped CSV → custom tables for Works, Agents, Events
-- [ ] `umtd_work_media` population — attachment upload, `umtd_work_media` junction table population, `view_type_id` assignment
-- [ ] Data entry and QA on staging — all records entered and reviewed before staging review phase
-- [ ] `edition_size` and `printer_copies` fields — data entered for all print Works
-- [ ] `umtd_series` terms created and assigned
+- [ ] Media population — attachment upload, junction table population, view type assignment
+- [ ] Data entry and QA on staging — all records entered and reviewed before staging review
+- [ ] Edition and copy fields populated for all relevant Works
+- [ ] Series terms created and assigned
 
 ### Weeks 5–11 — Child Theme
 
 Client phase: Child theme design and implementation. Overlaps with data import.
 
-- [ ] `umt-design-piroir` repo created — child theme, client typography, colour, branding
+- [ ] `umt-design-{client}` repo created — child theme, client typography, colour, branding
 - [ ] All archive templates updated to use `umtd_get_field()` throughout
 - [ ] Schema.org engine extended — `umtd_events` → `ExhibitionEvent`; `umtd_agents` → `Person` / `Organization`; sitewide `Organization` schema
 - [ ] Language switcher — `umtd_localize_url()`, `wp_nav_menu_objects` filter, `umtd_language_switcher()` template function
 - [ ] Menu URL rewriting — nav menu item URLs rewritten to active language via filter
-- [ ] Bilingual content entry — all translatable fields populated in FR and EN via `umtd_translations`
+- [ ] Bilingual content entry — all translatable fields populated in FR and EN
 - [ ] Venue agent subtype — venues excluded from Artists archive, linked from Event singles
 
 ### Weeks 10–12 — Staging Review
@@ -71,12 +83,12 @@ Client phase: Staging review and client UAT.
 Client phase: Production deploy.
 
 - [ ] DNS cutover — Cloudflare A record updated, TTL managed
-- [ ] Final `mysqldump` from staging imported to production
-- [ ] CI/CD verified — GitHub Actions deploy workflows confirmed on all three repos
+- [ ] Final database dump from staging imported to production
+- [ ] CI/CD verified — GitHub Actions deploy workflows confirmed on all repos
 - [ ] SSL confirmed on production domain
-- [ ] Rewrite rules flushed — Settings → Permalinks → Save
+- [ ] Rewrite rules flushed
 - [ ] Admin UI locked down — client user role configured, plugin installation disabled, ACF field groups read-only
-- [ ] Client credentials delivered — WP admin login, S3 dump access
+- [ ] Client credentials delivered — WP admin login, database backup access
 - [ ] Handoff documentation — client-facing guide to data entry, terminology, and support process
 
 ---
@@ -262,6 +274,9 @@ Deep listmonk integration, social media publishing, campaign scheduling, and onl
 **Target: Y3, 2028**
 
 Offer tracking, collector preference profiling, and a sales pipeline dashboard. At v2.x, the platform covers the complete collector relationship lifecycle that Artlogic's PrivateViews and Arternal's CRM target — without requiring a separate tool.
+
+**AI-assisted campaign suggestions**
+- [ ] Optional AI analysis of collection data, exhibition schedule, and engagement analytics to surface campaign timing and content suggestions from within WP admin
 
 **Offer tracking**
 - [ ] `umtd_offers` CPT — work → collector, offered price, offer date, expiry, status (pending / accepted / declined / expired)
