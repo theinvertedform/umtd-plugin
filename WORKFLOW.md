@@ -15,7 +15,7 @@ This document covers the code-side steps to onboard a new client: creating the c
 
 ## Step 1 — Create the Child Plugin
 
-Create a new repo: `umt-studio-{client}`.
+Create a new repo: `umt-studio-{client}`, forked or copied from `umt-studio-child`.
 
 ```
 umt-studio-{client}/
@@ -26,12 +26,12 @@ umt-studio-{client}/
 
 ### `umt-studio-{client}.php`
 
-Copy `umt-studio-piroir.php` as the starting point. Update:
+Copy `umt-studio-child.php` as the starting point. Update the plugin header only:
 
 - `Plugin Name`
 - `Text Domain`
-- `UMTD_{CLIENT}_PATH` constant
-- Function name prefix: `umtd_{client}_`
+
+Constants (`UMTD_CHILD_*`) and function prefixes (`umtd_child_*`) are intentionally generic and do not need to change per client.
 
 ### `config/terms.php`
 
@@ -87,13 +87,13 @@ Activate `umt-studio-{client}` **after** `umt-studio`. The activation hook seeds
 
 ### CI/CD
 
-Add `.github/workflows/deploy.yml` to the repo. The workflow calls the generic deploy script with the target path:
+The deploy workflow is already present in `umt-studio-child` at `.github/workflows/deploy.yml` with the `on:` trigger commented out. To activate it for a client repo:
 
-```yaml
---parameters 'commands=["/usr/local/bin/deploy /var/www/{client}/htdocs/wp-content/plugins/umt-studio-{client}"]'
-```
+1. Uncomment the `on:` block
+2. Substitute `{client}` in both SSM target paths — base plugin and child plugin steps
+3. Push to main to verify the workflow fires correctly
 
-See `INFRASTRUCTURE.md` — Deploy Scripts for the full workflow template.
+See `INFRASTRUCTURE.md` — Actions Workflow for the full template and path conventions.
 
 ---
 
@@ -144,11 +144,7 @@ Activate `umt-design-{client}`. WordPress loads `umt-design` as the parent autom
 
 ### CI/CD
 
-Add `.github/workflows/deploy.yml` to the repo with the correct path:
-
-```yaml
---parameters 'commands=["/usr/local/bin/deploy /var/www/{client}/htdocs/wp-content/themes/umt-design-{client}"]'
-```
+The child theme repo requires its own deploy workflow following the same pattern as the child plugin — deploying the base theme first, then the child theme. Add `.github/workflows/deploy.yml` with the base and child theme target paths substituted. See `INFRASTRUCTURE.md` — Actions Workflow.
 
 ---
 
@@ -164,17 +160,15 @@ If the client requires additional or modified ACF fields, register them in the c
 
 ## Step 4 — WordPress Pages and Nav Menus
 
-Create pages and assign templates to match the client's nav structure. Example for Piroir:
+Create pages and assign templates to match the client's nav structure:
 
 | Page title | Slug | Template |
 |---|---|---|
 | Events | `/events/` | Events Archive |
-| Prints | `/prints/` | Prints Archive |
-| Books | `/books/` | Books Archive |
 | Artists | `/artists/` | Artists Archive |
 | Studio | `/studio/` | Default |
 
-Page slugs are not language-prefixed — only CPT single URLs are language-prefixed via the i18n rewrite system. Page template URL structure is a client decision.
+Adjust page titles, slugs, and templates to match the client's information architecture. Page slugs are not language-prefixed — only CPT single URLs are language-prefixed via the i18n rewrite system.
 
 Then **Appearance → Menus**: create a Primary menu (location: `primary`) and Footer menu (location: `footer`), and add the relevant pages to each.
 
@@ -190,7 +184,7 @@ After activating plugins and theme: **Settings → Permalinks → Save Changes**
 
 - [ ] CPT single URLs resolve with language prefix — e.g. `/fr/artistes/{slug}/`, `/en/artists/{slug}/`
 - [ ] Bare CPT slugs without language prefix 404
-- [ ] Page template URLs resolve — `/events/`, `/prints/`, `/books/`, `/artists/`
+- [ ] Page template URLs resolve
 - [ ] ACF field groups appear on Works, Agents, Events edit screens
 - [ ] Work type terms seeded — check **Posts → Works → Work Types**
 - [ ] Nav menus in front-end header and footer

@@ -9,6 +9,7 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio-child (formerly umt-studio-piroir)
 
+- chore(ci): comment out on: trigger in deploy workflow — template repo must not fire on push
 - chore: rename repo and plugin from piroir to child — fully generic template
 - chore: rename umt-studio-piroir.php → umt-studio-child.php
 - chore: replace all UMTD_PIROIR_* constants with UMTD_CHILD_*
@@ -16,10 +17,12 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 - feat(ci): add deploy workflow — deploys base plugin then child on push to main
 
 ### umt-design
+
 - chore: remove deploy workflow — base theme deployed by child repo
 
 ### umt-studio
 
+- docs(workflow): genericize WORKFLOW.md — remove piroir references, update child plugin and CI/CD instructions
 - chore(infrastructure): decommission piroir.umt.world — remove nginx config, SSL cert, MariaDB database and user, WordPress install
 - docs(infrastructure): genericize all piroir references to {client} pattern
 - docs(infrastructure): remove shlink from services table — internal service, not client-facing
