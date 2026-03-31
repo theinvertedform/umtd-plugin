@@ -87,9 +87,9 @@ Activate `umt-studio-{client}` **after** `umt-studio`. The activation hook seeds
 
 ### CI/CD
 
-The deploy workflow is already present in `umt-studio-child` at `.github/workflows/deploy.yml` with the `on:` trigger commented out. To activate it for a client repo:
+The deploy workflow is already present in `umt-studio-child` at `.github/workflows/deploy.yml` with the `on:` trigger set to `workflow_dispatch`. To activate it for a client repo:
 
-1. Uncomment the `on:` block
+1. Replace `workflow_dispatch` with `push: branches: [main]`
 2. Substitute `{client}` in both SSM target paths — base plugin and child plugin steps
 3. Push to main to verify the workflow fires correctly
 
