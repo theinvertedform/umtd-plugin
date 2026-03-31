@@ -7,8 +7,30 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
-### BUSINESS.md
+### umt-studio-child (formerly umt-studio-piroir)
 
+- chore: rename repo and plugin from piroir to child — fully generic template
+- chore: rename umt-studio-piroir.php → umt-studio-child.php
+- chore: replace all UMTD_PIROIR_* constants with UMTD_CHILD_*
+- chore: replace all umtd_piroir_* functions with umtd_child_*
+- feat(ci): add deploy workflow — deploys base plugin then child on push to main
+
+### umt-design
+- chore: remove deploy workflow — base theme deployed by child repo
+
+### umt-studio
+
+- chore(infrastructure): decommission piroir.umt.world — remove nginx config, SSL cert, MariaDB database and user, WordPress install
+- docs(infrastructure): genericize all piroir references to {client} pattern
+- docs(infrastructure): remove shlink from services table — internal service, not client-facing
+- docs(infrastructure): remove Gotchas section
+- docs(infrastructure): condense listmonk and shlink service documentation
+- docs(infrastructure): update CI/CD section — document child-triggers-base deploy architecture
+- docs(infrastructure): update repos table — reflect umt-studio-child as template repo
+- docs(roadmap): remove piroir references — genericize to first client onboarding
+- docs(roadmap): add automated alerting to v0.x infrastructure items — deferred
+- docs(roadmap): add nightly mysqldump → S3 to v0.x infrastructure items
+- chore: remove deploy workflow — base plugin deployed by child repo
 - feat(business): establish GPL as licensing model for umt-studio and umt-design
 - feat(business): collapse service lines — remove standalone sysadmin and IA; absorb into onboarding fee
 - feat(business): define onboarding fee — public floor \$5,000 CAD, confidential minimum \$3,500 CAD, assessed quote ceiling, rationale documented
@@ -22,10 +44,6 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 - feat(business): update §9.1 IP — GPL decision recorded, proprietary methodology distinction documented
 - feat(business): update §8.3 cost structure — AWS line items populated with real numbers
 - chore(business): update revision date to 2026-03-26
-### umt-studio-piroir
-
-### umt-studio
-
 - docs(architecture): remove DEFERRED.md refs, replace with ROADMAP.md and SCHEMA.md throughout
 - docs(architecture): remove self-deprecating language — country field note, version pins on junction table refs
 - docs(architecture): add umtd_schema_config filter note — to be documented in SCHEMA.md

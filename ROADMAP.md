@@ -1,6 +1,6 @@
 # UMT Studio — Roadmap
 
-This document is the authoritative record of planned work. It has two parallel tracks: the active Piroir client engagement and the platform version roadmap covering the three-year product arc.
+This document is the authoritative record of planned work. It has two parallel tracks: the first client onboarding sequence and the platform version roadmap covering the three-year product arc.
 
 The Artlogic benchmark: by v3.0 (EOY3, 2028), the umt.studio CMS will offer feature parity with Artlogic across all non-mobile service lines — archive, commerce, CRM, invoicing, marketing automation, social publishing, analytics, and sales pipeline — built on a correct archival data model with AAT/FRBR/VRA Core alignment that Artlogic structurally cannot replicate. Mobile / iOS access is explicitly deferred post-v3.0.
 
@@ -105,7 +105,7 @@ Versions are sequenced development milestones, not calendar releases. Year targe
 
 **Target: Y1, 2026**
 
-The foundation. A standards-aligned archival CMS with a public-facing website, bilingual support, basic commerce, and newsletter infrastructure. This is the platform as delivered to Piroir and the basis for all subsequent client onboardings.
+The foundation. A standards-aligned archival CMS with a public-facing website, bilingual support, basic commerce, and newsletter infrastructure. This is the platform as delivered to the first client and the basis for all subsequent onboardings.
 
 **Archive & data model**
 - [x] CPTs: Works, Agents, Events (FRBR-aligned)
@@ -131,7 +131,7 @@ The foundation. A standards-aligned archival CMS with a public-facing website, b
 - [ ] `umtd_translations` custom table — `post_id | lang | field_name | value`
 
 **Public website**
-- [ ] `umt-design-piroir` child theme — typography, colour, branding
+- [ ] `umt-design-{client}` child theme — typography, colour, branding
 - [ ] All archive and single templates using `umtd_get_field()` throughout
 - [ ] Accessibility audit — semantic HTML, keyboard navigation, screen reader
 
@@ -165,7 +165,9 @@ The foundation. A standards-aligned archival CMS with a public-facing website, b
 
 **Infrastructure**
 - [ ] Staging environments — `staging.{client}.umt.world` pattern documented and repeatable
-- [ ] EBS snapshot automation — confirmed for all client databases
+- [ ] EBS snapshot automation — daily snapshots, 7-day retention, via AWS Data Lifecycle Manager; confirmed for all client installs
+- [ ] Nightly `mysqldump` → S3 — automated per-client database backup; retention policy TBD
+- [ ] Automated alerting — CloudWatch alarms for service health (nginx, PHP-FPM, MariaDB); replace logwatch with proper alerting stack
 - [ ] `wp i18n make-pot` — generated for base plugin and base theme
 - [ ] Portfolio site — case studies, methodology, public-facing product page
 
@@ -235,7 +237,7 @@ Invoicing, consignment, and artist payables. This closes the primary administrat
 - [ ] Item provenance chain — ownership history as ordered list of agent relationships with dates
 
 **Pricing**
-- [ ] Pricing research — invoicing / financial layer add-on monthly rate. To be established during v1.x development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic invoicing tier, QuickBooks pricing, Arternal financial features.
+- [ ] **[Pricing research — invoicing / financial layer add-on monthly rate. To be established during v1.x development and reflected in BUSINESS.md §8.2. Research comparables: Artlogic invoicing tier, QuickBooks pricing, Arternal financial features.]**
 
 ---
 
