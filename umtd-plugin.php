@@ -230,7 +230,7 @@ function umtd_register_taxonomies() {
  *
  * Seeds the full AAT-aligned controlled vocabulary on first activation.
  * Child plugin activation hooks run the whitelist filter after this — they
- * require UMTD_PATH to be defined, so umt-studio must be active first.
+ * require UMTD_PATH to be defined, so umtd-plugin must be active first.
  *
  * @see umtd_seed_terms()
  */

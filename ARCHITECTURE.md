@@ -10,10 +10,10 @@ White-label WordPress CMS for cultural heritage archive clients. Base plugin + b
 
 | Repo | Type | Purpose |
 |---|---|---|
-| `umt-studio` | Base plugin | CPTs, taxonomies, ACF fields, schema.org, agent logic, i18n routing |
-| `umt-design` | Base theme | Semantic HTML templates, BEM CSS, no client branding |
-| `umt-studio-{client}` | Child plugin | Work type whitelist, active languages, client-specific ACF overrides |
-| `umt-design-{client}` | Child theme | Client typography, colour, layout, branding |
+| `umtd-plugin` | Base plugin | CPTs, taxonomies, ACF fields, schema.org, agent logic, i18n routing |
+| `umtd-theme` | Base theme | Semantic HTML templates, BEM CSS, no client branding |
+| `umtd-plugin-{client}` | Child plugin | Work type whitelist, active languages, client-specific ACF overrides |
+| `umtd-theme-{client}` | Child theme | Client typography, colour, layout, branding |
 
 New client = new child plugin + new child theme. Base repos are never modified for client work.
 
@@ -26,7 +26,7 @@ New client = new child plugin + new child theme. Base repos are never modified f
 | PHP function prefix | `umtd_` | `umtd_register_post_types()` |
 | PHP constant prefix | `UMTD_` | `UMTD_VERSION`, `UMTD_PATH` |
 | Plugin text domain | `umtd` | `__( 'Works', 'umtd' )` |
-| Theme text domain | `umt-design` | `__( 'All', 'umt-design' )` |
+| Theme text domain | `umtd-theme` | `__( 'All', 'umtd-theme' )` |
 | CSS methodology | BEM | `.work-card__title`, `.archive-grid` |
 | Post type prefix | `umtd_` | `umtd_works`, `umtd_agents`, `umtd_events` |
 | Taxonomy prefix | `umtd_` | `umtd_work_type`, `umtd_agent_role` |
@@ -39,8 +39,8 @@ New client = new child plugin + new child theme. Base repos are never modified f
 ### File Structure
 
 ```
-umt-studio/
-├── umt-studio.php          — bootstrap, constants, require chain
+umtd-plugin/
+├── umtd-plugin.php         — bootstrap, constants, require chain
 ├── config/
 │   ├── post-types.php      — CPT definitions (data only, no slugs)
 │   ├── taxonomies.php      — taxonomy definitions (no slugs)
@@ -54,23 +54,23 @@ umt-studio/
 │       └── admin-fields.js — display name autopopulation in admin
 └── acf-json/               — ACF field group JSON (base plugin only)
 
-umt-studio-{client}/
-├── umt-studio-{client}.php — bootstrap, activation hook, language filter
+umtd-plugin-{client}/
+├── umtd-plugin-{client}.php — bootstrap, activation hook, language filter
 └── config/
-    └── terms.php           — client whitelist: subset of base terms by name
+    └── terms.php            — client whitelist: subset of base terms by name
 ```
 
 ### Bootstrap
 
-`UMTD_PATH` and `UMTD_VERSION` are defined at file load time in `umt-studio.php`.
+`UMTD_PATH` and `UMTD_VERSION` are defined at file load time in `umtd-plugin.php`.
 
 On `plugins_loaded`, child plugins register their `umtd_i18n` filter. This hook is used rather than top-level registration because WordPress plugin load order is not guaranteed — `plugins_loaded` fires after all plugins have loaded regardless of order.
 
-On `init`, `umt-studio.php` registers CPTs (via `umtd_post_types` filter), registers taxonomies (via `umtd_taxonomies` filter), loads `schema.php` and `admin.php`, and registers `acf-json/` as the ACF load path. By the time `init` fires, `plugins_loaded` has already run and all child plugin filters are registered.
+On `init`, `umtd-plugin.php` registers CPTs (via `umtd_post_types` filter), registers taxonomies (via `umtd_taxonomies` filter), loads `schema.php` and `admin.php`, and registers `acf-json/` as the ACF load path. By the time `init` fires, `plugins_loaded` has already run and all child plugin filters are registered.
 
-On activation, `umt-studio.php` calls `umtd_seed_terms()` — inserts all base vocabulary terms with `aat_id` as term meta.
+On activation, `umtd-plugin.php` calls `umtd_seed_terms()` — inserts all base vocabulary terms with `aat_id` as term meta.
 
-On activation, child plugin reads its whitelist and the base vocabulary via `UMTD_PATH`, inserts whitelisted terms, and deletes non-whitelisted ones. **Requires `umt-studio` active first per `Requires Plugins` header.**
+On activation, child plugin reads its whitelist and the base vocabulary via `UMTD_PATH`, inserts whitelisted terms, and deletes non-whitelisted ones. **Requires `umtd-plugin` active first per `Requires Plugins` header.**
 
 ### Base vs Child Boundary
 
@@ -171,9 +171,9 @@ Adding a language: add translations to `config/i18n.php`, add the language code 
 
 ## ACF Field Groups
 
-Base plugin fields load from `acf-json/`. **No save path is registered in the base plugin** — base field groups are read-only on all deployed installs. To modify: temporarily add a save path to `umt-studio.php`, edit on localhost, save, remove the save path, commit updated JSON, deploy.
+Base plugin fields load from `acf-json/`. **No save path is registered in the base plugin** — base field groups are read-only on all deployed installs. To modify: temporarily add a save path to `umtd-plugin.php`, edit on localhost, save, remove the save path, commit updated JSON, deploy.
 
-Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path filter registered in the `plugins_loaded` callback.
+Child plugin fields load from `umtd-plugin-{client}/acf-json/` via a load path filter registered in the `plugins_loaded` callback.
 
 ### Field Groups
 
@@ -183,7 +183,7 @@ Child plugin fields load from `umt-studio-{client}/acf-json/` via a load path fi
 | `group_69b04222d0542.json` | Event Metadata | `umtd_events` |
 | `group_69b0409962f04.json` | Work Metadata  | `umtd_works`  |
 | `group_69b9919e17cbb.json` | Image Metadata | attachments   |
-| `group_69baf2308c736.json` | Piroir Roles   | `umtd_works` (child plugin) |
+| `group_69baf2308c736.json` | Client Roles   | `umtd_works` (child plugin) |
 
 ### Agent Metadata Fields
 
@@ -322,7 +322,7 @@ To find agents associated with works of a given type: `tax_query` → collect ag
 ### File Structure
 
 ```
-umt-design/
+umtd-theme/
 ├── style.css               — theme header only
 ├── functions.php           — enqueue, nav registration, theme support
 ├── header.php              — opens <html>, <head>, <body>, <header>, <main>
@@ -336,9 +336,8 @@ umt-design/
 │   └── card-event.php
 ├── templates/
 │   ├── events-archive.php
-│   ├── prints-archive.php
-│   ├── books-archive.php
-│   └── artists-archive.php
+│   ├── works-archive.php
+│   └── agents-archive.php
 └── assets/css/main.css
 ```
 
@@ -346,7 +345,7 @@ umt-design/
 
 CPT archives (`archive-umtd_*.php`) exist but are not used for primary navigation. Client nav pages are WordPress pages with custom page templates (`templates/*.php`) running their own `WP_Query`. This decouples URL structure from CPT registration.
 
-`umtd_events` has `'has_archive' => false` to prevent URL conflict with the `/evenements/` page.
+`umtd_events` has `'has_archive' => false` to prevent URL conflict with the client's events page slug.
 
 Page templates are client-specific — the base theme ships minimal stubs. Pages must be created manually in WP admin with the correct template assigned (or via `wp_insert_post()` on child plugin activation — see `ROADMAP.md`).
 
@@ -364,24 +363,19 @@ Page templates are client-specific — the base theme ships minimal stubs. Pages
 
 CPT single and archive URLs are language-prefixed via the i18n rewrite system. Page template URLs are WordPress pages with slugs set manually in WP admin — these are not language-prefixed in the current implementation. Outbound URL rewriting for nav menus is planned — see `ROADMAP.md`.
 
-The table below shows Piroir (FR primary, EN supplementary) as the concrete example.
+The table below illustrates a bilingual install with FR as the primary language and EN as supplementary.
 
 | URL | Template | Notes |
 |---|---|---|
-| `/` | `front-page.php` | Current/upcoming events |
-| `/fr/oeuvres/{slug}/` | `single-umtd_works.php` | Single work — FR canonical |
-| `/en/works/{slug}/` | `single-umtd_works.php` | Single work — EN supplementary |
-| `/fr/artistes/{slug}/` | `single-umtd_agents.php` | Single agent — FR canonical |
-| `/en/artists/{slug}/` | `single-umtd_agents.php` | Single agent — EN supplementary |
-| `/fr/evenements/{slug}/` | `single-umtd_events.php` | Single event — FR canonical |
-| `/en/events/{slug}/` | `single-umtd_events.php` | Single event — EN supplementary |
-| `/evenements/` | `templates/events-archive.php` | All events by year; current/upcoming ticker |
-| `/estampes/` | `templates/prints-archive.php` | Agents with works of type `print` |
-| `/livres/` | `templates/books-archive.php` | Agents with works of type `artist-book` |
-| `/artistes/` | `templates/artists-archive.php` | All agents, persons/orgs split |
-| `/studio/` | `page.php` | Static editorial page |
+| `/` | `front-page.php` | Homepage |
+| `/{lang}/{works-slug}/{slug}/` | `single-umtd_works.php` | Single work |
+| `/{lang}/{agents-slug}/{slug}/` | `single-umtd_agents.php` | Single agent |
+| `/{lang}/{events-slug}/{slug}/` | `single-umtd_events.php` | Single event |
+| `/{client-slug}/` | `templates/events-archive.php` | Events archive page |
+| `/{client-slug}/` | `templates/works-archive.php` | Works archive page |
+| `/{client-slug}/` | `templates/agents-archive.php` | Agents archive page |
 
-CPT archive URLs (`/fr/oeuvres/`, `/fr/artistes/`) are registered but not linked in primary nav — page template equivalents are used instead.
+CPT archive URLs (`/{lang}/{works-slug}/`, `/{lang}/{agents-slug}/`) are registered but not linked in primary nav — page template equivalents are used instead. Page slugs are client-defined.
 
 ---
 
@@ -394,3 +388,4 @@ Version defined in plugin header and as `UMTD_VERSION` constant. Semantic versio
 - `PATCH` — bugfix
 
 Stay at `0.x` until filter hooks and field keys are stable. Tag releases `git tag v0.x.x`. Child plugins should document which base version they target.
+

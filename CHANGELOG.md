@@ -28,6 +28,7 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- chore: replace all instances of umt-studio, umt-studio-child, umt-design, umt-design-child with new names in ARCHITECTURE.md, INFRASTRUCTURE.md, WORKFLOW.md, and individual plugin/theme files
 - chore: rename umt-studio → umtd-plugin, umt-design → umtd-theme, umt-studio-child → umtd-plugin-child on GitHub; update remote URLs in all local clones
 - chore: update SSM target paths in umtd-plugin-child deploy workflow to reflect new repo names
 - fix(ci): remove invalid branches key from workflow_dispatch trigger in umtd-plugin-child
