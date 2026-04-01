@@ -25,7 +25,7 @@ Week numbers are relative to contract signing (Week 0).
 These items are prerequisites for signing. No contract is issued until they are complete.
 
 - [ ] Staging environment live — `staging.{client}.umt.world`, same EC2 host, separate nginx server block, separate MariaDB database
-- [ ] EBS snapshots configured — automated daily, 7-day retention, via AWS Data Lifecycle Manager
+- [x] EBS snapshots configured — DLM policy live, daily at 03:00 UTC, 7-day retention, targets Backup=daily tag on root volume
 - [ ] PHP and MariaDB versions confirmed — local dev environment matches production (PHP 8.4, MariaDB production version)
 - [ ] Professional liability (E&O) insurance obtained
 - [ ] Limitation of liability clause confirmed in contract template
@@ -45,7 +45,7 @@ Client phase: Scoping assessment and design brief.
 - [ ] `umtd_series` taxonomy registered on `umtd_works`
 - [ ] `agent_type` ENUM column — Person, Organization, Venue
 - [ ] All templates updated — replace all remaining `get_field()` calls with `umtd_get_field()`
-- [ ] Nightly `mysqldump` → S3 — automated via cron; client-accessible from WP admin
+- [x] Nightly `mysqldump` + `pg_dump` → S3 — automated via cron at 02:00 UTC; all non-system MariaDB databases backed up dynamically; client-accessible from WP admin pending
 - [ ] Related Works field label semantics confirmed with client — on Works: series variants or related objects? On Events: works exhibited or works documented?
 - [ ] Staging environment SSL confirmed
 
@@ -165,9 +165,9 @@ The foundation. A standards-aligned archival CMS with a public-facing website, b
 
 **Infrastructure**
 - [ ] Staging environments — `staging.{client}.umt.world` pattern documented and repeatable
-- [ ] EBS snapshot automation — daily snapshots, 7-day retention, via AWS Data Lifecycle Manager; confirmed for all client installs
-- [ ] Nightly `mysqldump` → S3 — automated per-client database backup; retention policy TBD
-- [ ] Automated alerting — CloudWatch alarms for service health (nginx, PHP-FPM, MariaDB); replace logwatch with proper alerting stack
+- [x] EBS snapshot automation — DLM policy live, daily at 03:00 UTC, 7-day retention
+- [x] Nightly `mysqldump` + `pg_dump` → S3 — automated, dynamic per-client, 30-day retention
+- [x] Automated alerting — CloudWatch alarms for EC2 system recovery, instance reboot, and backup dead man's switch; SNS email alerts via umt-alerts topic
 - [ ] `wp i18n make-pot` — generated for base plugin and base theme
 - [ ] Portfolio site — case studies, methodology, public-facing product page
 
@@ -340,3 +340,4 @@ At v3.0, the umt.studio CMS reaches feature parity with Artlogic across all non-
 
 **Mobile / iOS**
 - [ ] Deferred post-v3.0. Evaluate based on client demand and revenue after v3.0. Likely addressed via mobile-optimized responsive web app rather than native development.
+

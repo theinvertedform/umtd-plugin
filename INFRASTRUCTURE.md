@@ -1,6 +1,6 @@
 # UMT Studio — Infrastructure
 
-Last updated: 2026-03-31
+Last updated: 2026-04-01
 
 ---
 
@@ -19,6 +19,20 @@ aws ssm start-session --target i-0e4757a759e2a9991
 ```
 
 PPAs: `ppa:ondrej/php` (PHP 8.4), `ppa:ondrej/nginx` (nginx 1.28.x).
+
+---
+
+## IAM
+
+Instance profile: `UMT.NET-SSM-Role`
+
+| Policy | Type | Purpose |
+|---|---|---|
+| `AmazonSSMManagedInstanceCore` | AWS managed | SSM Session Manager access |
+| `umt-backups-s3` | Inline | Read/write to `umt-backups` S3 bucket |
+| `umt-cloudwatch-metrics` | Inline | Publish custom metrics to CloudWatch |
+
+CI/CD role: `ec2-github` (`arn:aws:iam::828007040661:role/ec2-github`) — assumed via OIDC by GitHub Actions. Trust policy covers `repo:theinvertedform/*:ref:refs/heads/main`.
 
 ---
 
@@ -63,6 +77,80 @@ SMTP via AWS SES (ca-central-1). Credentials injected via `EnvironmentFile=/etc/
 ## Secrets Management
 
 Secrets are stored in `/etc/[service]/secrets.env`, injected via `EnvironmentFile` in systemd units. Files are `chmod 600`, owned by root, not in git. WordPress DB credentials live in `wp-config.php` per standard WordPress convention.
+
+---
+
+## Backup
+
+### EBS Snapshots
+
+DLM policy `policy-0fe3e664fbf0c6117` targets volumes tagged `Backup=daily`. Daily snapshot at 03:00 UTC, 7 retained. The EC2 root volume (`vol-0faa0cace0e178afd`) carries this tag. All system config files, secrets, binaries, and nginx config are covered by the EBS snapshot.
+
+DLM execution role: `AWSDataLifecycleManagerDefaultRole`.
+
+```bash
+# Check snapshot policy state
+aws dlm get-lifecycle-policies \
+  --query 'Policies[*].[PolicyId,Description,State]' \
+  --output table --region ca-central-1
+```
+
+### Database Backups
+
+Script: `/usr/local/bin/umt-backup` — chmod 755, root-owned.
+
+Runs nightly via `/etc/cron.d/umt-backup` at 02:00 UTC. Logs to `/var/log/umt-backup.log`.
+
+Behaviour:
+- Discovers all non-system MariaDB databases dynamically — no per-client configuration required. New client databases are backed up automatically on the next run.
+- Dumps each MariaDB database and the PostgreSQL `listmonk` database, compresses with gzip, uploads to S3, removes the local temp file.
+- Publishes a `BackupSuccess` metric to the `UMT/Backups` CloudWatch namespace on completion. A missing metric triggers an alert (see Monitoring & Alerting).
+
+S3 layout:
+```
+umt-backups/
+    mysql/{db}/{db}-YYYYMMDD.sql.gz
+    postgres/listmonk/listmonk-YYYYMMDD.sql.gz
+```
+
+### Backup Bucket
+
+Bucket: `umt-backups` (ca-central-1). Versioning enabled. Objects expire after 30 days. Noncurrent versions expire after 30 days. Public access blocked.
+
+```bash
+# Verify a backup ran
+aws s3 ls s3://umt-backups/mysql/ --recursive --region ca-central-1
+```
+
+---
+
+## Monitoring & Alerting
+
+SNS topic: `arn:aws:sns:ca-central-1:828007040661:umt-alerts` — email subscription confirmed.
+
+All alarms send to this topic on state change. `ok-actions` is set on the EC2 alarms so recovery is also notified.
+
+### CloudWatch Alarms
+
+| Alarm | Metric | Action |
+|---|---|---|
+| `umt-ec2-system-status` | `StatusCheckFailed_System` | EC2 recover + SNS |
+| `umt-ec2-instance-status` | `StatusCheckFailed_Instance` | EC2 reboot + SNS |
+| `umt-backup-missing` | `UMT/Backups BackupSuccess` | SNS |
+
+`umt-ec2-system-status` and `umt-ec2-instance-status` both evaluate over 2 × 60-second periods before triggering. `umt-backup-missing` uses `treat_missing_data = breaching` on a 1-hour period — fires at 03:00 UTC if no success metric was published by the 02:00 UTC cron run.
+
+```bash
+# Check alarm states
+aws cloudwatch describe-alarms \
+  --alarm-names "umt-ec2-system-status" "umt-ec2-instance-status" "umt-backup-missing" \
+  --query 'MetricAlarms[*].[AlarmName,StateValue]' \
+  --output table --region ca-central-1
+```
+
+### Recovery Behaviour
+
+A system status check failure (AWS hardware/host issue) triggers automatic instance migration to new hardware — EBS volumes, Elastic IP, and instance ID are preserved. A failed instance status check (OS-level issue) triggers a reboot. Both are automatic and require no manual intervention. If automatic recovery fails, the alarm remains in `ALARM` state and manual intervention via SSM is required.
 
 ---
 
@@ -252,18 +340,6 @@ server {
     root /var/www/{client}/htdocs;
     index index.php;
     location /.well-known/acme-challenge/ { root /var/www/certbot; }
-    location / { return 301 https://$host$request_uri; }
-}
-server {
-    listen 443 ssl;
-    server_name {clientdomain.com};
-    server_tokens off;
-    root /var/www/{client}/htdocs;
-    index index.php;
-    ssl_certificate /etc/letsencrypt/live/{clientdomain.com}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{clientdomain.com}/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
     location / { try_files $uri $uri/ /index.php?$args; }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;

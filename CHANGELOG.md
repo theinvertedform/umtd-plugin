@@ -7,6 +7,12 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### xyla.zone
+
+- chore(infra): provision xyla.zone on EC2 — MariaDB database and user, WordPress install, nginx server block, SSL via certbot
+- chore(dns): migrate xyla.zone DNS from Netlify to Cloudflare — nameservers updated in Route 53, A record → 52.60.213.8
+- docs(infra): fix client deploy process — HTTP-only nginx block first, certbot adds SSL automatically; remove premature SSL directives from step 6
+
 ### umt-studio-child (formerly umt-studio-piroir)
 
 - chore(ci): comment out on: trigger in deploy workflow — template repo must not fire on push
@@ -22,6 +28,16 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- infra: create S3 bucket umt-backups — versioning on, 30-day lifecycle, public access blocked
+- infra: attach umt-backups-s3 and umt-cloudwatch-metrics inline policies to UMT.NET-SSM-Role
+- infra: configure DLM daily EBS snapshot policy (policy-0fe3e664fbf0c6117) — 7-day retention, vol-0faa0cace0e178afd tagged Backup=daily
+- infra: add /usr/local/bin/umt-backup — dynamic mysqldump + pg_dump to S3 with pipefail and CloudWatch BackupSuccess metric
+- infra: add /etc/cron.d/umt-backup — 02:00 UTC nightly, logs to /var/log/umt-backup.log
+- infra: create SNS topic umt-alerts with confirmed email subscription
+- infra: create CloudWatch alarms umt-ec2-system-status (recover), umt-ec2-instance-status (reboot), umt-backup-missing (dead man's switch)
+- docs(infra): add IAM, Backup, and Monitoring & Alerting sections to INFRASTRUCTURE.md
+- docs(roadmap): mark EBS snapshots, nightly backup, and automated alerting complete in pre-contract checklist and v0.x Infrastructure
+- docs(infrastructure): fix client deploy process steps 6 and 7 — create HTTP-only nginx server block first, run certbot second; certbot adds SSL block and HTTPS redirect automatically; remove premature SSL directives from manual steps
 - docs(workflow): genericize WORKFLOW.md — remove piroir references, update child plugin and CI/CD instructions
 - chore(infrastructure): decommission piroir.umt.world — remove nginx config, SSL cert, MariaDB database and user, WordPress install
 - docs(infrastructure): genericize all piroir references to {client} pattern
