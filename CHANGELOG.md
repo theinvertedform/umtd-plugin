@@ -28,6 +28,19 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- feat(scripts): add local provision script at ~/.local/share/bin/provision — reads config.yml and defaults.yml, generates passwords, creates GitHub repos, scaffolds child plugin and theme, triggers remote provision via SSM
+- feat(scripts): add remote provision script at /usr/local/bin/provision-client — idempotent MariaDB, WordPress, nginx, SSL, WP-CLI activation via SSM SendCommand
+- feat(infra): add ~/studio/scripts/defaults.yml — global provisioning defaults
+- feat(infra): add ~/studio/templates/config.default.yml — documented client config template
+- chore(infra): install WP-CLI at /usr/local/bin/wp
+- chore(infra): install yq via apt
+- chore(infra): add IAM inline policy umt-ssm-parameters to UMT.NET-SSM-Role — ssm:GetParameter on /umt/clients/*
+- fix(deploy): add chown ubuntu:ubuntu before git pull in /usr/local/bin/deploy — prevents permission denied on unlink during pull
+- fix(scripts): replace --allow-root with sudo -u www-data for all WP-CLI calls in provision-client — wp-config.php chmod 640 owned by www-data not readable by root
+- fix(scripts): password generation idempotent — skip if already exists in pass
+- fix(scripts): scaffold idempotent — skip if repo default branch already exists
+- fix(scripts): clean /tmp/{repo} before scaffold to prevent git remote conflict on retry
+- fix(scripts): use defaultBranchRef check instead of pushedAt for scaffold idempotency
 - chore: replace all instances of umt-studio, umt-studio-child, umt-design, umt-design-child with new names in ARCHITECTURE.md, INFRASTRUCTURE.md, WORKFLOW.md, and individual plugin/theme files
 - chore: rename umt-studio → umtd-plugin, umt-design → umtd-theme, umt-studio-child → umtd-plugin-child on GitHub; update remote URLs in all local clones
 - chore: update SSM target paths in umtd-plugin-child deploy workflow to reflect new repo names
