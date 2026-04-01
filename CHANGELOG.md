@@ -28,6 +28,10 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- chore: rename umt-studio → umtd-plugin, umt-design → umtd-theme, umt-studio-child → umtd-plugin-child on GitHub; update remote URLs in all local clones
+- chore: update SSM target paths in umtd-plugin-child deploy workflow to reflect new repo names
+- fix(ci): remove invalid branches key from workflow_dispatch trigger in umtd-plugin-child
+- chore: initialize ~/studio as private business directory — docs, templates, accounting, scripts, clients
 - infra: create S3 bucket umt-backups — versioning on, 30-day lifecycle, public access blocked
 - infra: attach umt-backups-s3 and umt-cloudwatch-metrics inline policies to UMT.NET-SSM-Role
 - infra: configure DLM daily EBS snapshot policy (policy-0fe3e664fbf0c6117) — 7-day retention, vol-0faa0cace0e178afd tagged Backup=daily
