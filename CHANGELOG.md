@@ -28,6 +28,12 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umt-studio
 
+- infra: add 1G swapfile — prevents OOM cascade on memory pressure spikes
+- fix(monitoring): change umt-backup-missing alarm period from 3600 to 86400 — eliminates false alarms between nightly runs
+- fix(backup): replace venv aws path with /usr/local/bin/aws in umt-backup script
+- fix(logging): correct rsyslog permissions on /var/log/listmonk.log
+- chore: remove stale logwatch tmpdir /var/cache/logwatch/logwatch.wBkDOGe0
+- chore(logging): add logrotate config for /var/log/umt-backup.log
 - feat(scripts): add local provision script at ~/.local/share/bin/provision — reads config.yml and defaults.yml, generates passwords, creates GitHub repos, scaffolds child plugin and theme, triggers remote provision via SSM
 - feat(scripts): add remote provision script at /usr/local/bin/provision-client — idempotent MariaDB, WordPress, nginx, SSL, WP-CLI activation via SSM SendCommand
 - feat(infra): add ~/studio/scripts/defaults.yml — global provisioning defaults
