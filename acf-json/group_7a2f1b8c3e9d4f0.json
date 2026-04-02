@@ -1,0 +1,335 @@
+{
+  "key": "group_7a2f1b8c3e9d4f0",
+  "title": "Work: Visual Object",
+  "fields": [
+    {
+      "key": "field_7a2f1b8c3e9d001",
+      "label": "Medium",
+      "name": "medium",
+      "aria-label": "",
+      "type": "taxonomy",
+      "instructions": "VRA Core: material. Process or material category — Intaglio, Relief, Planographic, Oil, Acrylic, Bronze, etc.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "taxonomy": "umtd_medium",
+      "add_term": 1,
+      "save_terms": 0,
+      "load_terms": 0,
+      "return_format": "object",
+      "field_type": "radio",
+      "allow_null": 1,
+      "allow_in_bindings": 0,
+      "bidirectional": 0,
+      "multiple": 0,
+      "bidirectional_target": []
+    },
+    {
+      "key": "field_7a2f1b8c3e9d002",
+      "label": "Support",
+      "name": "support",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: material (type=support). E.g. canvas, paper, wood panel, aluminium.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_69b83f1baed5e",
+      "label": "Height",
+      "name": "dimensions_h",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: measurements (type=height).",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_69c41e1379a0a",
+      "label": "Width",
+      "name": "dimensions_w",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: measurements (type=width).",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d003",
+      "label": "Depth",
+      "name": "dimensions_d",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: measurements (type=depth). For sculpture and three-dimensional works.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_69c41e4d79a0b",
+      "label": "Unit",
+      "name": "dimensions_unit",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "mm": "mm",
+        "cm": "cm",
+        "in": "in"
+      },
+      "default_value": "cm",
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "allow_in_bindings": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": "",
+      "create_options": 0,
+      "save_options": 0
+    },
+    {
+      "key": "field_69b83f24aed5f",
+      "label": "Current Location",
+      "name": "current_location",
+      "aria-label": "",
+      "type": "relationship",
+      "instructions": "VRA Core: location (type=repository). Institution or venue currently holding the work.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "post_type": [
+        "umtd_agents"
+      ],
+      "post_status": "",
+      "taxonomy": "",
+      "filters": [
+        "search",
+        "post_type",
+        "taxonomy"
+      ],
+      "return_format": "object",
+      "min": "",
+      "max": 1,
+      "allow_in_bindings": 0,
+      "elements": "",
+      "bidirectional": 0,
+      "bidirectional_target": []
+    },
+    {
+      "key": "field_69b83f3caed60",
+      "label": "Accession Number",
+      "name": "accession_number",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: location refid (type=accession). Local repository identifier.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d004",
+      "label": "Inscription",
+      "name": "inscription",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "VRA Core: inscription. Transcription of any text on the object — signature, date, dedication, stamps. Note position if relevant.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "rows": 3,
+      "placeholder": "",
+      "new_lines": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d005",
+      "label": "Style / Period",
+      "name": "style_period",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: stylePeriod. AAT-aligned term — e.g. Modernist, Baroque, Abstract Expressionist.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d006",
+      "label": "Catalogue Raisonné Reference",
+      "name": "catalogue_raisonne",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: textref. Reference number in a published catalogue raisonné.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:painting"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:drawing"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:sculpture"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:photograph"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:installation"
+      }
+    ]
+  ],
+  "menu_order": 10,
+  "position": "normal",
+  "style": "seamless",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "VRA Core physical description fields for visual object work types.",
+  "show_in_rest": 0,
+  "display_title": "",
+  "modified": 1743638400
+}

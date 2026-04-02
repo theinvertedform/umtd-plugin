@@ -1,0 +1,110 @@
+{
+  "key": "group_7a2f1b8c3e9d4f1",
+  "title": "Work: Print",
+  "fields": [
+    {
+      "key": "field_7a2f1b8c3e9d010",
+      "label": "Edition Size",
+      "name": "edition_size",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "VRA Core: stateEdition. Total number of impressions in the edition.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": "",
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d011",
+      "label": "Printer's Copies",
+      "name": "printer_copies",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "VRA Core: stateEdition. Number of printer’s proofs, artist’s proofs, hors commerce, etc. outside the numbered edition.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": "",
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d012",
+      "label": "State",
+      "name": "print_state",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: stateEdition. State designation if the plate was reworked between impressions — e.g. “Second state of three”.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:print"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:photograph"
+      }
+    ]
+  ],
+  "menu_order": 20,
+  "position": "normal",
+  "style": "seamless",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "VRA Core stateEdition fields for prints and editioned photographs.",
+  "show_in_rest": 0,
+  "display_title": "",
+  "modified": 1743638400
+}

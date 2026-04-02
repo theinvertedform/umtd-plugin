@@ -1,0 +1,162 @@
+{
+  "key": "group_7a2f1b8c3e9d4f2",
+  "title": "Work: Film",
+  "fields": [
+    {
+      "key": "field_7a2f1b8c3e9d020",
+      "label": "Runtime",
+      "name": "runtime",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "VRA Core: measurements (type=duration). Runtime in minutes.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": "",
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "min",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d021",
+      "label": "Format",
+      "name": "film_format",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "VRA Core: material. Original exhibition or production format. AAT-aligned.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "35mm": "35mm",
+        "16mm": "16mm",
+        "8mm": "8mm",
+        "digital": "Digital",
+        "video": "Video",
+        "other": "Other"
+      },
+      "default_value": false,
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 1,
+      "allow_in_bindings": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": "",
+      "create_options": 0,
+      "save_options": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d022",
+      "label": "Language",
+      "name": "language",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISO 639-1 language code(s) of the original dialogue — e.g. “en”, “fr”, “fr, en”.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d023",
+      "label": "ISAN",
+      "name": "isan",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: textref. International Standard Audiovisual Number — 24 hex character identifier.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": 36,
+      "allow_in_bindings": 0,
+      "placeholder": "0000-0000-0000-0000-0000-0000-0000-0",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d024",
+      "label": "Country of Origin",
+      "name": "country_of_origin",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: culturalContext. ISO 3166-1 alpha-2 country code(s) of production — e.g. “CA”, “FR, CA”.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:film"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:video"
+      }
+    ]
+  ],
+  "menu_order": 30,
+  "position": "normal",
+  "style": "seamless",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "VRA Core and ISAN fields for film and video work types.",
+  "show_in_rest": 0,
+  "display_title": "",
+  "modified": 1743638400
+}

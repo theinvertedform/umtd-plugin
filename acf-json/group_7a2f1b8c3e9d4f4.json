@@ -1,0 +1,214 @@
+{
+  "key": "group_7a2f1b8c3e9d4f4",
+  "title": "Work: Listing",
+  "fields": [
+    {
+      "key": "field_7a2f1b8c3e9d040",
+      "label": "Address",
+      "name": "listing_address",
+      "aria-label": "",
+      "type": "textarea",
+      "instructions": "Full civic address of the property.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "rows": 3,
+      "placeholder": "",
+      "new_lines": "br"
+    },
+    {
+      "key": "field_7a2f1b8c3e9d041",
+      "label": "Tenure Type",
+      "name": "tenure_type",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "Legal basis of occupation.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "freehold": "Freehold",
+        "leasehold": "Leasehold",
+        "rental": "Rental",
+        "cooperative": "Cooperative",
+        "other": "Other"
+      },
+      "default_value": false,
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 1,
+      "allow_in_bindings": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": "",
+      "create_options": 0,
+      "save_options": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d042",
+      "label": "Listing Status",
+      "name": "listing_status",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "Current transactional status of the listing.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "active": "Active",
+        "under-offer": "Under Offer",
+        "sold": "Sold",
+        "rented": "Rented",
+        "withdrawn": "Withdrawn"
+      },
+      "default_value": "active",
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "allow_in_bindings": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": "",
+      "create_options": 0,
+      "save_options": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d043",
+      "label": "Floor Area",
+      "name": "floor_area",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "Total interior floor area.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": "",
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d044",
+      "label": "Floor Area Unit",
+      "name": "floor_area_unit",
+      "aria-label": "",
+      "type": "select",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "choices": {
+        "sqft": "sq ft",
+        "sqm": "m²"
+      },
+      "default_value": "sqft",
+      "return_format": "value",
+      "multiple": 0,
+      "allow_null": 0,
+      "allow_in_bindings": 0,
+      "ui": 0,
+      "ajax": 0,
+      "placeholder": "",
+      "create_options": 0,
+      "save_options": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d045",
+      "label": "Rooms",
+      "name": "rooms",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "Total number of rooms, excluding bathrooms.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": 0,
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d046",
+      "label": "Bathrooms",
+      "name": "bathrooms",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": 0,
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "",
+      "allow_in_bindings": 0
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:listing"
+      }
+    ]
+  ],
+  "menu_order": 50,
+  "position": "normal",
+  "style": "seamless",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "Local vocabulary fields for property listing work type.",
+  "show_in_rest": 0,
+  "display_title": "",
+  "modified": 1743638400
+}

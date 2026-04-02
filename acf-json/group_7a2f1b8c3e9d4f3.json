@@ -1,0 +1,279 @@
+{
+  "key": "group_7a2f1b8c3e9d4f3",
+  "title": "Work: Bibliographic",
+  "fields": [
+    {
+      "key": "field_7a2f1b8c3e9d030",
+      "label": "ISBN",
+      "name": "isbn",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. International Standard Book Number. ISBN-13 preferred. For books and monographs.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": 17,
+      "allow_in_bindings": 0,
+      "placeholder": "978-x-xxx-xxxxx-x",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d031",
+      "label": "ISSN",
+      "name": "issn",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. International Standard Serial Number. For articles — identifies the journal, not the article.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": 9,
+      "allow_in_bindings": 0,
+      "placeholder": "xxxx-xxxx",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d032",
+      "label": "DOI",
+      "name": "doi",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "Dublin Core: identifier. Digital Object Identifier. For articles and digital publications.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "10.xxxx/xxxxx",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d033",
+      "label": "Place of Publication",
+      "name": "place_of_publication",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. City and country of publication — e.g. “Montréal, QC”.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d034",
+      "label": "Edition",
+      "name": "edition_number",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "VRA Core: stateEdition. Edition statement as published — e.g. “2nd ed.”, “Rev. ed.”",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d035",
+      "label": "Page Count",
+      "name": "page_count",
+      "aria-label": "",
+      "type": "number",
+      "instructions": "ISBD: extent. Total pages.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "min": 1,
+      "max": "",
+      "step": 1,
+      "placeholder": "",
+      "prepend": "",
+      "append": "pp.",
+      "allow_in_bindings": 0
+    },
+    {
+      "key": "field_7a2f1b8c3e9d036",
+      "label": "Journal Title",
+      "name": "journal_title",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. Title of the journal or periodical in which the article was published. Articles only.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d037",
+      "label": "Volume",
+      "name": "volume",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. Journal volume number. Articles only.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d038",
+      "label": "Issue",
+      "name": "issue",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. Journal issue number or designation. Articles only.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "",
+      "prepend": "",
+      "append": ""
+    },
+    {
+      "key": "field_7a2f1b8c3e9d039",
+      "label": "Page Range",
+      "name": "page_range",
+      "aria-label": "",
+      "type": "text",
+      "instructions": "ISBD. Page range of the article within the journal — e.g. “pp. 45–67”.",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "default_value": "",
+      "maxlength": "",
+      "allow_in_bindings": 0,
+      "placeholder": "pp. 00–00",
+      "prepend": "",
+      "append": ""
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:books"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:monographs"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:articles"
+      }
+    ],
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "umtd_works"
+      },
+      {
+        "param": "post_taxonomy",
+        "operator": "==",
+        "value": "umtd_work_type:artist-book"
+      }
+    ]
+  ],
+  "menu_order": 40,
+  "position": "normal",
+  "style": "seamless",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "ISBD, Dublin Core, and VRA Core fields for bibliographic work types.",
+  "show_in_rest": 0,
+  "display_title": "",
+  "modified": 1743638400
+}

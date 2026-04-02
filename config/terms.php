@@ -20,20 +20,24 @@
  */
 
 return array(
-	'umtd_work_type' => array(
-		'300041273' => 'Print',
-		'300028051' => 'Artist Book',
-		'300033618' => 'Painting',
-		'300046300' => 'Photograph',
-		'300047090' => 'Sculpture',
-		'300136900' => 'Film',
-		'300033973' => 'Drawing',
-		'300047896' => 'Installation',
-		'300069200' => 'Performance',
-		'300028682' => 'Video',
+	'umtd_work_type'	=> array(
+		'300041273' =>	'Print',
+		'300123016' =>	'Artist Book',
+		'300033618' =>	'Painting',
+		'300046300' =>	'Photograph',
+		'300047090' =>	'Sculpture',
+		'300136900' =>	'Film',
+		'300033973' =>	'Drawing',
+		'300047896' =>	'Installation',
+		'300069200' =>	'Performance',
+		'300028682' =>	'Video',
+		'300028051' =>	'Books',
+		'300060417' =>	'Monographs',
+		'300048715'	=>	'Articles',
+		'local'		=>	'Listing',
 	),
 
-	'umtd_event_type' => array(
+	'umtd_event_type'	=> array(
 		'300054766'	=>	'Exhibition',
     	'300266327'	=>	'Opening',
     	'300069765'	=>	'Workshop',
@@ -43,10 +47,13 @@ return array(
 		'300112347'	=>	'Market',
 ),
 
-	'umtd_medium' => array(
-		'300041338' =>	'Intaglio',
+	'umtd_medium'	=> array(
+		'300041338'	=>	'Intaglio',
 		'300041391'	=>	'Relief',
 		'300178376'	=>	'Planographic',
+		'300263816'	=>	'35mm',
+		'300015050'	=>	'Oil',
+		'300015058'	=>	'Acrylic',
 	),
 );
 
