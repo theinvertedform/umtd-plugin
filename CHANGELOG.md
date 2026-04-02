@@ -9,11 +9,13 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### xyla.zone
 
+- feat(terms): update umtd-plugin-xyla whitelist — all xyla work types, event types, and medium terms
+- feat(acf): deactivate Piroir Roles field group on xyla.zone
 - chore(infra): provision xyla.zone on EC2 — MariaDB database and user, WordPress install, nginx server block, SSL via certbot
 - chore(dns): migrate xyla.zone DNS from Netlify to Cloudflare — nameservers updated in Route 53, A record → 52.60.213.8
 - docs(infra): fix client deploy process — HTTP-only nginx block first, certbot adds SSL automatically; remove premature SSL directives from step 6
 
-### umt-studio-child (formerly umt-studio-piroir)
+### umtd-plugin-child (formerly umt-studio-piroir)
 
 - chore(ci): comment out on: trigger in deploy workflow — template repo must not fire on push
 - chore: rename repo and plugin from piroir to child — fully generic template
@@ -22,12 +24,20 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 - chore: replace all umtd_piroir_* functions with umtd_child_*
 - feat(ci): add deploy workflow — deploys base plugin then child on push to main
 
-### umt-design
+### umtd-theme (formerly umt-design)
 
 - chore: remove deploy workflow — base theme deployed by child repo
 
-### umt-studio
+### umtd-plugin (formerly umt-studio)
 
+- feat(terms): add Books, Monographs, Articles, Listing to umtd_work_type vocabulary — AAT-aligned where applicable, local key for Listing
+- feat(terms): add 35mm, Oil, Acrylic to umtd_medium vocabulary — AAT-aligned
+- feat(acf): split Work Metadata field group — strip to universal fields only (agents, dates, description, related_works)
+- feat(acf): add Work: Visual Object field group — VRA Core material, measurements, inscription, stylePeriod, textref fields; location rules: painting, drawing, sculpture, photograph, installation
+- feat(acf): add Work: Print field group — VRA Core stateEdition fields (edition_size, printer_copies, print_state); location rules: print, photograph
+- feat(acf): add Work: Film field group — runtime, format, language, ISAN, country_of_origin; location rules: film, video
+- feat(acf): add Work: Bibliographic field group — ISBN, ISSN, DOI, place_of_publication, edition_number, page_count, journal_title, volume, issue, page_range; location rules: books, monographs, articles, artist-book
+- feat(acf): add Work: Listing field group — address, tenure_type, listing_status, floor_area, floor_area_unit, rooms, bathrooms; location rule: listing
 - infra: add 1G swapfile — prevents OOM cascade on memory pressure spikes
 - fix(monitoring): change umt-backup-missing alarm period from 3600 to 86400 — eliminates false alarms between nightly runs
 - fix(backup): replace venv aws path with /usr/local/bin/aws in umt-backup script
