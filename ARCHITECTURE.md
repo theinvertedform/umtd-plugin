@@ -110,11 +110,13 @@ Note: `slug` key is absent — slugs are owned by `config/i18n.php`.
 |---|---|---|---|
 | `umtd_work_type` | `umtd_works` | true | AAT-aligned work type vocabulary |
 | `umtd_event_type` | `umtd_events` | true | AAT-aligned event type vocabulary |
-| `umtd_medium` | `umtd_works` | false | Coarse process categories — intentionally 3 terms; children can be added |
+| `umtd_medium` | `umtd_works` | false | Process/material categories — see hung lantern below |
 
 Canonical vocabulary for all three taxonomies is in `config/terms.php` (AAT IDs as keys, display names as values). Term identity is the **name** — renaming breaks existing assignments. AAT IDs are reference metadata only.
 
 Native WordPress sidebar metaboxes for `umtd_medium` and `umtd_event_type` are suppressed in `includes/admin.php` via `admin_menu` — these taxonomies are managed through ACF fields in the main edit form. Non-hierarchical taxonomies use the `tagsdiv-{taxonomy}` metabox ID; hierarchical use `{taxonomy}div`.
+
+**Hung lantern — `umtd_medium` scope:** the current vocabulary (Intaglio, Relief, Planographic, 35mm, Oil, Acrylic) is adequate for print and painting work types but does not generalise across all work types. For film, medium means stock format; for books and articles, medium is not meaningful; for mixed-media sculpture, medium is multi-value with hierarchical specificity. A redesign splitting `umtd_medium` into separate `umtd_material` and `umtd_technique` taxonomies, or replacing it with per-type ACF select fields, is required before any multi-discipline client beyond xyla.zone is onboarded.
 
 ---
 
@@ -177,13 +179,21 @@ Child plugin fields load from `umtd-plugin-{client}/acf-json/` via a load path f
 
 ### Field Groups
 
-| File | Group | CPT |
-|---|---|---|
-| `group_69b042aeefe3b.json` | Agent Metadata | `umtd_agents` |
-| `group_69b04222d0542.json` | Event Metadata | `umtd_events` |
-| `group_69b0409962f04.json` | Work Metadata  | `umtd_works`  |
-| `group_69b9919e17cbb.json` | Image Metadata | attachments   |
-| `group_69baf2308c736.json` | Client Roles   | `umtd_works` (child plugin) |
+| File | Group | Scope | Notes |
+|---|---|---|---|
+| `group_69b042aeefe3b.json` | Agent Metadata | `umtd_agents` | All agent types |
+| `group_69b04222d0542.json` | Event Metadata | `umtd_events` | All event types |
+| `group_69b0409962f04.json` | Work Metadata | `umtd_works` | Universal fields — all work types |
+| `group_69b9919e17cbb.json` | Image Metadata | attachments | All attachments |
+| `group_work_visual_object.json` | Work: Visual Object | `umtd_works` | Painting, Drawing, Sculpture, Photograph, Installation |
+| `group_work_print.json` | Work: Print | `umtd_works` | Print, Photograph |
+| `group_work_film.json` | Work: Film | `umtd_works` | Film, Video |
+| `group_work_bibliographic.json` | Work: Bibliographic | `umtd_works` | Books, Monographs, Articles, Artist Book |
+| `group_work_listing.json` | Work: Listing | `umtd_works` | Listing |
+
+Per-type field groups use ACF location rules `post_type == umtd_works` AND `post_taxonomy == umtd_work_type:{term-slug}`. The work type must be set and the post saved before type-specific field groups appear. A planned admin UX improvement (programmatic auto-draft creation with pre-assigned term, triggered from per-type admin menu items) eliminates the two-save requirement — see ROADMAP.md.
+
+**Hung lantern — field access:** field tables below reference `get_field()` for consistency with current implementation. At v0.3.0, all field reads move to `umtd_get_field()` via the custom schema access layer. See `SCHEMA.md`.
 
 ### Agent Metadata Fields
 
@@ -209,24 +219,91 @@ Child plugin fields load from `umtd-plugin-{client}/acf-json/` via a load path f
 | `org_location` | — | text | organization | |
 | `parent_org` | — | relationship | organization | → `umtd_agents` |
 
-### Work Metadata Fields
+### Work Metadata Fields — Universal (all work types)
 
 | Field | Key | Type | Notes |
 |---|---|---|---|
-| `agent` | — | relationship | → `umtd_agents`, returns array of `WP_Post` objects |
-| `agents_artists` | — | relationship | → `umtd_agents`; interim role encoding, superseded by `umtd_work_agents` junction table. See `SCHEMA.md`. |
-| `agents_authors` | — | relationship | → `umtd_agents`; interim role encoding, superseded by `umtd_work_agents` junction table. See `SCHEMA.md`. |
-| `medium` | — | taxonomy | `umtd_medium` — Intaglio / Relief / Planographic |
+| `agents` | — | relationship | → `umtd_agents`, returns array of `WP_Post` objects |
 | `date_display` | — | text | human-readable, e.g. `ca. 1987–89` |
 | `date_earliest` | — | date picker | stored `Ymd`, returns `Y-m-d` |
 | `date_latest` | — | date picker | stored `Ymd`, returns `Y-m-d` |
-| `dimensions_h` | — | number | height in `dimensions_unit` |
-| `dimensions_w` | — | number | width in `dimensions_unit` |
-| `dimensions_unit` | — | select | cm (default) / mm / in |
 | `description` | — | textarea | |
-| `related_works` | — | relationship | → `umtd_works`; explicit object-to-object relations (`isDerivedFrom`, `isDocumentedBy`) planned via `umtd_work_relations`. See `SCHEMA.md`. |
-| `current_location` | — | relationship | → `umtd_agents` |
-| `accession_number` | — | text | |
+| `related_works` | — | relationship | → `umtd_works`; explicit object-to-object relations planned via `umtd_work_relations`. See `SCHEMA.md`. |
+
+Agent roles (artist, author, director, publisher, etc.) are differentiated via `umtd_roles` — not separate relationship fields. The interim `agents_artists` / `agents_authors` fields are removed; role differentiation is handled by the `umtd_work_agents` junction table at v0.3.0. See `SCHEMA.md`.
+
+**Hung lantern — agent field filtering:** the `agents` relationship field currently shows all agents regardless of work type. A planned `acf/fields/relationship/query` filter will restrict visible agents by role, keyed to a work-type → permitted-roles mapping in the base plugin config. Deferred.
+
+### Work Metadata Fields — Visual Object (Painting, Drawing, Sculpture, Photograph, Installation)
+
+VRA Core elements: `material`, `measurements`, `inscription`, `stylePeriod`, `textref`, `location`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `medium` | taxonomy | `umtd_medium` — VRA Core `material` |
+| `support` | text | VRA Core `material` (type=support) — e.g. canvas, paper, wood panel |
+| `dimensions_h` | text | VRA Core `measurements` (type=height) |
+| `dimensions_w` | text | VRA Core `measurements` (type=width) |
+| `dimensions_d` | text | VRA Core `measurements` (type=depth) — sculpture and 3D works |
+| `dimensions_unit` | select | cm (default) / mm / in |
+| `current_location` | relationship | → `umtd_agents`; VRA Core `location` (type=repository) |
+| `accession_number` | text | VRA Core `location` refid (type=accession) |
+| `inscription` | textarea | VRA Core `inscription` — transcription of text on the object |
+| `style_period` | text | VRA Core `stylePeriod` — AAT-aligned |
+| `catalogue_raisonne` | text | VRA Core `textref` — catalogue raisonné reference number |
+
+### Work Metadata Fields — Print (Print, Photograph)
+
+VRA Core element: `stateEdition`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `edition_size` | number | VRA Core `stateEdition` — total impressions in edition |
+| `printer_copies` | number | VRA Core `stateEdition` — proofs outside numbered edition (AP, HC, etc.) |
+| `print_state` | text | VRA Core `stateEdition` — state designation if plate reworked between impressions |
+
+### Work Metadata Fields — Film (Film, Video)
+
+VRA Core elements: `measurements` (type=duration), `material`, `culturalContext`, `textref`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `runtime` | number | VRA Core `measurements` (type=duration) — minutes |
+| `film_format` | select | VRA Core `material` — 35mm / 16mm / 8mm / Digital / Video / Other |
+| `language` | text | ISO 639-1 language code(s) of original dialogue |
+| `isan` | text | VRA Core `textref` — International Standard Audiovisual Number |
+| `country_of_origin` | text | VRA Core `culturalContext` — ISO 3166-1 alpha-2 |
+
+### Work Metadata Fields — Bibliographic (Books, Monographs, Articles, Artist Book)
+
+Standards: ISBD, Dublin Core, VRA Core `stateEdition`, `textref`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `isbn` | text | ISBD — ISBN-13 preferred. Books and monographs. |
+| `issn` | text | ISBD — identifies the journal. Articles. |
+| `doi` | text | Dublin Core `identifier` — articles and digital publications |
+| `place_of_publication` | text | ISBD |
+| `edition_number` | text | VRA Core `stateEdition` — edition statement as published |
+| `page_count` | number | ISBD `extent` |
+| `journal_title` | text | ISBD — journal or periodical. Articles only. |
+| `volume` | text | ISBD — journal volume. Articles only. |
+| `issue` | text | ISBD — journal issue. Articles only. |
+| `page_range` | text | ISBD — article page range, e.g. `pp. 45–67`. Articles only. |
+
+### Work Metadata Fields — Listing
+
+Local vocabulary. No external standard covers transactional real estate listing fields.
+
+| Field | Type | Notes |
+|---|---|---|
+| `listing_address` | textarea | Full civic address |
+| `tenure_type` | select | Freehold / Leasehold / Rental / Cooperative / Other |
+| `listing_status` | select | Active / Under Offer / Sold / Rented / Withdrawn |
+| `floor_area` | number | Total interior floor area |
+| `floor_area_unit` | select | sq ft / m² |
+| `rooms` | number | Total rooms excluding bathrooms |
+| `bathrooms` | number | |
 
 ### Event Metadata Fields
 
@@ -277,27 +354,32 @@ ACF date pickers store as `Ymd` VARCHAR. `get_field()` returns `Y-m-d` per ACF f
 
 ### Entity Types
 
-| CPT | FRBR Equivalent | Schema.org Type |
-|---|---|---|
-| `umtd_works` | Work | `VisualArtwork` |
-| `umtd_agents` | Person/Corporate Body | `Person` / `Organization` |
-| `umtd_events` | Event | `ExhibitionEvent` |
+| CPT | FRBR Equivalent | Schema.org Type | Notes |
+|---|---|---|---|
+| `umtd_works` | Work | `CreativeWork` / `VisualArtwork` | Schema.org type varies by `umtd_work_type` — see `schema.php` |
+| `umtd_agents` | Person/Corporate Body | `Person` / `Organization` | |
+| `umtd_events` | Event | `ExhibitionEvent` | |
+| `post` (native) | Work | `Article` | Editorial / magazine posts. Multi-author via agent relationship field. Kept separate from `umtd_works` in admin UI. |
+
+**Note on schema.org alignment:** schema.org's `CreativeWork` is a flat unified model; FRBR's WEMI hierarchy is structurally incompatible with it. Our schema.org JSON-LD output is a deliberate lossy projection of the FRBR-aligned internal model — a `umtd_works` record may represent a Work, Expression, or Manifestation depending on context. This is intentional and consistent with how schema.org is used across the web. The internal data model is FRBR-aligned; the serialization for search engines and linked data consumers is schema.org. These are separate concerns.
 
 ### Work–Agent Relationship
 
-Works relate to Agents via the `agent` ACF relationship field, stored as a serialized PHP array of post IDs in `wp_postmeta`. `get_field('agent')` returns an array of `WP_Post` objects.
+Works relate to Agents via the `agents` ACF relationship field, stored as a serialized PHP array of post IDs in `wp_postmeta`. `get_field('agents')` returns an array of `WP_Post` objects.
 
 Query works by agent:
 
 ```php
 array(
-    'key'     => 'agent',
+    'key'     => 'agents',
     'value'   => '"' . $agent_id . '"',
     'compare' => 'LIKE',
 )
 ```
 
-This query pattern is appropriate for the current collection size. The custom database schema replaces it with a normalized `umtd_work_agents` junction table (`work_id | agent_id | role_id`), which supports indexed relational queries and role-differentiated agent credits. Agent role is currently encoded in the interim `agents_artists` / `agents_authors` fields; these are superseded by the junction table. See `SCHEMA.md` and `ROADMAP.md`.
+This query pattern is appropriate for the current collection size. The custom database schema replaces it with a normalized `umtd_work_agents` junction table (`work_id | agent_id | role_id`), which supports indexed relational queries and role-differentiated agent credits. See `SCHEMA.md` and `ROADMAP.md`.
+
+**Hung lantern — native post authorship:** `umtd_work_agents` is keyed to `umtd_works.id`. When the custom schema lands at v0.3.0, native WordPress `post` multi-authorship (magazine/editorial) will require either a parallel `umtd_post_agents` table or an `entity_type` discriminator column on `umtd_work_agents`. Resolution deferred to v0.3.0 schema design.
 
 ### Taxonomy Queries
 
@@ -311,7 +393,7 @@ array(
 )
 ```
 
-To find agents associated with works of a given type: `tax_query` → collect agent IDs via `get_field('agent', $work_id)` → second query with `post__in`. This two-query pattern is used with the current postmeta storage model. The custom schema replaces it with a direct JOIN on `umtd_work_agents`. See `SCHEMA.md`.
+To find agents associated with works of a given type: `tax_query` → collect agent IDs via `get_field('agents', $work_id)` → second query with `post__in`. This two-query pattern is used with the current postmeta storage model. The custom schema replaces it with a direct JOIN on `umtd_work_agents`. See `SCHEMA.md`.
 
 `umtd_medium` and `umtd_event_type` are standard WordPress taxonomies — queryable directly via `tax_query` with no serialization issues.
 

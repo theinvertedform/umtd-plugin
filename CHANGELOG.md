@@ -7,6 +7,44 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### umtd-plugin
+
+- docs(roadmap): update current status — v0.2.x, xyla.zone active, umtd script operational
+- docs(roadmap): add umtd_roles expansion, umtd_medium redesign to v0.x
+- docs(roadmap): add index page, magazine templates, Work type singles to v0.x
+- docs(roadmap): add contact form section to v0.x — wp_mail() only, no CPT
+- docs(roadmap): add consolidated admin menu and per-type Add Work items to v0.x
+- docs(roadmap): update provisioning item — umtd/umtd-remote, local dev automated
+- docs(roadmap): add WooCommerce CRM hook to v1.0
+- docs(roadmap): add note to v3.0 inquiry tracking — v0.x form is deliberate placeholder
+- docs(roadmap): add per-type extension tables to Weeks 1–2 schema tasks
+- docs(schema): update revision date
+- docs(schema): add hung lantern — umtd_works per-type extension tables needed at v0.3.0
+- docs(schema): add hung lantern — umtd_work_agents native post authorship resolution deferred to v0.3.0
+- docs(schema): add hung lantern — umtd_roles seed data expansion required before film/bibliographic data entry
+- docs(schema): update taxonomy table — expanded umtd_work_type vocabulary, umtd_medium scope note
+- docs(schema): add deferred section — per-type extension tables with field lists
+- feat(terms): add Books, Monographs, Articles, Listing to umtd_work_type vocabulary — AAT-aligned where applicable, local key for Listing
+- feat(terms): add 35mm, Oil, Acrylic to umtd_medium vocabulary — AAT-aligned
+- feat(acf): split Work Metadata field group — strip to 6 universal fields (agents, date_earliest, date_latest, date_display, description, related_works)
+- feat(acf): add Work: Visual Object field group — VRA Core material, measurements, inscription, stylePeriod, textref; location rules: painting, drawing, sculpture, photograph, installation
+- feat(acf): add Work: Print field group — VRA Core stateEdition fields; location rules: print, photograph
+- feat(acf): add Work: Film field group — VRA Core/ISAN fields; location rules: film, video
+- feat(acf): add Work: Bibliographic field group — ISBD/Dublin Core fields; location rules: books, monographs, articles, artist-book
+- feat(acf): add Work: Listing field group — local vocabulary fields; location rule: listing
+- docs(architecture): update field group table — five new per-type groups documented
+- docs(architecture): update Work Metadata field table — universal fields only
+- docs(architecture): add hung lantern — umtd_medium scope inadequate for multi-type clients
+- docs(architecture): add hung lantern — native post authorship requires umtd_post_agents or entity_type discriminator at v0.3.0
+- docs(architecture): add hung lantern — agent field filtering by work type deferred
+- docs(architecture): add note on schema.org/FRBR relationship — intentional lossy projection
+- docs(architecture): add native post CPT row to entity types table
+
+### umtd-plugin-xyla
+
+- feat(terms): update whitelist — all xyla work types (14 terms), event types, and medium terms
+- chore(acf): deactivate Piroir Roles field group
+
 ### umtd (provisioning repo — new)
 
 - fix(scripts): add chown -R \$USER after each local repo clone — prevents git dubious ownership warnings

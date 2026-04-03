@@ -1,7 +1,7 @@
 # UMT Studio — Database Schema
 
 Version: 0.3.0-planned
-Last revised: 2026-03-26
+Last revised: 2026-04-03
 
 This document defines the custom database schema that replaces WordPress postmeta as the primary data store for all umt.studio CPT data. It is the reference for implementation of `umtd_register_tables()`, `umtd_get_field()`, and all `acf/save_post` intercept hooks.
 
@@ -67,6 +67,8 @@ CREATE TABLE umtd_works (
 Translatable fields stored in `umtd_translations`: `title`, `description`.
 
 `medium` and `work_type` are WordPress taxonomies (`umtd_medium`, `umtd_work_type`) — not columns. Series membership is the `umtd_series` taxonomy.
+
+**Hung lantern — per-type columns:** the current `umtd_works` table captures fields common to visual works (dimensions, edition size). Fields added in the v0.2.x ACF field groups for film (runtime, format, ISAN), bibliographic works (ISBN, ISSN, DOI, page count, journal metadata), and listings (address, tenure type, floor area) are stored in ACF postmeta until v0.3.0. At v0.3.0, these fields need either additional columns on `umtd_works` or typed extension tables (`umtd_works_film`, `umtd_works_bibliographic`, `umtd_works_listing`). The extension table pattern is preferred — it keeps `umtd_works` narrow and avoids sparse columns. Resolution deferred to v0.3.0 schema design.
 
 ### `umtd_agents`
 
@@ -142,6 +144,8 @@ CREATE TABLE umtd_work_agents (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
+**Hung lantern — native post authorship:** `umtd_work_agents` is keyed to `umtd_works.id` and covers only `umtd_works` CPT records. The platform now supports editorial/magazine content via the native WordPress `post` CPT with multi-author via agent relationship field. At v0.3.0, native post authorship requires one of: (a) a parallel `umtd_post_agents` table with identical structure but `post_id` FK instead of `work_id`; or (b) an `entity_type` discriminator column on `umtd_work_agents` (`entity_type ENUM('work','post')`, with `work_id` renamed to `entity_id`). Option (b) is more general but requires a migration. Resolution deferred to v0.3.0 schema design.
+
 ### `umtd_event_agents`
 
 ```sql
@@ -190,7 +194,7 @@ Vocabulary tables replace ACF select/radio fields for any value that requires a 
 
 ### `umtd_roles`
 
-Agent roles within Works and Events (artist, author, printer, publisher, photographer, curator, etc.).
+Agent roles within Works and Events.
 
 ```sql
 CREATE TABLE umtd_roles (
@@ -204,6 +208,8 @@ CREATE TABLE umtd_roles (
 ```
 
 Seeded on activation via `umtd_seed_roles()`. Child plugins extend via `umtd_roles` filter, same pattern as `umtd_terms`.
+
+**Hung lantern — roles seed data expansion:** the current seed data covers print and visual art roles (artist, printer, publisher, photographer, curator). The expanded work type vocabulary added in v0.2.x requires additional roles: `director`, `cinematographer`, `cast`, `producer`, `screenwriter` (Film/Video); `author`, `editor`, `translator`, `illustrator` (Bibliographic); `distributor` (Film). These must be added to `umtd_seed_roles()` before any film or bibliographic data entry on any client install. Not yet implemented.
 
 ### `umtd_view_types`
 
@@ -248,10 +254,10 @@ These remain as WordPress taxonomies registered in `config/taxonomies.php`. They
 
 | Taxonomy | CPT | Notes |
 |---|---|---|
-| `umtd_work_type` | `umtd_works` | Print, Artist Book, etc. AAT-aligned. |
-| `umtd_medium` | `umtd_works` | Intaglio, Relief, Planographic. AAT-aligned. |
+| `umtd_work_type` | `umtd_works` | Print, Artist Book, Painting, Sculpture, Film, Drawing, Installation, Performance, Video, Photograph, Books, Monographs, Articles, Listing. AAT-aligned where applicable; `local` key for Listing. |
+| `umtd_medium` | `umtd_works` | Intaglio, Relief, Planographic, 35mm, Oil, Acrylic. AAT-aligned. See hung lantern in ARCHITECTURE.md — scope is inadequate for multi-type clients. |
 | `umtd_series` | `umtd_works` | Semantic grouping declared by artist. No AAT alignment required. |
-| `umtd_event_type` | `umtd_events` | Exhibition, Opening, Workshop, etc. |
+| `umtd_event_type` | `umtd_events` | Exhibition, Opening, Workshop, Performance, Premiere, Fair, Market. |
 
 ---
 
@@ -306,4 +312,16 @@ CREATE TABLE umtd_items (
 ## Deferred — Work Relations
 
 A `umtd_work_relations` junction table for explicit object-to-object relationships (isDerivedFrom, isDocumentedBy) is deferred until a client archive requires it. Series membership is currently handled by the `umtd_series` taxonomy, which is sufficient for Piroir.
+
+---
+
+## Deferred — Per-type Extension Tables
+
+Fields specific to film, bibliographic, and listing work types are stored in ACF postmeta until v0.3.0. At that point, typed extension tables are preferred over sparse columns on `umtd_works`:
+
+- `umtd_works_film` — runtime, format, language, ISAN, country_of_origin
+- `umtd_works_bibliographic` — isbn, issn, doi, place_of_publication, edition_number, page_count, journal_title, volume, issue, page_range
+- `umtd_works_listing` — address, tenure_type, listing_status, floor_area, floor_area_unit, rooms, bathrooms
+
+Each extension table carries a `work_id` FK → `umtd_works.id` and a one-to-one relationship enforced by a `UNIQUE KEY work_id`. Visual object fields (support, dimensions_d, inscription, style_period, catalogue_raisonne) and print fields (print_state) follow the same pattern. The base `umtd_works` table remains narrow — only fields universal to all work types.
 
