@@ -7,6 +7,77 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### umtd (provisioning repo — new)
+
+- fix(scripts): add chown -R \$USER after each local repo clone — prevents git dubious ownership warnings
+- feat(scripts): initialize ~/umtd as tracked private GitHub repo theinvertedform/umtd — scripts, templates, client configs, docs
+- feat(ci): add GitHub Actions deploy workflow — uploads umtd-remote and templates to S3, triggers umtd-deploy on EC2 via SSM
+- feat(infra): add umtd-deploy at /usr/local/bin/umtd-remote — pulls scripts and templates from S3, installs to target paths, cleans up
+- feat(infra): bootstrap umtd-deploy to EC2 manually via umt-temp-transfer
+- chore(iam): add s3:PutObject, s3:DeleteObject on umt-temp-transfer/deploy/* and s3:ListBucket scoped to deploy/ prefix to GitHubActionsSSMDeploy policy on ec2-github role
+
+### umtd (local provision script — formerly provision)
+
+- chore: rename provision → umtd, symlink ~/.local/bin/umtd → ~/umtd/scripts/umtd
+- feat(scripts): extract all heredocs to template files in ~/umtd/templates/ — rendered via envsubst with explicit substitution lists
+- refactor(scripts): add require_field helper — collapses repeated yq_get + empty check + error + exit pattern
+- refactor(scripts): compute PLUGIN_FUNC and THEME_FUNC explicitly for use in templates
+- refactor(scripts): move IAM ARN from hardcoded to defaults.yml as iam_role_arn
+- refactor(scripts): replace local_wp_content in defaults.yml with local_wp_root — derive per-client LOCAL_DOMAIN from CLIENT_ID (strips TLD), LOCAL_WEBROOT from LOCAL_WP_ROOT
+- refactor(scripts): replace ACTIVE_LANGS paste pipeline with yq join
+- refactor(scripts): remove redundant inner gh repo view check from scaffold blocks
+- refactor(scripts): replace cd ~ with subshells for git operations
+- refactor(scripts): replace mysql with mariadb — retrieve root password from pass via local_db_root_pass_key in defaults.yml
+- refactor(scripts): add --skip-check to wp config create — avoids DB connection before MariaDB is provisioned
+- refactor(scripts): reorder sections — WP download → wp-config → MariaDB → WP install → clone repos → activate
+- feat(scripts): add -y flag for non-interactive invocation
+- feat(scripts): add trap ERR — prints script name and line number on failure
+- feat(scripts): add sleep 2 after gh repo create — prevents push timing race
+- feat(scripts): generate config/terms.php dynamically from work_type_whitelist in config.yml
+- feat(scripts): add local WordPress download, wp-config.php, MariaDB DB and user, WP core install
+- feat(scripts): add base repo clone check before activation
+- feat(scripts): add child repo clone with chown before clone
+- feat(scripts): add local nginx config generation from nginx-local.conf.tpl
+- feat(scripts): add local /etc/hosts entry
+- feat(scripts): pass WP_ADMIN_USER and WP_ADMIN_EMAIL to umtd-remote as args 5 and 6
+- fix(scripts): update SSM call — umtd-remote replaces provision-client
+
+### umtd-remote (formerly provision-client)
+
+- chore: rename provision-client → umtd-remote at /usr/local/bin/umtd-remote
+- feat(scripts): accept WP_ADMIN_USER and WP_ADMIN_EMAIL as args 5 and 6 — replace hardcoded values
+- chore(scripts): normalize indentation to tabs
+
+### umtd templates (new)
+
+- feat(templates): add plugin.php.tpl — child plugin entrypoint
+- feat(templates): add plugin-deploy.yml.tpl — child plugin GitHub Actions deploy workflow
+- feat(templates): add theme-style.css.tpl — child theme style.css
+- feat(templates): add theme-functions.php.tpl — child theme functions.php; dependency handle umtd-theme
+- feat(templates): add theme-deploy.yml.tpl — child theme GitHub Actions deploy workflow
+- feat(templates): add nginx-local.conf.tpl — local nginx site config; TCP fastcgi 127.0.0.1:9000, no Ubuntu snippets dependency
+
+### umtd-theme
+
+- refactor: rename umt-design → umtd-theme and umt_design → umtd_theme throughout — functions.php, style.css, header.php, all template and archive files
+
+### docs
+
+- docs(infrastructure): update last-updated date to 2026-04-03
+- docs(infrastructure): add GitHubActionsSSMDeploy policy detail to IAM section
+- docs(infrastructure): add Local Development Environment section — directory structure, OpenRC services, nginx fastcgi config, /etc/hosts, WP-CLI config, local secrets
+- docs(infrastructure): update Provisioning section — rename scripts, expand local script description, add -y flag, update config paths to ~/umtd/
+- docs(infrastructure): add Provisioning Scripts and Templates section — ~/umtd/ repo structure, template list, EC2 install paths, umtd-deploy bootstrap instructions
+- docs(infrastructure): update CI/CD Repos table — add theinvertedform/umtd, remove umtd-plugin-child template entry
+- docs(infrastructure): update deploy workflow template reference — umtd replaces provision
+- docs(infrastructure): update File Transfer section — note deploy/ prefix reservation
+- docs(infrastructure): update Database Import — mysql → mariadb
+- docs(workflow): update Provisioning section — umtd replaces provision, ~/umtd/ replaces ~/studio/, add -y flag, expand local provisioning description
+- docs(workflow): update After Provisioning — note ACF required on both local and remote
+- docs(workflow): split Verify checklist into Remote and Local sections
+- docs(workflow): update Child Plugin terms.php section — generated from work_type_whitelist in config.yml, edit in child plugin post-provisioning
+- docs(workflow): replace provision references with umtd throughout
+
 ### xyla.zone
 
 - feat(terms): update umtd-plugin-xyla whitelist — all xyla work types, event types, and medium terms
