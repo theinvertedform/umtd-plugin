@@ -9,6 +9,15 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- feat(schema): implement umtd_register_tables() — dbDelta() via config/tables.php, umtd_schema_tables filter
+- feat(schema): add config/tables.php — full schema: vocabulary, entity, junction, translation tables
+- feat(schema): add config/roles.php — agent roles vocabulary, en/fr labels, umtd_roles filter
+- feat(schema): add config/view-types.php — view types vocabulary, en/fr labels, umtd_view_types filter
+- feat(schema): add umtd_seed_roles(), umtd_seed_view_types() — vocabulary seed on activation
+- feat(schema): add umtd_seed_vocabulary() — shared seed logic for vocabulary tables
+- feat(db): add includes/db.php — umtd_get_field(), umtd_get_work_agents(), umtd_get_event_works()
+- chore(ci): add workflow_dispatch to umtd-plugin-xyla deploy workflow
+- fix(dev): symlink xyla.local umtd-plugin and umtd-theme to localhost base plugin checkouts
 - feat(schema): add umtd_register_tables() — dbDelta() for all custom tables via config/tables.php; umtd_schema_tables filter for child plugin subset
 - feat(schema): add umtd_seed_vocabulary() — shared seed logic for vocabulary tables
 - feat(config): add config/tables.php — full schema definition: vocabulary, entity, junction, translation tables
