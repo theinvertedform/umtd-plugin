@@ -221,6 +221,99 @@ function umtd_register_taxonomies() {
 }
 
 /**
+ * Register custom tables via dbDelta().
+ *
+ * Called on activation and plugins_loaded — dbDelta() is idempotent and
+ * handles column additions on upgrade without data loss.
+ *
+ * Tables are filtered via umtd_schema_tables. Child plugins may remove
+ * tables irrelevant to their client. Base default: all tables.
+ *
+ * @global wpdb $wpdb
+ */
+function umtd_register_tables() {
+    global $wpdb;
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    $charset     = $wpdb->get_charset_collate();
+    $definitions = apply_filters( 'umtd_schema_tables', require UMTD_PATH . 'config/tables.php' );
+    foreach ( $definitions as $sql ) {
+        dbDelta( $sql );
+    }
+}
+add_action( 'plugins_loaded', 'umtd_register_tables' );
+
+/**
+ * Seed the agent roles vocabulary into umtd_roles.
+ *
+ * Reads from config/roles.php — slug as key, language codes as nested keys.
+ * Skips rows where the slug already exists; safe to re-run on reactivation
+ *umtd-plugin.ph or upgrade without clobbering edited labels.
+ *
+ * Child plugins extend the vocabulary via the umtd_roles filter, using the
+ * same array shape. New slugs are inserted; existing slugs are never updated
+ * by this function — to correct a label, update the row directly or add a
+ * dedicated migration.
+ *
+ * Called from umtd_activate() after umtd_register_tables() — table must
+ * exist before insert.
+ *
+ * @global wpdb $wpdb
+ * @see config/roles.php
+ * @see umtd_register_tables()
+ */
+
+function umtd_seed_roles() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'umtd_roles';
+    $roles = apply_filters( 'umtd_roles', require UMTD_PATH . 'config/roles.php' );
+
+    foreach ( $roles as $slug => $labels ) {
+        if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE slug = %s", $slug ) ) ) {
+            $wpdb->insert( $table, array(
+                'slug'     => $slug,
+                'label_en' => $labels['en'],
+                'label_fr' => $labels['fr'] ?? null,
+            ), array( '%s', '%s', '%s' ) );
+        }
+    }
+}
+
+/**
+ * Seed the view types vocabulary into umtd_view_types.
+ *
+ * Reads from config/view-types.php — slug as key, language codes as nested keys.
+ * Skips rows where the slug already exists; safe to re-run on reactivation
+ * or upgrade without clobbering edited labels.
+ *
+ * Child plugins extend the vocabulary via the umtd_view_types filter, using the
+ * same array shape. New slugs are inserted; existing slugs are never updated
+ * by this function — to correct a label, update the row directly or add a
+ * dedicated migration.
+ *
+ * Called from umtd_activate() after umtd_register_tables() — table must
+ * exist before insert.
+ *
+ * @global wpdb $wpdb
+ * @see config/view-types.php
+ * @see umtd_register_tables()
+ */
+function umtd_seed_view_types() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'umtd_view_types';
+    $view_types = apply_filters( 'umtd_view_types', require UMTD_PATH . 'config/view-types.php' );
+
+    foreach ( $view_types as $slug => $labels ) {
+        if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE slug = %s", $slug ) ) ) {
+            $wpdb->insert( $table, array(
+                'slug'     => $slug,
+                'label_en' => $labels['en'],
+                'label_fr' => $labels['fr'] ?? null,
+            ), array( '%s', '%s', '%s' ) );
+        }
+    }
+}
+
+/**
  * Plugin activation hook.
  *
  * Registers CPTs and taxonomies before flush_rewrite_rules() so WordPress can
@@ -238,8 +331,11 @@ register_activation_hook( __FILE__, 'umtd_activate' );
 
 function umtd_activate() {
     umtd_register_post_types();
-    umtd_register_taxonomies();
-    umtd_seed_terms();
+	umtd_register_taxonomies();
+	umtd_register_tables();
+	umtd_seed_terms();
+	umtd_seed_roles();
+	umtd_seed_view_types();
     flush_rewrite_rules();
 }
 
@@ -293,3 +389,6 @@ require_once UMTD_PATH . 'includes/schema.php';
 
 // Agent name sync (post title from ACF name fields) and admin script enqueue.
 require_once UMTD_PATH . 'includes/admin.php';
+
+// Custom database function
+require_once UMTD_PATH . 'includes/db.php';

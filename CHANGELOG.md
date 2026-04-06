@@ -9,6 +9,17 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- feat(schema): add umtd_register_tables() — dbDelta() for all custom tables via config/tables.php; umtd_schema_tables filter for child plugin subset
+- feat(schema): add umtd_seed_vocabulary() — shared seed logic for vocabulary tables
+- feat(config): add config/tables.php — full schema definition: vocabulary, entity, junction, translation tables
+- feat(schema): add umtd_works, umtd_agents, umtd_events entity tables
+- feat(schema): add umtd_work_agents, umtd_event_agents, umtd_event_works, umtd_work_media junction tables
+- feat(schema): add umtd_translations table
+- feat(schema): add umtd_view_types custom table — seeded from config/view-types.php on activation
+- feat(config): add config/view-types.php — slug-keyed view types vocabulary with en/fr labels; extensible via umtd_view_types filter
+- feat(schema): add umtd_roles custom table — dbDelta via umtd_register_tables(), umtd_schema_tables filter for child plugin subset
+- feat(schema): add umtd_seed_roles() — seeds agent roles vocabulary from config/roles.php on activation
+- feat(config): add config/roles.php — slug-keyed roles vocabulary with en/fr labels; extensible via umtd_roles filter
 - docs(roadmap): update current status — v0.2.x, xyla.zone active, umtd script operational
 - docs(roadmap): add umtd_roles expansion, umtd_medium redesign to v0.x
 - docs(roadmap): add index page, magazine templates, Work type singles to v0.x
