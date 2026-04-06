@@ -2,7 +2,7 @@
 
 ## Overview
 
-White-label WordPress CMS for cultural heritage archive clients. Base plugin + base theme pair, extended per client via child plugin + child theme. Manages Works, Agents, Images, and Events as interrelated archival entities aligned with FRBR.
+White-label WordPress CMS for cultural heritage and commercial archive clients. Base plugin + base theme pair, extended per client via child plugin + child theme. Manages Works, Agents, Images, and Events as interrelated archival entities aligned with FRBR.
 
 ---
 
