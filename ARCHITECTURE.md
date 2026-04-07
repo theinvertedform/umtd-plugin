@@ -397,15 +397,22 @@ $agents = umtd_get_work_agents( $post_id ); // returns array of stdClass with ag
 Query all works for an agent:
 
 ```php
-global $wpdb;
-$work_post_ids = $wpdb->get_col( $wpdb->prepare(
-    "SELECT w.post_id
-     FROM {$wpdb->prefix}umtd_work_agents wa
-     JOIN {$wpdb->prefix}umtd_works w ON w.id = wa.work_id
-     WHERE wa.agent_id = %d
-     ORDER BY wa.sort_order ASC",
-    umtd_get_agent_id( $agent_post_id )
-) );
+$work_post_ids = umtd_get_agent_works( $agent_post_id ); // returns array of post IDs
+```
+
+Query agents associated with works of a given type, optionally filtered by role:
+
+```php
+$agent_ids = umtd_get_agents_by_work_type( 'film' );            // all agents on Film works
+$agent_ids = umtd_get_agents_by_work_type( 'books', 'author' ); // authors on Books works
+```
+
+**Entity data functions** — `includes/db.php` provides high-level functions that fetch all scalar fields for an entity as a keyed array. Templates call these once at the top of the template and pass the result to parts via `$args`. No `get_field()` calls in template or part files:
+
+```php
+$work  = umtd_get_work( $post_id );   // all work fields; per-type fields via get_field() fallback
+$agent = umtd_get_agent( $post_id );  // all agent fields; works list separate via umtd_get_agent_works()
+$event = umtd_get_event( $post_id );  // all event scalar fields; relational fields fetched separately
 ```
 
 The old postmeta `LIKE` query pattern (`key => 'agents', compare => 'LIKE'`) is retired. No postmeta is written for agent relationships.
@@ -424,7 +431,7 @@ array(
 )
 ```
 
-To find agents associated with works of a given type: `tax_query` → collect work post IDs → query `umtd_work_agents` JOIN `umtd_agents` for those work IDs. This replaces the old two-query postmeta pattern.
+To find agents associated with works of a given type, use `umtd_get_agents_by_work_type()` — one JOIN query replaces the old two-query postmeta pattern. See Work–Agent Relationship above.
 
 `umtd_medium` and `umtd_event_type` are standard WordPress taxonomies — queryable directly via `tax_query` with no serialization issues.
 
@@ -444,13 +451,21 @@ umtd-theme/
 ├── archive-umtd_works.php / archive-umtd_agents.php / archive-umtd_events.php
 ├── single-umtd_works.php / single-umtd_agents.php / single-umtd_events.php
 ├── parts/
-│   ├── card-work.php
-│   ├── card-agent.php
-│   └── card-event.php
+│   ├── card-work.php       — receives $args['work'], $args['agents']
+│   ├── card-agent.php      — receives $args['agent']
+│   ├── card-event.php      — receives $args['event'], $args['organizers']
+│   └── work-type/
+│       ├── film.php        — Film/Video metadata partial
+│       ├── print.php       — Print metadata partial (stub)
+│       ├── book.php        — Bibliographic metadata partial (stub)
+│       ├── visual-object.php — Visual Object metadata partial (stub)
+│       └── listing.php     — Listing metadata partial (stub)
 ├── templates/
 │   ├── events-archive.php
 │   ├── works-archive.php
-│   └── agents-archive.php
+│   ├── artists-archive.php
+│   ├── prints-archive.php
+│   └── books-archive.php
 └── assets/css/main.css
 ```
 
@@ -515,3 +530,4 @@ Version defined in plugin header and as `UMTD_VERSION` constant. Semantic versio
 - `PATCH` — bugfix
 
 Stay at `0.x` until filter hooks and field keys are stable. Tag releases `git tag v0.x.x`. Child plugins should document which base version they target.
+

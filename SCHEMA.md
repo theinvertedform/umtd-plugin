@@ -25,7 +25,17 @@ All ten tables are implemented and active as of v0.2.x. Scalar fields for Works,
 
 ## Access Pattern
 
-All field reads in templates should use `umtd_get_field()`:
+**High-level — entity data arrays for templates:**
+
+```php
+umtd_get_work( int $post_id ) : array   // all scalar work fields, per-type via get_field() fallback
+umtd_get_agent( int $post_id ) : array  // all scalar agent fields; works list separate
+umtd_get_event( int $post_id ) : array  // all scalar event fields; relational fields separate
+```
+
+Templates call these once at the top and pass the result to parts via `$args`. No `get_field()` or `umtd_get_field()` calls in template or part files directly.
+
+**Low-level — single field reads:**
 
 ```php
 umtd_get_field( string $field, int $post_id, string $lang = null ) : mixed
@@ -33,25 +43,27 @@ umtd_get_field( string $field, int $post_id, string $lang = null ) : mixed
 
 - Checks `umtd_translations` first for translatable fields when `$lang` is set.
 - Checks the custom entity table for scalar fields covered by the write intercepts.
-- Falls back to `get_field()` for any field not yet covered by a custom table — this is a developer safety net during active development, not a data migration path.
+- Falls back to `get_field()` for any field not yet covered by a custom table.
 - Returns null if the field does not exist in either location.
 
-Current templates call `get_field()` directly — migration to `umtd_get_field()` throughout is part of the planned template restructure. Agent display names must use `get_field( 'name_display', $id )` (or `umtd_get_field()`) — never `get_the_title()`.
-
-For relational fields resolved via junction tables, use the dedicated functions:
+**Relational field helpers:**
 
 ```php
 umtd_get_work_agents( int $work_post_id, string $lang = 'en' ) : array  // agent+role rows for a work
+umtd_get_agent_works( int $agent_post_id ) : int[]                       // work post IDs for an agent
 umtd_get_event_works( int $event_post_id ) : array                       // work post IDs for an event
+umtd_get_agents_by_work_type( string $type_slug, string $role_slug = null ) : int[]  // agent IDs by work type and role
 ```
 
-FK lookup helpers (used internally by save intercepts and meta box):
+**FK lookup helpers** (used internally by save intercepts and meta box):
 
 ```php
 umtd_get_agent_id( int $post_id ) : int|null   // wp_post ID → umtd_agents.id
 umtd_get_work_id( int $post_id ) : int|null    // wp_post ID → umtd_works.id
 umtd_get_event_id( int $post_id ) : int|null   // wp_post ID → umtd_events.id
 ```
+
+Agent display names must use `get_field( 'name_display', $id )` — never `get_the_title()`.
 
 ---
 

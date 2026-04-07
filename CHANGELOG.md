@@ -30,6 +30,14 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-theme
 
+- docs(architecture): update theme file structure — add parts/work-type/ directory, card \$args notation, prints-archive and books-archive templates
+- docs(architecture): update Work–Agent Relationship section — replace inline SQL with umtd_get_agent_works(); add umtd_get_agents_by_work_type() with examples; add entity data functions block
+- docs(architecture): update Taxonomy Queries section — point to umtd_get_agents_by_work_type()
+- docs(schema): restructure Access Pattern section — high-level entity functions, relational helpers, FK lookups; add umtd_get_agent_works() and umtd_get_agents_by_work_type()
+- docs(roadmap): update Current Status — template restructure complete, entity data functions, per-type partial routing
+- docs(roadmap): mark Weeks 1–2 template item complete — entity data functions replace direct get_field() calls
+- docs(roadmap): mark v0.x archive templates item complete
+- docs(roadmap): mark Weeks 5–11 archive templates item complete
 - refactor(parts): card-work.php — receives \$args['work'] and \$args['agents']; removes direct get_field() calls; agents read from junction table rows via agent_post_id
 - refactor(parts): card-agent.php — receives \$args['agent']; dates rendered via birth_date_formatted/death_date_formatted
 - refactor(parts): card-event.php — receives \$args['event'] and \$args['organizers']; location correctly accesses ->ID on WP_Post object; name_display passed correct post ID
@@ -55,6 +63,7 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- docs(db): update includes/db.php file docblock — two-level API structure, high-level entity functions listed
 - feat(db): add umtd_get_work() — all scalar work fields as keyed array, per-type extension fields via get_field() fallback
 - feat(db): add umtd_get_agent() — all scalar agent fields as keyed array, dates in raw and formatted forms
 - feat(db): add umtd_get_agent_works() — junction table query for agent works list, separate from umtd_get_agent() to avoid N+1
