@@ -1,11 +1,11 @@
 # UMT Studio — Database Schema
 
-Version: 0.3.0-planned
-Last revised: 2026-04-03
+Version: 0.2.x
+Last revised: 2026-04-07
 
-This document defines the custom database schema that replaces WordPress postmeta as the primary data store for all umt.studio CPT data. It is the reference for implementation of `umtd_register_tables()`, `umtd_get_field()`, and all `acf/save_post` intercept hooks.
+This document defines the custom database schema that replaces WordPress postmeta as the primary data store for all umt.studio CPT data. It is the reference for `umtd_register_tables()`, `umtd_get_field()`, and all `acf/save_post` intercept hooks.
 
-The schema is implemented in `v0.3.0` of the base plugin. All Piroir data is entered against this schema — there is no postmeta migration path for Piroir.
+All ten tables are implemented and active as of v0.2.x. Scalar fields for Works, Agents, and Events are intercepted on `acf/save_post` and written to entity tables. Agent–Work relationships are written to `umtd_work_agents` via the Agents meta box (`includes/metabox.php`). Event–Agent and Event–Work relationships are written to their junction tables via `acf/save_post` intercepts at priority 30. The `umtd_translations` table is created but the write/read layer is not yet implemented — bilingual content entry is deferred. Per-type extension fields (film, bibliographic, listing) remain in ACF postmeta until v0.3.0.
 
 ---
 
@@ -25,18 +25,33 @@ The schema is implemented in `v0.3.0` of the base plugin. All Piroir data is ent
 
 ## Access Pattern
 
-All field reads in templates use `umtd_get_field()`:
+All field reads in templates should use `umtd_get_field()`:
 
 ```php
 umtd_get_field( string $field, int $post_id, string $lang = null ) : mixed
 ```
 
-- Checks custom tables first.
-- `$lang` defaults to the current active language if null.
+- Checks `umtd_translations` first for translatable fields when `$lang` is set.
+- Checks the custom entity table for scalar fields covered by the write intercepts.
 - Falls back to `get_field()` for any field not yet covered by a custom table — this is a developer safety net during active development, not a data migration path.
 - Returns null if the field does not exist in either location.
 
-Templates must never call `get_field()` or `get_the_title()` directly. All agent display names use `umtd_get_field( 'name_display', $id )`.
+Current templates call `get_field()` directly — migration to `umtd_get_field()` throughout is part of the planned template restructure. Agent display names must use `get_field( 'name_display', $id )` (or `umtd_get_field()`) — never `get_the_title()`.
+
+For relational fields resolved via junction tables, use the dedicated functions:
+
+```php
+umtd_get_work_agents( int $work_post_id, string $lang = 'en' ) : array  // agent+role rows for a work
+umtd_get_event_works( int $event_post_id ) : array                       // work post IDs for an event
+```
+
+FK lookup helpers (used internally by save intercepts and meta box):
+
+```php
+umtd_get_agent_id( int $post_id ) : int|null   // wp_post ID → umtd_agents.id
+umtd_get_work_id( int $post_id ) : int|null    // wp_post ID → umtd_works.id
+umtd_get_event_id( int $post_id ) : int|null   // wp_post ID → umtd_events.id
+```
 
 ---
 
@@ -44,7 +59,7 @@ Templates must never call `get_field()` or `get_the_title()` directly. All agent
 
 ### `umtd_works`
 
-One row per Work (canonical edition record). Does not record individual exemplars — see Backlog: Item-level inventory.
+One row per Work (canonical edition record). Does not record individual exemplars — see Deferred: Item-level inventory.
 
 ```sql
 CREATE TABLE umtd_works (
@@ -64,15 +79,17 @@ CREATE TABLE umtd_works (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
+**Note — table vs implementation:** `config/tables.php` currently defines `umtd_works` without `edition_size` and `printer_copies` — these columns exist in the spec above but were not included in the initial implementation. They will be added via `dbDelta()` in a subsequent deploy. `dbDelta()` is additive — adding columns does not require reactivation or data migration.
+
 Translatable fields stored in `umtd_translations`: `title`, `description`.
 
 `medium` and `work_type` are WordPress taxonomies (`umtd_medium`, `umtd_work_type`) — not columns. Series membership is the `umtd_series` taxonomy.
 
-**Hung lantern — per-type columns:** the current `umtd_works` table captures fields common to visual works (dimensions, edition size). Fields added in the v0.2.x ACF field groups for film (runtime, format, ISAN), bibliographic works (ISBN, ISSN, DOI, page count, journal metadata), and listings (address, tenure type, floor area) are stored in ACF postmeta until v0.3.0. At v0.3.0, these fields need either additional columns on `umtd_works` or typed extension tables (`umtd_works_film`, `umtd_works_bibliographic`, `umtd_works_listing`). The extension table pattern is preferred — it keeps `umtd_works` narrow and avoids sparse columns. Resolution deferred to v0.3.0 schema design.
+**Hung lantern — per-type columns:** fields added in the v0.2.x ACF field groups for film (runtime, format, ISAN), bibliographic works (ISBN, ISSN, DOI, page count, journal metadata), and listings (address, tenure type, floor area) are stored in ACF postmeta until v0.3.0. Extension tables are preferred over sparse columns on `umtd_works` — see Deferred: Per-type Extension Tables.
 
 ### `umtd_agents`
 
-Persons, organizations, and venues. Venues are agents with `agent_type = 'venue'` — they are excluded from public archive listings by default. Child plugin config controls which subtypes are publicly listed.
+Persons, organizations, and venues. Venues are agents with `agent_type = 'venue'` — excluded from public archive listings by default.
 
 ```sql
 CREATE TABLE umtd_agents (
@@ -96,9 +113,11 @@ CREATE TABLE umtd_agents (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-Translatable fields: `biography`, `name_display` (for organizations and venues where FR/EN names differ), `place_of_birth`, `place_of_death`, `org_location`.
+**Note — table vs implementation:** `config/tables.php` currently defines `umtd_agents` without `name_first`, `name_last`, `name_display` columns. These are in the spec but not yet in the implementation — they will be added via `dbDelta()`. The `acf/save_post` intercept currently writes `agent_type`, date fields, `wikidata_id`, `ulan_id`, and `website` only.
 
-`country` (nationality) and `gender` remain ACF postmeta fields for now — low query priority, deferred to schema v0.4.
+Translatable fields: `biography`, `name_display` (for organizations and venues where FR/EN names differ).
+
+`country` (nationality) and `gender` remain ACF postmeta fields — low query priority, deferred.
 
 ### `umtd_events`
 
@@ -120,6 +139,8 @@ CREATE TABLE umtd_events (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
+**Note — partial implementation:** the `acf/save_post` intercept currently writes `start_date`, `end_date`, and `event_link`. `organizing_agent_id` and `venue_id` require resolving the ACF relationship field value to `umtd_agents.id` — this lookup is deferred alongside the event agent meta box. These columns exist in the table but are always null until the intercept is extended.
+
 Translatable fields: `title`, `description`.
 
 `event_type` is the `umtd_event_type` taxonomy — not a column.
@@ -130,7 +151,7 @@ Translatable fields: `title`, `description`.
 
 ### `umtd_work_agents`
 
-Work–Agent relationship with role. Replaces the `agents_artists` / `agents_authors` parallel field pattern.
+Work–Agent relationship with role. Written by `includes/metabox.php` on `acf/save_post` at priority 30. Replaces the retired `agents_artists` / `agents_authors` ACF parallel field pattern.
 
 ```sql
 CREATE TABLE umtd_work_agents (
@@ -144,9 +165,13 @@ CREATE TABLE umtd_work_agents (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-**Hung lantern — native post authorship:** `umtd_work_agents` is keyed to `umtd_works.id` and covers only `umtd_works` CPT records. The platform now supports editorial/magazine content via the native WordPress `post` CPT with multi-author via agent relationship field. At v0.3.0, native post authorship requires one of: (a) a parallel `umtd_post_agents` table with identical structure but `post_id` FK instead of `work_id`; or (b) an `entity_type` discriminator column on `umtd_work_agents` (`entity_type ENUM('work','post')`, with `work_id` renamed to `entity_id`). Option (b) is more general but requires a migration. Resolution deferred to v0.3.0 schema design.
+Read via `umtd_get_work_agents( $work_post_id )` in `includes/db.php`.
+
+**Hung lantern — native post authorship:** `umtd_work_agents` is keyed to `umtd_works.id`. Native WordPress `post` multi-authorship (magazine/editorial) will require either a parallel `umtd_post_agents` table or an `entity_type` discriminator column. Resolution deferred to v0.3.0 schema design.
 
 ### `umtd_event_agents`
+
+Written by `acf/save_post` intercept at priority 30. Role is inferred from field: `organizing_agents` → `curator`, `participating_agents` → `artist`. This is a blunt mapping — a proper event agent meta box (same pattern as Works) is deferred.
 
 ```sql
 CREATE TABLE umtd_event_agents (
@@ -160,7 +185,7 @@ CREATE TABLE umtd_event_agents (
 
 ### `umtd_event_works`
 
-Works exhibited or documented at an Event.
+Works exhibited or documented at an Event. Written by `acf/save_post` intercept at priority 30 from the `related_works` ACF field on events.
 
 ```sql
 CREATE TABLE umtd_event_works (
@@ -194,7 +219,7 @@ Vocabulary tables replace ACF select/radio fields for any value that requires a 
 
 ### `umtd_roles`
 
-Agent roles within Works and Events.
+Agent roles within Works and Events. Seeded on activation via `umtd_seed_roles()` from `config/roles.php`. Child plugins extend via `umtd_roles` filter.
 
 ```sql
 CREATE TABLE umtd_roles (
@@ -207,13 +232,11 @@ CREATE TABLE umtd_roles (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-Seeded on activation via `umtd_seed_roles()`. Child plugins extend via `umtd_roles` filter, same pattern as `umtd_terms`.
-
-**Hung lantern — roles seed data expansion:** the current seed data covers print and visual art roles (artist, printer, publisher, photographer, curator). The expanded work type vocabulary added in v0.2.x requires additional roles: `director`, `cinematographer`, `cast`, `producer`, `screenwriter` (Film/Video); `author`, `editor`, `translator`, `illustrator` (Bibliographic); `distributor` (Film). These must be added to `umtd_seed_roles()` before any film or bibliographic data entry on any client install. Not yet implemented.
+Current seed vocabulary: `artist`, `photographer`, `publisher`, `curator`, `director`, `cinematographer`, `editor`, `cast`, `producer`, `screenwriter`, `composer`, `printer`, `author`, `translator`, `illustrator`. Adding a new role: add to `config/roles.php`, deploy, reactivate.
 
 ### `umtd_view_types`
 
-View types for Work media (recto, verso, detail, installation view, exhibition view, before treatment, after treatment).
+View types for Work media. Seeded on activation via `umtd_seed_view_types()` from `config/view-types.php`. Child plugins extend via `umtd_view_types` filter.
 
 ```sql
 CREATE TABLE umtd_view_types (
@@ -226,9 +249,13 @@ CREATE TABLE umtd_view_types (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
+Current seed vocabulary: `recto`, `verso`, `detail`, `installation-view`, `exhibition-view`, `before-treatment`, `after-treatment`.
+
 ---
 
 ## Translation Table
+
+Table exists but write/read layer is not yet implemented. `umtd_get_field()` checks this table first for translatable fields when `$lang` is set — currently returns null for all fields since no rows exist. Bilingual content entry is deferred to the bilingual platform phase (see ROADMAP.md).
 
 ```sql
 CREATE TABLE umtd_translations (
@@ -244,8 +271,6 @@ CREATE TABLE umtd_translations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-`umtd_get_field()` checks this table first when `$lang` is set or when the current active language is not the site default.
-
 ---
 
 ## WordPress Taxonomies (not DB tables)
@@ -257,34 +282,25 @@ These remain as WordPress taxonomies registered in `config/taxonomies.php`. They
 | `umtd_work_type` | `umtd_works` | Print, Artist Book, Painting, Sculpture, Film, Drawing, Installation, Performance, Video, Photograph, Books, Monographs, Articles, Listing. AAT-aligned where applicable; `local` key for Listing. |
 | `umtd_medium` | `umtd_works` | Intaglio, Relief, Planographic, 35mm, Oil, Acrylic. AAT-aligned. See hung lantern in ARCHITECTURE.md — scope is inadequate for multi-type clients. |
 | `umtd_series` | `umtd_works` | Semantic grouping declared by artist. No AAT alignment required. |
-| `umtd_event_type` | `umtd_events` | Exhibition, Opening, Workshop, Performance, Premiere, Fair, Market. |
+| `umtd_event_type` | `umtd_events` | Exhibition, Opening, Workshop, Performance, Premiere, Fair, Market, Retrospective. |
 
 ---
 
 ## Child Plugin Configuration
 
-Child plugins declare active tables via the `umtd_schema_tables` filter:
+Child plugins modify the active table set via the `umtd_schema_tables` filter. The filter receives the full definitions array from `config/tables.php` — child plugins unset entries for tables their client does not need:
 
 ```php
 add_filter( 'umtd_schema_tables', function( $tables ) {
-    // Return only the tables this client needs.
-    // Tables not listed are not created on activation.
-    return array(
-        'umtd_works',
-        'umtd_agents',
-        'umtd_events',
-        'umtd_work_agents',
-        'umtd_event_agents',
-        'umtd_event_works',
-        'umtd_work_media',
-        'umtd_roles',
-        'umtd_view_types',
-        'umtd_translations',
-    );
+    // Client has no Events — remove event tables.
+    unset( $tables['umtd_events'] );
+    unset( $tables['umtd_event_agents'] );
+    unset( $tables['umtd_event_works'] );
+    return $tables;
 } );
 ```
 
-Base plugin default: all tables active. Child plugin may remove tables irrelevant to the client's archive type.
+Base plugin default: all tables active. Tables removed by a child plugin are not created on activation — they will not exist in the database for that client install.
 
 ---
 
@@ -324,4 +340,3 @@ Fields specific to film, bibliographic, and listing work types are stored in ACF
 - `umtd_works_listing` — address, tenure_type, listing_status, floor_area, floor_area_unit, rooms, bathrooms
 
 Each extension table carries a `work_id` FK → `umtd_works.id` and a one-to-one relationship enforced by a `UNIQUE KEY work_id`. Visual object fields (support, dimensions_d, inscription, style_period, catalogue_raisonne) and print fields (print_state) follow the same pattern. The base `umtd_works` table remains narrow — only fields universal to all work types.
-
