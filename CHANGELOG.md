@@ -30,6 +30,21 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-theme
 
+- refactor(parts): card-work.php — receives \$args['work'] and \$args['agents']; removes direct get_field() calls; agents read from junction table rows via agent_post_id
+- refactor(parts): card-agent.php — receives \$args['agent']; dates rendered via birth_date_formatted/death_date_formatted
+- refactor(parts): card-event.php — receives \$args['event'] and \$args['organizers']; location correctly accesses ->ID on WP_Post object; name_display passed correct post ID
+- refactor(templates): single-umtd_works.php — thin router; fetches umtd_get_work() and umtd_get_work_agents() at top; dimensions formatted inline from h/w/unit; per-type partial routing via locate_template()
+- refactor(templates): single-umtd_agents.php — debug comment removed; inline junction query replaced with umtd_get_agent_works(); all get_field() calls replaced with data array keys
+- refactor(templates): single-umtd_events.php — dates use formatted variants; location uses ->ID; related works tries junction table first, falls back to ACF postmeta; cards receive \$args
+- feat(templates): parts/work-type/film.php — Film/Video metadata partial; runtime pluralised; returns early if no film fields populated
+- refactor(templates): front-page.php — stray duplicate name_display line removed; dates via umtd_get_event() with formatted variants
+- refactor(templates): archive-umtd_agents.php — cards receive \$args['agent']
+- refactor(templates): archive-umtd_events.php — cards receive \$args['event']
+- refactor(templates): archive-umtd_works.php — umtd_get_work() and umtd_get_work_agents() called in loop; both passed to card
+- refactor(templates): templates/artists-archive.php — cards receive \$args['agent']
+- refactor(templates): templates/events-archive.php — dates formatted throughout; umtd_get_field() for year extraction; cards receive \$args
+- refactor(templates): templates/prints-archive.php — replaced postmeta agent loop with umtd_get_agents_by_work_type('print'); cards receive \$args
+- refactor(templates): templates/books-archive.php — replaced agents_authors/agents_artists postmeta loop with umtd_get_agents_by_work_type() filtered by role; cards receive \$args
 - fix(templates): single-umtd_works.php — replace get_field('agent') with umtd_get_work_agents(); remove dead agents_artists/agents_authors pre-refactor block
 - fix(templates): single-umtd_works.php — medium field WP_Term object → \$medium->name
 - fix(templates): single-umtd_agents.php — replace postmeta LIKE query with junction table lookup via umtd_get_agent_id() and umtd_work_agents
@@ -40,6 +55,11 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- feat(db): add umtd_get_work() — all scalar work fields as keyed array, per-type extension fields via get_field() fallback
+- feat(db): add umtd_get_agent() — all scalar agent fields as keyed array, dates in raw and formatted forms
+- feat(db): add umtd_get_agent_works() — junction table query for agent works list, separate from umtd_get_agent() to avoid N+1
+- feat(db): add umtd_get_event() — all scalar event fields as keyed array, event_type_name convenience key
+- feat(db): add umtd_get_agents_by_work_type() — single JOIN query returns agent post IDs by work type and optional role slug; replaces per-work agent loop in type-specific archives
 - feat(schema): add config/view-types.php — slug-keyed view types vocabulary with en/fr labels; extensible via umtd_view_types filter
 - feat(schema): add umtd_seed_vocabulary() — shared seed logic for all vocabulary tables; reduces boilerplate in seed functions
 - feat(schema): add umtd_seed_roles(), umtd_seed_view_types() — vocabulary seed on activation via umtd_seed_vocabulary()

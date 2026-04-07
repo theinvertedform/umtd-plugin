@@ -2,21 +2,34 @@
 /**
  * Data access layer for umt.studio custom tables.
  *
- * Provides umtd_get_field() as the single read interface for all CPT field
- * data. Templates and other plugin code must use this function exclusively —
- * never get_field() or get_post_meta() directly for umtd CPT fields.
+ * Two levels of API:
  *
- * Read priority:
- *   1. umtd_translations — for translatable fields when $lang is set
- *   2. Custom entity table — umtd_works, umtd_agents, umtd_events
- *   3. get_field() fallback — for fields not yet covered by a custom table
+ * Low-level — single field reads:
+ *   umtd_get_field()       — reads custom tables first, falls back to get_field()
+ *   umtd_get_work_agents() — junction table read for work–agent–role rows
+ *   umtd_get_event_works() — junction table read for event–work rows
+ *   umtd_get_agent_id()    — FK lookup: wp post ID → umtd_agents.id
+ *   umtd_get_work_id()     — FK lookup: wp post ID → umtd_works.id
+ *   umtd_get_event_id()    — FK lookup: wp post ID → umtd_events.id
+ *   umtd_format_date()     — Ymd → display string
  *
- * The get_field() fallback is a developer safety net during active development.
+ * High-level — entity data arrays for templates:
+ *   umtd_get_work()        — all scalar work fields as keyed array
+ *   umtd_get_agent()       — all scalar agent fields as keyed array
+ *   umtd_get_event()       — all scalar event fields as keyed array
+ *   umtd_get_agent_works() — works list for an agent (call separately, not embedded)
+ *
+ * Templates use the high-level functions. Save intercepts and the meta box
+ * use the low-level FK lookup helpers. umtd_get_field() is the fallback for
+ * any field not yet covered by a custom table.
+ *
+ * get_field() fallback is a developer safety net during active development.
  * It is not a data migration path. Once a field is intercepted on save, the
  * fallback for that field becomes unreachable.
  *
  * @package umtd-plugin
- * @see includes/save.php — acf/save_post intercept hooks
+ * @see includes/save.php    — acf/save_post intercept hooks
+ * @see includes/metabox.php — agent+role meta box, writes to umtd_work_agents
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -260,4 +273,270 @@ function umtd_format_date( $ymd, $format = 'j F Y' ) {
     }
     $dt = DateTime::createFromFormat( 'Ymd', $ymd );
     return ( $dt && $dt->format( 'Ymd' ) === $ymd ) ? $dt->format( $format ) : $ymd;
+}
+
+/**
+ * Retrieve all scalar fields for a work as a keyed array.
+ *
+ * Intended for use in single and card templates. Centralises all field reads
+ * so templates never call get_field() or umtd_get_field() directly.
+ *
+ * Relational fields (agents, related works) are not included — fetch them
+ * separately to avoid N+1 queries in archive contexts:
+ *   umtd_get_work_agents( $post_id ) — agent+role rows
+ *   get_field( 'related_works', $post_id ) — related works (postmeta)
+ *
+ * Per-type extension fields (film, print, bibliographic, listing, visual object)
+ * are included via get_field() fallback — they live in postmeta until v0.3.0
+ * extension tables are implemented.
+ *
+ * @param int $post_id WordPress post ID of the work.
+ * @return array
+ */
+function umtd_get_work( $post_id ) {
+    $work_type_terms = get_the_terms( $post_id, 'umtd_work_type' );
+    $work_type_slug  = ( $work_type_terms && ! is_wp_error( $work_type_terms ) )
+        ? $work_type_terms[0]->slug
+        : null;
+
+    $medium_terms = get_the_terms( $post_id, 'umtd_medium' );
+
+    $date_earliest = umtd_get_field( 'date_earliest', $post_id );
+    $date_latest   = umtd_get_field( 'date_latest',   $post_id );
+
+    return array(
+
+        // WordPress core
+        'title'         => get_the_title( $post_id ),
+        'permalink'     => get_permalink( $post_id ),
+        'thumbnail_id'  => get_post_thumbnail_id( $post_id ),
+
+        // Taxonomy
+        'work_type'      => $work_type_terms ?: array(),
+        'work_type_slug' => $work_type_slug,
+        'medium'         => ( $medium_terms && ! is_wp_error( $medium_terms ) ) ? $medium_terms : array(),
+
+        // Dates
+        'date_display'            => umtd_get_field( 'date_display',  $post_id ),
+        'date_earliest'           => $date_earliest,
+        'date_earliest_formatted' => umtd_format_date( $date_earliest ),
+        'date_latest'             => $date_latest,
+        'date_latest_formatted'   => umtd_format_date( $date_latest ),
+
+        // Physical description
+        'accession_number' => umtd_get_field( 'accession_number', $post_id ),
+        'dimensions_h'     => umtd_get_field( 'dimensions_h',     $post_id ),
+        'dimensions_w'     => umtd_get_field( 'dimensions_w',     $post_id ),
+        'dimensions_d'     => get_field( 'dimensions_d',          $post_id ),
+        'dimensions_unit'  => umtd_get_field( 'dimensions_unit',  $post_id ),
+
+        // Description
+        'description' => umtd_get_field( 'description', $post_id ),
+
+        // Per-type — visual object (Painting, Drawing, Sculpture, Photograph, Installation)
+        'support'           => get_field( 'support',           $post_id ),
+        'inscription'       => get_field( 'inscription',       $post_id ),
+        'style_period'      => get_field( 'style_period',      $post_id ),
+        'catalogue_raisonne'=> get_field( 'catalogue_raisonne',$post_id ),
+        'current_location'  => get_field( 'current_location',  $post_id ),
+
+        // Per-type — print (Print, Photograph)
+        'edition_size'   => get_field( 'edition_size',   $post_id ),
+        'printer_copies' => get_field( 'printer_copies', $post_id ),
+        'print_state'    => get_field( 'print_state',    $post_id ),
+
+        // Per-type — film (Film, Video)
+        'runtime'           => get_field( 'runtime',           $post_id ),
+        'film_format'       => get_field( 'film_format',       $post_id ),
+        'language'          => get_field( 'language',          $post_id ),
+        'isan'              => get_field( 'isan',              $post_id ),
+        'country_of_origin' => get_field( 'country_of_origin', $post_id ),
+
+        // Per-type — bibliographic (Books, Monographs, Articles, Artist Book)
+        'isbn'               => get_field( 'isbn',               $post_id ),
+        'issn'               => get_field( 'issn',               $post_id ),
+        'doi'                => get_field( 'doi',                $post_id ),
+        'place_of_publication'=> get_field( 'place_of_publication',$post_id ),
+        'edition_number'     => get_field( 'edition_number',     $post_id ),
+        'page_count'         => get_field( 'page_count',         $post_id ),
+        'journal_title'      => get_field( 'journal_title',      $post_id ),
+        'volume'             => get_field( 'volume',             $post_id ),
+        'issue'              => get_field( 'issue',              $post_id ),
+        'page_range'         => get_field( 'page_range',         $post_id ),
+
+        // Per-type — listing
+        'listing_address'  => get_field( 'listing_address',  $post_id ),
+        'tenure_type'      => get_field( 'tenure_type',      $post_id ),
+        'listing_status'   => get_field( 'listing_status',   $post_id ),
+        'floor_area'       => get_field( 'floor_area',       $post_id ),
+        'floor_area_unit'  => get_field( 'floor_area_unit',  $post_id ),
+        'rooms'            => get_field( 'rooms',            $post_id ),
+        'bathrooms'        => get_field( 'bathrooms',        $post_id ),
+    );
+}
+
+/**
+ * Retrieve all scalar fields for an agent as a keyed array.
+ *
+ * Does not include the agent's works list — fetch separately to avoid N+1
+ * queries in archive contexts:
+ *   umtd_get_agent_works( $post_id )
+ *
+ * @param int $post_id WordPress post ID of the agent.
+ * @return array
+ */
+function umtd_get_agent( $post_id ) {
+    $birth_date      = umtd_get_field( 'birth_date',      $post_id );
+    $death_date      = umtd_get_field( 'death_date',      $post_id );
+    $founding_date   = umtd_get_field( 'founding_date',   $post_id );
+    $dissolution_date= umtd_get_field( 'dissolution_date',$post_id );
+
+    return array(
+
+        // WordPress core
+        'title'        => get_the_title( $post_id ),
+        'permalink'    => get_permalink( $post_id ),
+        'thumbnail_id' => get_post_thumbnail_id( $post_id ),
+
+        // Display name — always use this, never title
+        'name_display' => get_field( 'name_display', $post_id ),
+
+        // Type
+        'agent_type' => umtd_get_field( 'agent_type', $post_id ),
+
+        // Person dates
+        'birth_date'            => $birth_date,
+        'birth_date_formatted'  => umtd_format_date( $birth_date ),
+        'death_date'            => $death_date,
+        'death_date_formatted'  => umtd_format_date( $death_date ),
+
+        // Organization dates
+        'founding_date'             => $founding_date,
+        'founding_date_formatted'   => umtd_format_date( $founding_date ),
+        'dissolution_date'          => $dissolution_date,
+        'dissolution_date_formatted'=> umtd_format_date( $dissolution_date ),
+
+        // Identifiers and contact
+        'wikidata_id' => umtd_get_field( 'wikidata_id', $post_id ),
+        'ulan_id'     => umtd_get_field( 'ulan_id',     $post_id ),
+        'website'     => umtd_get_field( 'website',     $post_id ),
+
+        // Still in postmeta
+        'biography'    => get_field( 'biography',    $post_id ),
+        'country'      => get_field( 'country',      $post_id ),
+        'gender'       => get_field( 'gender',       $post_id ),
+        'org_location' => get_field( 'org_location', $post_id ),
+        'parent_org'   => get_field( 'parent_org',   $post_id ),
+    );
+}
+
+/**
+ * Retrieve all works for an agent as an array of post IDs.
+ *
+ * Separate from umtd_get_agent() to avoid N+1 queries on archive pages.
+ * Call only in single-agent context or when the works list is explicitly needed.
+ *
+ * @param int $post_id WordPress post ID of the agent.
+ * @return int[] Array of work post IDs.
+ */
+function umtd_get_agent_works( $post_id ) {
+    global $wpdb;
+
+    $agent_id = umtd_get_agent_id( $post_id );
+    if ( ! $agent_id ) {
+        return array();
+    }
+
+    return $wpdb->get_col( $wpdb->prepare(
+        "SELECT w.post_id
+         FROM {$wpdb->prefix}umtd_work_agents wa
+         JOIN {$wpdb->prefix}umtd_works w ON w.id = wa.work_id
+         WHERE wa.agent_id = %d
+         ORDER BY wa.sort_order ASC",
+        $agent_id
+    ) );
+}
+
+/**
+ * Retrieve all scalar fields for an event as a keyed array.
+ *
+ * Does not include organizing agents, participating agents, or related works —
+ * fetch separately to avoid N+1 queries in archive contexts:
+ *   get_field( 'organizing_agents',   $post_id ) — returns WP_Post objects
+ *   get_field( 'participating_agents',$post_id ) — returns WP_Post objects
+ *   umtd_get_event_works( $post_id )              — junction table
+ *
+ * @param int $post_id WordPress post ID of the event.
+ * @return array
+ */
+function umtd_get_event( $post_id ) {
+    $start_date = umtd_get_field( 'start_date', $post_id );
+    $end_date   = umtd_get_field( 'end_date',   $post_id );
+
+    $event_type_term = get_field( 'event_type', $post_id );
+
+    return array(
+
+        // WordPress core
+        'title'        => get_the_title( $post_id ),
+        'permalink'    => get_permalink( $post_id ),
+        'thumbnail_id' => get_post_thumbnail_id( $post_id ),
+
+        // Dates
+        'start_date'           => $start_date,
+        'start_date_formatted' => umtd_format_date( $start_date ),
+        'end_date'             => $end_date,
+        'end_date_formatted'   => umtd_format_date( $end_date ),
+
+        // Type — WP_Term object; use ['event_type']->name for display
+        'event_type'      => $event_type_term,
+        'event_type_name' => $event_type_term ? $event_type_term->name : null,
+
+        // Scalar fields
+        'event_link'  => umtd_get_field( 'event_link',  $post_id ),
+        'description' => umtd_get_field( 'description', $post_id ),
+
+        // Location — WP_Post object (venue agent); still in postmeta
+        'location' => get_field( 'location', $post_id ),
+    );
+}
+
+/**
+ * Retrieve agent post IDs associated with works of a given work type.
+ *
+ * Queries umtd_work_agents joined to umtd_works and WordPress taxonomy tables.
+ * Returns distinct agent post IDs, optionally filtered by role slug.
+ *
+ * Used by type-specific archive templates to build agent lists without looping
+ * through individual works and their agent arrays.
+ *
+ * @param string      $type_slug Work type term slug — e.g. 'print', 'books'.
+ * @param string|null $role_slug Optional. Role slug — e.g. 'author', 'artist'.
+ * @return int[]                 Array of agent WordPress post IDs.
+ */
+function umtd_get_agents_by_work_type( $type_slug, $role_slug = null ) {
+    global $wpdb;
+
+    $role_join  = '';
+    $role_where = '';
+
+    if ( $role_slug ) {
+        $role_join  = "JOIN {$wpdb->prefix}umtd_roles r ON r.id = wa.role_id";
+        $role_where = $wpdb->prepare( "AND r.slug = %s", $role_slug );
+    }
+
+    return $wpdb->get_col( $wpdb->prepare(
+        "SELECT DISTINCT a.post_id
+         FROM {$wpdb->prefix}umtd_work_agents wa
+         JOIN {$wpdb->prefix}umtd_agents a ON a.id = wa.agent_id
+         JOIN {$wpdb->prefix}umtd_works  w ON w.id = wa.work_id
+         $role_join
+         JOIN {$wpdb->term_relationships} tr ON tr.object_id       = w.post_id
+         JOIN {$wpdb->term_taxonomy}      tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+         JOIN {$wpdb->terms}              t  ON t.term_id           = tt.term_id
+         WHERE t.slug = %s
+           AND tt.taxonomy = 'umtd_work_type'
+           $role_where",
+        $type_slug
+    ) );
 }
