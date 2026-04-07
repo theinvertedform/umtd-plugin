@@ -38,7 +38,7 @@ return array(
 		'enabled'  => true,
 		'plural'   => 'Agents',
 		'singular' => 'Agent',
-		'supports' => array( 'title', 'thumbnail', 'revisions' ),
+		'supports' => array( 'thumbnail', 'revisions' ),
 	),
 
 );

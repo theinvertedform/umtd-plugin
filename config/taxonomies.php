@@ -21,6 +21,12 @@ return array(
 		'singular'     => 'Work Type',
 		'hierarchical' => true,
 		'post_types'   => array( 'umtd_works' ),
+		'capabilities' => array(
+		    'manage_terms' => 'manage_options',
+		    'edit_terms'   => 'manage_options',
+		    'delete_terms' => 'manage_options',
+		    'assign_terms' => 'edit_posts',
+		),
 	),
 
 	'umtd_event_type' => array(
@@ -29,6 +35,12 @@ return array(
 		'singular'     => 'Event Type',
 		'hierarchical' => true,
 		'post_types'   => array( 'umtd_events' ),
+		'capabilities' => array(
+		    'manage_terms' => 'manage_options',
+		    'edit_terms'   => 'manage_options',
+		    'delete_terms' => 'manage_options',
+		    'assign_terms' => 'edit_posts',
+		),
 	),
 
 	'umtd_medium' => array(
@@ -37,6 +49,11 @@ return array(
 	    'singular'     => 'Medium',
 	    'hierarchical' => false,
 	    'post_types'   => array( 'umtd_works' ),
+		'capabilities' => array(
+		    'manage_terms' => 'manage_options',
+		    'edit_terms'   => 'manage_options',
+		    'delete_terms' => 'manage_options',
+		    'assign_terms' => 'edit_posts',
+		),
 	),
 );
-

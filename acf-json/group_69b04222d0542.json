@@ -43,7 +43,7 @@
                 "id": ""
             },
             "display_format": "Y-m-d",
-            "return_format": "Y-m-d",
+            "return_format": "Ymd",
             "first_day": 1,
             "default_to_current_date": 1,
             "allow_in_bindings": 0
@@ -63,7 +63,7 @@
                 "id": ""
             },
             "display_format": "Y-m-d",
-            "return_format": "Y-m-d",
+            "return_format": "Ymd",
             "first_day": 1,
             "default_to_current_date": 1,
             "allow_in_bindings": 0
@@ -91,21 +91,13 @@
         },
         {
             "key": "field_69b04900648ad",
-            "label": "Participating Artists",
-            "name": "participating_artists",
+            "label": "Participating Agents",
+            "name": "participating_agents",
             "aria-label": "",
             "type": "relationship",
             "instructions": "",
             "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_69b83fd0a0dcc",
-                        "operator": "==",
-                        "value": "80"
-                    }
-                ]
-            ],
+            "conditional_logic": 0,
             "wrapper": {
                 "width": "",
                 "class": "",
@@ -121,7 +113,7 @@
                 "post_type",
                 "taxonomy"
             ],
-            "return_format": "id",
+            "return_format": "object",
             "min": "",
             "max": "",
             "allow_in_bindings": 0,

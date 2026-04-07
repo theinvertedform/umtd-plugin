@@ -49,7 +49,7 @@
                 "id": ""
             },
             "display_format": "Y-m-d",
-            "return_format": "Y-m-d",
+            "return_format": "Ymd",
             "first_day": 1,
             "default_to_current_date": 0,
             "allow_in_bindings": 0

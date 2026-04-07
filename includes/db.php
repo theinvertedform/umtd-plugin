@@ -195,3 +195,69 @@ function umtd_get_event_works( $event_post_id ) {
         $event_post_id
     ) );
 }
+
+/**
+ * Get the umtd_agents.id for a given WordPress post ID.
+ *
+ * Used by save intercepts to resolve the FK before inserting into junction
+ * tables. Returns null if no row exists — agent must be saved before any
+ * work that references it.
+ *
+ * @param int $post_id WordPress post ID of the agent.
+ * @return int|null
+ */
+function umtd_get_agent_id( $post_id ) {
+    global $wpdb;
+    return $wpdb->get_var( $wpdb->prepare(
+        "SELECT id FROM {$wpdb->prefix}umtd_agents WHERE post_id = %d",
+        $post_id
+    ) );
+}
+
+/**
+ * Get the umtd_works.id for a given WordPress post ID.
+ *
+ * @param int $post_id WordPress post ID of the work.
+ * @return int|null
+ */
+function umtd_get_work_id( $post_id ) {
+    global $wpdb;
+    return $wpdb->get_var( $wpdb->prepare(
+        "SELECT id FROM {$wpdb->prefix}umtd_works WHERE post_id = %d",
+        $post_id
+    ) );
+}
+
+/**
+ * Get the umtd_events.id for a given WordPress post ID.
+ *
+ * @param int $post_id WordPress post ID of the event.
+ * @return int|null
+ */
+function umtd_get_event_id( $post_id ) {
+    global $wpdb;
+    return $wpdb->get_var( $wpdb->prepare(
+        "SELECT id FROM {$wpdb->prefix}umtd_events WHERE post_id = %d",
+        $post_id
+    ) );
+}
+
+/**
+ * Format a Ymd date string for display.
+ *
+ * Converts the stored Ymd format (e.g. 20250815) to a human-readable string.
+ * Passes through any value that cannot be parsed as Ymd — e.g. a plain year
+ * string like '2015' will be returned as-is, which is correct for date_display
+ * values entered manually.
+ *
+ * @param string $ymd    Date string in Ymd format.
+ * @param string $format PHP date format string. Default 'F j, Y'.
+ * @return string
+ */
+function umtd_format_date( $ymd, $format = 'j F Y' ) {
+    if ( ! $ymd ) {
+        return '';
+    }
+    $dt = DateTime::createFromFormat( 'Ymd', $ymd );
+    return ( $dt && $dt->format( 'Ymd' ) === $ymd ) ? $dt->format( $format ) : $ymd;
+}

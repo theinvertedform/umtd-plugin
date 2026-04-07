@@ -3,38 +3,6 @@
   "title": "Work Metadata",
   "fields": [
     {
-      "key": "field_69b04129a1b77",
-      "label": "Agent",
-      "name": "agents",
-      "aria-label": "",
-      "type": "relationship",
-      "instructions": "",
-      "required": 0,
-      "conditional_logic": 0,
-      "wrapper": {
-        "width": "",
-        "class": "",
-        "id": ""
-      },
-      "post_type": [
-        "umtd_agents"
-      ],
-      "post_status": "",
-      "taxonomy": "",
-      "filters": [
-        "search",
-        "post_type",
-        "taxonomy"
-      ],
-      "return_format": "object",
-      "min": "",
-      "max": "",
-      "allow_in_bindings": 0,
-      "elements": "",
-      "bidirectional": 0,
-      "bidirectional_target": []
-    },
-    {
       "key": "field_69b83f09aed5c",
       "label": "Date Earliest",
       "name": "date_earliest",
@@ -49,7 +17,7 @@
         "id": ""
       },
       "display_format": "Y-m-d",
-      "return_format": "Y-m-d",
+      "return_format": "Ymd",
       "first_day": 1,
       "default_to_current_date": 0,
       "allow_in_bindings": 0
@@ -69,7 +37,7 @@
         "id": ""
       },
       "display_format": "Y-m-d",
-      "return_format": "Y-m-d",
+      "return_format": "Ymd",
       "first_day": 1,
       "default_to_current_date": 0,
       "allow_in_bindings": 0

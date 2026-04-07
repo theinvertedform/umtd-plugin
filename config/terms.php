@@ -45,6 +45,7 @@ return array(
     	'300069101'	=>	'Premiere',
 		'300054776'	=>	'Fair',
 		'300112347'	=>	'Market',
+		'300266712'	=>	'Retrospective',
 ),
 
 	'umtd_medium'	=> array(

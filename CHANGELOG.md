@@ -7,8 +7,60 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### umtd-remote
+
+- feat(scripts): accept install_acf and install_woo as optional args 7 and 8 — default true/false respectively
+- feat(scripts): add default plugin and theme removal — hello dolly and twentytwenty* themes deleted after WordPress install
+- feat(scripts): add optional plugin install block — ACF and WooCommerce installed conditionally from args
+
+### umtd
+
+- feat(provision): expand terms generation to all three taxonomy whitelists — work_type_whitelist, event_type_whitelist, medium_whitelist; each optional, generates empty array if absent
+- feat(provision): add plugin install flags — ACF installed by default (opt-out via plugins.acf: false), WooCommerce opt-in via plugins.woocommerce: true
+- feat(provision): remove default WordPress plugins and themes on fresh install — Hello Dolly deleted, all default Twenty* themes deleted
+- feat(provision): replace base repo clone with symlink — umtd-plugin and umtd-theme symlinked from ~/umtd/ into client wp-content; single canonical checkout for all local environments
+- feat(provision): pass install_acf and install_woo flags to umtd-remote via SSM args 7 and 8
+- feat(provision): add install_acf and install_woo flags to summary output
+
+### umtd-plugin-xyla
+
+- fix(i18n): correct umtd_i18n filter — default_lang en, languages ['en']; was incorrectly set to fr/['fr','en'] from Piroir template
+- chore(config): sync config/terms.php to config.yml whitelists — work_type, event_type, medium all three taxonomies now consistent
+- chore(ci): add workflow_dispatch to deploy workflow — enables manual trigger without a code push
+
+### umtd-theme
+
+- fix(templates): single-umtd_works.php — replace get_field('agent') with umtd_get_work_agents(); remove dead agents_artists/agents_authors pre-refactor block
+- fix(templates): single-umtd_works.php — medium field WP_Term object → \$medium->name
+- fix(templates): single-umtd_agents.php — replace postmeta LIKE query with junction table lookup via umtd_get_agent_id() and umtd_work_agents
+- fix(templates): single-umtd_events.php — event_type WP_Term object → \$event_type->name
+- fix(templates): single-umtd_events.php — add post ID to get_field('name_display') calls in organizers and participants loops
+- fix(templates): front-page.php — add post ID to get_field('name_display') calls in all agent loops
+- fix(templates): remove diff file — leftover merge artifact
+
 ### umtd-plugin
 
+- feat(schema): add config/view-types.php — slug-keyed view types vocabulary with en/fr labels; extensible via umtd_view_types filter
+- feat(schema): add umtd_seed_vocabulary() — shared seed logic for all vocabulary tables; reduces boilerplate in seed functions
+- feat(schema): add umtd_seed_roles(), umtd_seed_view_types() — vocabulary seed on activation via umtd_seed_vocabulary()
+- feat(schema): add umtd_view_types custom table — seeded from config/view-types.php on activation
+- feat(schema): add config/tables.php — full schema definition extracted from umtd_register_tables(); vocabulary, entity, junction, translation tables; umtd_schema_tables filter operates on definitions array directly
+- feat(schema): add umtd_works, umtd_agents, umtd_events entity tables
+- feat(schema): add umtd_work_agents, umtd_event_agents, umtd_event_works, umtd_work_media junction tables
+- feat(schema): add umtd_translations table
+- feat(db): add includes/db.php — umtd_get_field() read layer with custom table priority and get_field() fallback; umtd_get_work_agents(), umtd_get_event_works() junction readers; umtd_get_agent_id(), umtd_get_work_id(), umtd_get_event_id() FK lookup helpers; umtd_format_date() Ymd → display string
+- feat(save): add includes/save.php — acf/save_post intercepts at priority 20 for umtd_works, umtd_agents, umtd_events scalar fields; acf/save_post intercepts at priority 30 for umtd_event_agents and umtd_event_works junction rows
+- feat(metabox): add includes/metabox.php — agent+role meta box on umtd_works; AJAX agent search; reads/writes umtd_work_agents directly; replaces ACF agents relationship field
+- fix(acf): remove group_69baf2308c736.json (Piroir Roles) from base plugin acf-json/ — agents_artists/agents_authors were client-specific, never belonged in base
+- fix(acf): remove agents relationship field from Work Metadata group — superseded by metabox
+- fix(acf): set return_format to object on organizing_agents and participating_agents relationship fields in Event Metadata
+- fix(acf): set return_format to Ymd on all date picker fields — aligns with VARCHAR(8) storage; display_format remains Y-m-d for admin UI
+- fix(acf): remove conditional logic from participating_agents field — was gated on a term ID that didn't exist on all installs
+- fix(acf): rename participating_artists to participating_agents in Event Metadata field group
+- fix(cpt): remove title from umtd_agents supports — title field hidden; post title set programmatically by umtd_sync_agent_title()
+- feat(i18n): omit language prefix from CPT and taxonomy slugs when only one language is active — monolingual installs get clean URLs
+- feat(taxonomies): add capabilities passthrough to umtd_register_taxonomies() — child plugins and config/taxonomies.php can restrict term management to manage_options
+- feat(config): add manage_options capability restriction to umtd_work_type, umtd_event_type, umtd_medium — editors can assign terms but not create, edit, or delete
 - feat(schema): implement umtd_register_tables() — dbDelta() via config/tables.php, umtd_schema_tables filter
 - feat(schema): add config/tables.php — full schema: vocabulary, entity, junction, translation tables
 - feat(schema): add config/roles.php — agent roles vocabulary, en/fr labels, umtd_roles filter

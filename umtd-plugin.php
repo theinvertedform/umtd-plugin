@@ -76,6 +76,7 @@ function umtd_register_post_types() {
 		'map_meta_cap',
 		'publicly_queryable',
 		'exclude_from_search',
+		'show_in_nav_menus',
 	);
 
 	$default_lang = $i18n['default_lang'];
@@ -90,7 +91,9 @@ function umtd_register_post_types() {
 		$base_slug = isset( $i18n['slugs'][ $type ][ $default_lang ] )
 			? $i18n['slugs'][ $type ][ $default_lang ]
 			: $type;
-		$slug = $default_lang . '/' . $base_slug;
+		$slug = count( $i18n['languages'] ) > 1
+			? $default_lang . '/' . $base_slug
+	    	: $base_slug;
 
 		// has_archive must match the prefixed slug to generate the correct archive URL.
 		// If explicitly false in config (e.g. umtd_events), preserve that.
@@ -168,9 +171,8 @@ function umtd_register_post_types() {
  * @see umtd_activate()
  */
 function umtd_register_taxonomies() {
-	$taxonomies = apply_filters( 'umtd_taxonomies', require UMTD_PATH . 'config/taxonomies.php' );
-	$i18n       = umtd_get_i18n();
-
+	$taxonomies   = apply_filters( 'umtd_taxonomies', require UMTD_PATH . 'config/taxonomies.php' );
+	$i18n         = umtd_get_i18n();
 	$default_lang = $i18n['default_lang'];
 
 	foreach ( $taxonomies as $taxonomy => $args ) {
@@ -181,26 +183,31 @@ function umtd_register_taxonomies() {
 		$base_slug = isset( $i18n['slugs'][ $taxonomy ][ $default_lang ] )
 			? $i18n['slugs'][ $taxonomy ][ $default_lang ]
 			: $taxonomy;
-		$slug = $default_lang . '/' . $base_slug;
 
-		register_taxonomy(
-			$taxonomy,
-			$args['post_types'],
-			array(
-				'labels' => array(
-					'name'          => $args['plural'],
-					'singular_name' => $args['singular'],
-					'add_new_item'  => sprintf( __( 'Add New %s', 'umtd' ), $args['singular'] ),
-					'edit_item'     => sprintf( __( 'Edit %s', 'umtd' ), $args['singular'] ),
-					'search_items'  => sprintf( __( 'Search %s', 'umtd' ), $args['plural'] ),
-				),
-				'hierarchical'      => $args['hierarchical'],
-				'public'            => true,
-				'show_in_rest'      => true,
-				'show_admin_column' => true,
-				'rewrite'           => array( 'slug' => $slug ),
-			)
+		$slug = count( $i18n['languages'] ) > 1
+			? $default_lang . '/' . $base_slug
+			: $base_slug;
+
+		$taxonomy_args = array(
+			'labels' => array(
+				'name'          => $args['plural'],
+				'singular_name' => $args['singular'],
+				'add_new_item'  => sprintf( __( 'Add New %s', 'umtd' ), $args['singular'] ),
+				'edit_item'     => sprintf( __( 'Edit %s', 'umtd' ), $args['singular'] ),
+				'search_items'  => sprintf( __( 'Search %s', 'umtd' ), $args['plural'] ),
+			),
+			'hierarchical'      => $args['hierarchical'],
+			'public'            => true,
+			'show_in_rest'      => true,
+			'show_admin_column' => true,
+			'rewrite'           => array( 'slug' => $slug ),
 		);
+
+		if ( isset( $args['capabilities'] ) ) {
+			$taxonomy_args['capabilities'] = $args['capabilities'];
+		}
+
+		register_taxonomy( $taxonomy, $args['post_types'], $taxonomy_args );
 
 		// Supplementary rewrite rules for non-default active languages.
 		foreach ( $i18n['languages'] as $lang ) {
@@ -392,3 +399,9 @@ require_once UMTD_PATH . 'includes/admin.php';
 
 // Custom database function
 require_once UMTD_PATH . 'includes/db.php';
+
+// Save to custom database
+require_once UMTD_PATH . 'includes/save.php';
+
+// Custom metabox for agent roles
+require_once UMTD_PATH . 'includes/metabox.php';
