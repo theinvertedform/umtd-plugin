@@ -63,6 +63,8 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- docs(schema): update SCHEMA.md — add umtd_works_film to Core Entity Tables; remove implementation notes on umtd_agents name columns; update umtd_roles seed vocabulary; remove umtd_works_film from Deferred; update revision date
+- docs(roadmap): mark WP-CLI import scripts complete — Letterboxd→TMDB pipeline
 - feat(save): agent intercept now writes `name_first`, `name_last`, `name_display` to `umtd_agents`
 - feat(save): add film extension intercept at priority 25 — writes film/video fields to `umtd_works_film`
 - feat(db): `umtd_get_table_map()` — add name columns to `umtd_agents` column list

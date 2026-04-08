@@ -1,11 +1,11 @@
 # UMT Studio — Database Schema
 
 Version: 0.2.x
-Last revised: 2026-04-07
+Last revised: 2026-04-08
 
 This document defines the custom database schema that replaces WordPress postmeta as the primary data store for all umt.studio CPT data. It is the reference for `umtd_register_tables()`, `umtd_get_field()`, and all `acf/save_post` intercept hooks.
 
-All ten tables are implemented and active as of v0.2.x. Scalar fields for Works, Agents, and Events are intercepted on `acf/save_post` and written to entity tables. Agent–Work relationships are written to `umtd_work_agents` via the Agents meta box (`includes/metabox.php`). Event–Agent and Event–Work relationships are written to their junction tables via `acf/save_post` intercepts at priority 30. The `umtd_translations` table is created but the write/read layer is not yet implemented — bilingual content entry is deferred. Per-type extension fields (film, bibliographic, listing) remain in ACF postmeta until v0.3.0.
+All ten tables are implemented and active as of v0.2.x, plus `umtd_works_film` added April 2026. Scalar fields for Works, Agents, and Events are intercepted on `acf/save_post` and written to entity tables. Agent name fields (`name_first`, `name_last`, `name_display`) are intercepted and written to `umtd_agents`. Film/Video extension fields are intercepted at priority 25 and written to `umtd_works_film`. Agent–Work relationships are written to `umtd_work_agents` via the Agents meta box (`includes/metabox.php`). Event–Agent and Event–Work relationships are written to their junction tables via `acf/save_post` intercepts at priority 30. The `umtd_translations` table is created but the write/read layer is not yet implemented — bilingual content entry is deferred. Bibliographic and listing per-type extension fields remain in ACF postmeta until v0.3.0.
 
 ---
 
@@ -99,6 +99,23 @@ Translatable fields stored in `umtd_translations`: `title`, `description`.
 
 **Hung lantern — per-type columns:** fields added in the v0.2.x ACF field groups for film (runtime, format, ISAN), bibliographic works (ISBN, ISSN, DOI, page count, journal metadata), and listings (address, tenure type, floor area) are stored in ACF postmeta until v0.3.0. Extension tables are preferred over sparse columns on `umtd_works` — see Deferred: Per-type Extension Tables.
 
+### `umtd_works_film`
+
+Extension table for Film and Video work types. One-to-one with `umtd_works` via `work_id`. Written by the `acf/save_post` intercept at priority 25, which fires only when the work has a `umtd_work_type` term of `film` or `video`. Read via LEFT JOIN in `umtd_get_work()`.
+
+```sql
+CREATE TABLE umtd_works_film (
+    work_id             BIGINT UNSIGNED NOT NULL,
+    runtime             INT UNSIGNED    DEFAULT NULL,  -- minutes
+    film_format         VARCHAR(100)    DEFAULT NULL,  -- 35mm, DCP, etc.
+    language            VARCHAR(10)     DEFAULT NULL,  -- ISO 639-1
+    isan                VARCHAR(100)    DEFAULT NULL,
+    country_of_origin   VARCHAR(100)    DEFAULT NULL,
+    PRIMARY KEY (work_id),
+    UNIQUE KEY work_id (work_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
 ### `umtd_agents`
 
 Persons, organizations, and venues. Venues are agents with `agent_type = 'venue'` — excluded from public archive listings by default.
@@ -124,8 +141,6 @@ CREATE TABLE umtd_agents (
     KEY name_last (name_last)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
-
-**Note — table vs implementation:** `config/tables.php` currently defines `umtd_agents` without `name_first`, `name_last`, `name_display` columns. These are in the spec but not yet in the implementation — they will be added via `dbDelta()`. The `acf/save_post` intercept currently writes `agent_type`, date fields, `wikidata_id`, `ulan_id`, and `website` only.
 
 Translatable fields: `biography`, `name_display` (for organizations and venues where FR/EN names differ).
 
@@ -244,7 +259,7 @@ CREATE TABLE umtd_roles (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-Current seed vocabulary: `artist`, `photographer`, `publisher`, `curator`, `director`, `cinematographer`, `editor`, `cast`, `producer`, `screenwriter`, `composer`, `printer`, `author`, `translator`, `illustrator`. Adding a new role: add to `config/roles.php`, deploy, reactivate.
+Current seed vocabulary: `artist`, `photographer`, `publisher`, `curator`, `director`, `cinematographer`, `editor`, `cast`, `producer`, `screenwriter`, `composer`, `printer`, `author`, `translator`, `illustrator`, `distributor`, `production-company`. Adding a new role: add to `config/roles.php`, deploy, reactivate.
 
 ### `umtd_view_types`
 
@@ -345,10 +360,10 @@ A `umtd_work_relations` junction table for explicit object-to-object relationshi
 
 ## Deferred — Per-type Extension Tables
 
-Fields specific to film, bibliographic, and listing work types are stored in ACF postmeta until v0.3.0. At that point, typed extension tables are preferred over sparse columns on `umtd_works`:
+Bibliographic and listing work type fields are stored in ACF postmeta until v0.3.0. Film/video fields are implemented in `umtd_works_film`. At v0.3.0, typed extension tables are preferred over sparse columns on `umtd_works`:
 
-- `umtd_works_film` — runtime, format, language, ISAN, country_of_origin
 - `umtd_works_bibliographic` — isbn, issn, doi, place_of_publication, edition_number, page_count, journal_title, volume, issue, page_range
 - `umtd_works_listing` — address, tenure_type, listing_status, floor_area, floor_area_unit, rooms, bathrooms
 
 Each extension table carries a `work_id` FK → `umtd_works.id` and a one-to-one relationship enforced by a `UNIQUE KEY work_id`. Visual object fields (support, dimensions_d, inscription, style_period, catalogue_raisonne) and print fields (print_state) follow the same pattern. The base `umtd_works` table remains narrow — only fields universal to all work types.
+
