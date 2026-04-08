@@ -63,6 +63,9 @@ function umtd_get_table_map() {
             'table'   => $wpdb->prefix . 'umtd_agents',
             'columns' => array(
                 'agent_type',
+                'name_first',
+                'name_last',
+                'name_display',
                 'birth_date',
                 'death_date',
                 'founding_date',
@@ -286,14 +289,17 @@ function umtd_format_date( $ymd, $format = 'j F Y' ) {
  *   umtd_get_work_agents( $post_id ) — agent+role rows
  *   get_field( 'related_works', $post_id ) — related works (postmeta)
  *
- * Per-type extension fields (film, print, bibliographic, listing, visual object)
- * are included via get_field() fallback — they live in postmeta until v0.3.0
- * extension tables are implemented.
+ * Per-type extension fields for film/video are read from umtd_works_film via
+ * a LEFT JOIN. All other per-type extension fields (print, bibliographic,
+ * listing, visual object) live in postmeta until v0.3.0 extension tables
+ * are implemented.
  *
  * @param int $post_id WordPress post ID of the work.
  * @return array
  */
 function umtd_get_work( $post_id ) {
+    global $wpdb;
+
     $work_type_terms = get_the_terms( $post_id, 'umtd_work_type' );
     $work_type_slug  = ( $work_type_terms && ! is_wp_error( $work_type_terms ) )
         ? $work_type_terms[0]->slug
@@ -303,6 +309,15 @@ function umtd_get_work( $post_id ) {
 
     $date_earliest = umtd_get_field( 'date_earliest', $post_id );
     $date_latest   = umtd_get_field( 'date_latest',   $post_id );
+
+    // Film extension fields — LEFT JOIN so non-film works return nulls cleanly.
+    $film = $wpdb->get_row( $wpdb->prepare(
+        "SELECT wf.runtime, wf.film_format, wf.language, wf.isan, wf.country_of_origin
+         FROM {$wpdb->prefix}umtd_works w
+         LEFT JOIN {$wpdb->prefix}umtd_works_film wf ON wf.work_id = w.id
+         WHERE w.post_id = %d",
+        $post_id
+    ) );
 
     return array(
 
@@ -345,12 +360,12 @@ function umtd_get_work( $post_id ) {
         'printer_copies' => get_field( 'printer_copies', $post_id ),
         'print_state'    => get_field( 'print_state',    $post_id ),
 
-        // Per-type — film (Film, Video)
-        'runtime'           => get_field( 'runtime',           $post_id ),
-        'film_format'       => get_field( 'film_format',       $post_id ),
-        'language'          => get_field( 'language',          $post_id ),
-        'isan'              => get_field( 'isan',              $post_id ),
-        'country_of_origin' => get_field( 'country_of_origin', $post_id ),
+        // Per-type — film (Film, Video) — from umtd_works_film
+        'runtime'           => $film->runtime           ?? null,
+        'film_format'       => $film->film_format       ?? null,
+        'language'          => $film->language          ?? null,
+        'isan'              => $film->isan              ?? null,
+        'country_of_origin' => $film->country_of_origin ?? null,
 
         // Per-type — bibliographic (Books, Monographs, Articles, Artist Book)
         'isbn'               => get_field( 'isbn',               $post_id ),
@@ -398,8 +413,10 @@ function umtd_get_agent( $post_id ) {
         'permalink'    => get_permalink( $post_id ),
         'thumbnail_id' => get_post_thumbnail_id( $post_id ),
 
-        // Display name — always use this, never title
-        'name_display' => get_field( 'name_display', $post_id ),
+        // Display name — always use this for output, never title
+        'name_display' => umtd_get_field( 'name_display', $post_id ),
+        'name_first'   => umtd_get_field( 'name_first',   $post_id ),
+        'name_last'    => umtd_get_field( 'name_last',    $post_id ),
 
         // Type
         'agent_type' => umtd_get_field( 'agent_type', $post_id ),
@@ -540,3 +557,4 @@ function umtd_get_agents_by_work_type( $type_slug, $role_slug = null ) {
         $type_slug
     ) );
 }
+

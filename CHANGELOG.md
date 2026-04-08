@@ -63,6 +63,18 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- feat(save): agent intercept now writes `name_first`, `name_last`, `name_display` to `umtd_agents`
+- feat(save): add film extension intercept at priority 25 — writes film/video fields to `umtd_works_film`
+- feat(db): `umtd_get_table_map()` — add name columns to `umtd_agents` column list
+- feat(db): `umtd_get_work()` — film fields now read from `umtd_works_film` via LEFT JOIN, not postmeta fallback
+- feat(db): `umtd_get_agent()` — `name_display`, `name_first`, `name_last` now read via `umtd_get_field()`
+- fix(schema): widen `wikidata_id` and `ulan_id` columns from VARCHAR(20) to VARCHAR(50)
+- feat(schema): add `name_first`, `name_last`, `name_display` columns to `umtd_agents` table
+- feat(schema): add `umtd_works_film` extension table (runtime, film_format, language, isan, country_of_origin)
+- feat(schema): add `name_last` index to `umtd_agents`
+- feat(roles): add `distributor` and `production-company` role slugs to config/roles.php
+- feat(importers): add `letterboxd-tmdb-fetch.py` — Stage 1 Letterboxd CSV → TMDB JSON fetch
+- feat(importers): add `letterboxd-tmdb-import.php` — Stage 2 JSON → WordPress + custom tables import
 - docs(db): update includes/db.php file docblock — two-level API structure, high-level entity functions listed
 - feat(db): add umtd_get_work() — all scalar work fields as keyed array, per-type extension fields via get_field() fallback
 - feat(db): add umtd_get_agent() — all scalar agent fields as keyed array, dates in raw and formatted forms

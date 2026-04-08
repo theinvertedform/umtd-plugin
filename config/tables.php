@@ -73,16 +73,31 @@ return array(
 		id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 		post_id             BIGINT UNSIGNED NOT NULL,
 		agent_type          VARCHAR(20)     NOT NULL DEFAULT 'person',
+		name_first          VARCHAR(255)    DEFAULT NULL,
+		name_last           VARCHAR(255)    DEFAULT NULL,
+		name_display        VARCHAR(255)    DEFAULT NULL,
 		birth_date          VARCHAR(8)      DEFAULT NULL,
 		death_date          VARCHAR(8)      DEFAULT NULL,
 		founding_date       VARCHAR(8)      DEFAULT NULL,
 		dissolution_date    VARCHAR(8)      DEFAULT NULL,
-		wikidata_id         VARCHAR(20)     DEFAULT NULL,
-		ulan_id             VARCHAR(20)     DEFAULT NULL,
+		wikidata_id         VARCHAR(50)     DEFAULT NULL,
+		ulan_id             VARCHAR(50)     DEFAULT NULL,
 		website             VARCHAR(2083)   DEFAULT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY post_id (post_id),
-		KEY agent_type (agent_type)
+		KEY agent_type (agent_type),
+		KEY name_last (name_last)
+	) $charset;",
+
+	'umtd_works_film' => "CREATE TABLE {$wpdb->prefix}umtd_works_film (
+		work_id             BIGINT UNSIGNED NOT NULL,
+		runtime             INT UNSIGNED    DEFAULT NULL,
+		film_format         VARCHAR(100)    DEFAULT NULL,
+		language            VARCHAR(10)     DEFAULT NULL,
+		isan                VARCHAR(100)    DEFAULT NULL,
+		country_of_origin   VARCHAR(100)    DEFAULT NULL,
+		PRIMARY KEY  (work_id),
+		UNIQUE KEY work_id (work_id)
 	) $charset;",
 
 	'umtd_events' => "CREATE TABLE {$wpdb->prefix}umtd_events (
@@ -156,3 +171,4 @@ return array(
 	) $charset;",
 
 );
+

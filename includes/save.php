@@ -78,6 +78,70 @@ add_action( 'acf/save_post', function( $post_id ) {
 }, 20 );
 
 /**
+ * Intercept ACF save for umtd_works_film extension fields.
+ *
+ * Writes Film/Video-specific fields to wp_umtd_works_film. Only runs when
+ * the work has a umtd_work_type term of 'film' or 'video'. Bails silently
+ * for all other work types.
+ *
+ * Runs at priority 25 — after the works scalar intercept at priority 20,
+ * which ensures the umtd_works row (and its id) exists before this fires.
+ *
+ * Fields written: runtime, film_format, language, isan, country_of_origin.
+ *
+ * @param int $post_id WordPress post ID.
+ */
+add_action( 'acf/save_post', function( $post_id ) {
+    if ( get_post_type( $post_id ) !== 'umtd_works' ) {
+        return;
+    }
+
+    if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+        return;
+    }
+
+    $terms = get_the_terms( $post_id, 'umtd_work_type' );
+    if ( empty( $terms ) || is_wp_error( $terms ) ) {
+        return;
+    }
+
+    $type_slugs = wp_list_pluck( $terms, 'slug' );
+    if ( ! array_intersect( array( 'film', 'video' ), $type_slugs ) ) {
+        return;
+    }
+
+    $work_id = umtd_get_work_id( $post_id );
+    if ( ! $work_id ) {
+        return;
+    }
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'umtd_works_film';
+
+    $data = array(
+        'work_id'           => $work_id,
+        'runtime'           => get_field( 'runtime',           $post_id ) ?: null,
+        'film_format'       => get_field( 'film_format',       $post_id ) ?: null,
+        'language'          => get_field( 'language',          $post_id ) ?: null,
+        'isan'              => get_field( 'isan',              $post_id ) ?: null,
+        'country_of_origin' => get_field( 'country_of_origin', $post_id ) ?: null,
+    );
+
+    $formats = array( '%d', '%d', '%s', '%s', '%s', '%s' );
+
+    $exists = $wpdb->get_var( $wpdb->prepare(
+        "SELECT work_id FROM $table WHERE work_id = %d",
+        $work_id
+    ) );
+
+    if ( $exists ) {
+        $wpdb->update( $table, $data, array( 'work_id' => $work_id ), $formats, array( '%d' ) );
+    } else {
+        $wpdb->insert( $table, $data, $formats );
+    }
+}, 25 );
+
+/**
  * Intercept ACF save for umtd_agents.
  *
  * Writes scalar agent fields to wp_umtd_agents. Creates or updates row
@@ -103,6 +167,9 @@ add_action( 'acf/save_post', function( $post_id ) {
     $data = array(
         'post_id'          => $post_id,
         'agent_type'       => get_field( 'agent_type',       $post_id ) ?: 'person',
+        'name_first'       => get_field( 'name_first',       $post_id ) ?: null,
+        'name_last'        => get_field( 'name_last',        $post_id ) ?: null,
+        'name_display'     => get_field( 'name_display',     $post_id ) ?: null,
         'birth_date'       => get_field( 'birth_date',       $post_id ) ?: null,
         'death_date'       => get_field( 'death_date',       $post_id ) ?: null,
         'founding_date'    => get_field( 'founding_date',    $post_id ) ?: null,
@@ -112,7 +179,7 @@ add_action( 'acf/save_post', function( $post_id ) {
         'website'          => get_field( 'website',          $post_id ) ?: null,
     );
 
-    $formats = array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' );
+    $formats = array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' );
 
     $exists = $wpdb->get_var( $wpdb->prepare(
         "SELECT id FROM $table WHERE post_id = %d",
