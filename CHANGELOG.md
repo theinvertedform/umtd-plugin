@@ -7,6 +7,10 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ## [Unreleased]
 
+### umtd-theme-xyla
+
+- chore(ci): add workflow_dispatch to deploy workflow — enables manual trigger without a code push
+
 ### umtd-remote
 
 - feat(scripts): accept install_acf and install_woo as optional args 7 and 8 — default true/false respectively
@@ -70,6 +74,13 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- docs(architecture): update db.php description — add umtd_get_event_agents()
+- docs(architecture): rewrite field access paragraph — static cache, fallback logger, no transition period
+- docs(architecture): rewrite agent name display guidance — three contexts, no get_field() in templates
+- docs(architecture): update entity data functions — per-type gating, no title key, event agents
+- docs(architecture): add umtd_get_event_agents() example with role filtering
+- docs(architecture): update event metadata fields — note junction table read/write paths
+- docs(decisions): add static row cache, per-type gating, junction JOIN decisions
 - refactor(db): add static row cache to umtd_get_field() — one query per post per request
 - feat(db): add fallback logger to umtd_get_field() — error_log on get_field() fallback, gated on WP_DEBUG
 - feat(db): add name_display to umtd_get_work_agents() JOIN — eliminates per-agent get_field() in templates
