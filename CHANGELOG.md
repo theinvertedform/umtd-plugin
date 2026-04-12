@@ -30,6 +30,13 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-theme
 
+- refactor(templates): front-page.php — replace get_field() agent reads with umtd_get_event_agents()
+- refactor(templates): single-umtd_works.php — agent names from $wa->name_display JOIN
+- refactor(templates): single-umtd_agents.php — remove $agent['title'] fallback
+- refactor(templates): single-umtd_events.php — replace get_field() agent reads with umtd_get_event_agents(); split by role_slug
+- refactor(parts): card-work.php — agent names from $wa->name_display JOIN, not per-agent get_field()
+- refactor(parts): card-agent.php — remove get_the_title() and $agent['title'] fallbacks
+- refactor(parts): card-event.php — organizers expect junction table rows, not WP_Post objects; remove title fallback
 - docs(architecture): update theme file structure — add parts/work-type/ directory, card \$args notation, prints-archive and books-archive templates
 - docs(architecture): update Work–Agent Relationship section — replace inline SQL with umtd_get_agent_works(); add umtd_get_agents_by_work_type() with examples; add entity data functions block
 - docs(architecture): update Taxonomy Queries section — point to umtd_get_agents_by_work_type()
@@ -63,6 +70,12 @@ Format: [Conventional Commits](https://www.conventionalcommits.org/). Versions f
 
 ### umtd-plugin
 
+- refactor(db): add static row cache to umtd_get_field() — one query per post per request
+- feat(db): add fallback logger to umtd_get_field() — error_log on get_field() fallback, gated on WP_DEBUG
+- feat(db): add name_display to umtd_get_work_agents() JOIN — eliminates per-agent get_field() in templates
+- feat(db): add umtd_get_event_agents() — junction table read for event–agent–role rows with name_display
+- fix(db): remove get_the_title() from umtd_get_agent() — convention violation
+- refactor(db): gate per-type field blocks in umtd_get_work() on work_type_slug
 - docs(schema): update SCHEMA.md — add umtd_works_film to Core Entity Tables; remove implementation notes on umtd_agents name columns; update umtd_roles seed vocabulary; remove umtd_works_film from Deferred; update revision date
 - docs(roadmap): mark WP-CLI import scripts complete — Letterboxd→TMDB pipeline
 - feat(save): agent intercept now writes `name_first`, `name_last`, `name_display` to `umtd_agents`
