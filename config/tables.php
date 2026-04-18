@@ -63,6 +63,8 @@ return array(
 		dimensions_h        DECIMAL(10,2)   DEFAULT NULL,
 		dimensions_w        DECIMAL(10,2)   DEFAULT NULL,
 		dimensions_unit     VARCHAR(10)     DEFAULT NULL,
+		edition_size        INT UNSIGNED    DEFAULT NULL,
+		printer_copies      INT UNSIGNED    DEFAULT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY post_id (post_id),
 		KEY date_earliest (date_earliest),
@@ -171,4 +173,3 @@ return array(
 	) $charset;",
 
 );
-

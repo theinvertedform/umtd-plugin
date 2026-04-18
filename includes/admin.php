@@ -1,12 +1,13 @@
 <?php
 /**
- * Admin script enqueue and agent name sync.
+ * Admin script enqueue, agent name sync, and attachment field control.
  *
- * Handles two concerns:
+ * Handles three concerns:
  * - Syncing the post title and slug from ACF name fields on save (umtd_agents only).
  * - Enqueueing admin-fields.js on edit screens for configured post types.
+ * - Removing attachment title support and suppressing caption/description/alt in admin.
  *
- * @package umt-studio
+ * @package umtd-plugin
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * dependencies arise.
  *
  * Note: global scope is a known limitation — a future refactor to a config array
- * passed via filter would be cleaner. See DEFERRED.md — Class-based Plugin Architecture.
+ * passed via filter would be cleaner. See ROADMAP.md — Stabilization.
  */
 $umtd_admin_script_post_types = array(
 	'umtd_agents',

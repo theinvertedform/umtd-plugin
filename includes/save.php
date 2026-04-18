@@ -61,9 +61,11 @@ add_action( 'acf/save_post', function( $post_id ) {
         'dimensions_w'     => get_field( 'dimensions_w',     $post_id ) ?: null,
         'dimensions_unit'  => get_field( 'dimensions_unit',  $post_id ) ?: null,
         'accession_number' => get_field( 'accession_number', $post_id ) ?: null,
+        'edition_size'     => get_field( 'edition_size',     $post_id ) ?: null,
+        'printer_copies'   => get_field( 'printer_copies',   $post_id ) ?: null,
     );
 
-    $formats = array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' );
+    $formats = array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d' );
 
     $exists = $wpdb->get_var( $wpdb->prepare(
         "SELECT id FROM $table WHERE post_id = %d",

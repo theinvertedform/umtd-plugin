@@ -5,6 +5,7 @@
  * Two levels of API:
  *
  * Low-level — single field reads:
+<<<<<<< HEAD
  *   umtd_get_field()        — reads custom tables first, falls back to get_field()
  *   umtd_get_work_agents()  — junction table read for work–agent–role rows
  *   umtd_get_event_agents() — junction table read for event–agent–role rows
@@ -13,6 +14,16 @@
  *   umtd_get_work_id()      — FK lookup: wp post ID → umtd_works.id
  *   umtd_get_event_id()     — FK lookup: wp post ID → umtd_events.id
  *   umtd_format_date()      — Ymd → display string
+=======
+ *   umtd_get_field()       — reads custom tables first, falls back to get_field()
+ *   umtd_get_work_agents() — junction table read for work–agent–role rows
+ *   umtd_get_event_works() — junction table read for event–work rows
+ *   umtd_get_agent_id()    — FK lookup: wp post ID → umtd_agents.id
+ *   umtd_get_work_id()     — FK lookup: wp post ID → umtd_works.id
+ *   umtd_get_event_id()    — FK lookup: wp post ID → umtd_events.id
+ *   umtd_format_date()     — Ymd → display string
+ *   umtd_search_agents()   — search agents by name (first/last/display)
+>>>>>>> fa53d1f (You're right. Separate commits per repo:)
  *
  * High-level — entity data arrays for templates:
  *   umtd_get_work()        — all scalar work fields as keyed array
@@ -633,4 +644,55 @@ function umtd_get_agents_by_work_type( $type_slug, $role_slug = null ) {
         $type_slug
     ) );
 }
+<<<<<<< HEAD
  
+=======
+
+/**
+ * Search agents by name.
+ *
+ * Searches name_first, name_last, and name_display fields from the custom
+ * umtd_agents table. Returns up to $limit results ordered by name_display.
+ *
+ * For persons, matches against first name, last name, or display name.
+ * For organizations, matches against display name only.
+ *
+ * Uses LIKE with wildcards for partial matching. Search is case-insensitive.
+ *
+ * @param string $term  Search term (minimum 2 characters recommended).
+ * @param int    $limit Maximum results to return. Default 20.
+ * @return array Array of objects with post_id and name_display.
+ */
+function umtd_search_agents( $term, $limit = 20 ) {
+    global $wpdb;
+
+    $term  = trim( $term );
+    $limit = absint( $limit );
+
+    if ( empty( $term ) || $limit < 1 ) {
+        return array();
+    }
+
+    $like = '%' . $wpdb->esc_like( $term ) . '%';
+
+    return $wpdb->get_results( $wpdb->prepare(
+        "SELECT DISTINCT
+            a.post_id,
+            a.name_display
+         FROM {$wpdb->prefix}umtd_agents a
+         JOIN {$wpdb->prefix}posts p ON p.ID = a.post_id
+         WHERE p.post_status = 'publish'
+           AND (
+               a.name_first   LIKE %s OR
+               a.name_last    LIKE %s OR
+               a.name_display LIKE %s
+           )
+         ORDER BY a.name_display ASC
+         LIMIT %d",
+        $like,
+        $like,
+        $like,
+        $limit
+    ) );
+}
+>>>>>>> fa53d1f (You're right. Separate commits per repo:)

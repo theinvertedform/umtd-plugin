@@ -52,12 +52,17 @@ umtd-plugin/
 ├── includes/
 │   ├── admin.php           — agent name sync, admin enqueue, attachment UI control
 │   ├── schema.php          — schema.org JSON-LD output
+<<<<<<< HEAD
 │   ├── db.php              — custom table read layer: umtd_get_field(), umtd_get_work_agents(), umtd_get_event_agents(), umtd_format_date(), FK lookup helpers
+=======
+│   ├── db.php              — custom table read layer: umtd_get_field(), umtd_get_work_agents(), umtd_format_date(), umtd_search_agents(), FK lookup helpers
+>>>>>>> fa53d1f (You're right. Separate commits per repo:)
 │   ├── save.php            — acf/save_post intercepts: writes scalar fields to entity tables, junction rows to work_agents/event_agents/event_works
-│   └── metabox.php         — agent+role meta box on umtd_works; AJAX agent search; writes to umtd_work_agents
+│   └── metabox.php         — agent+role meta box on umtd_works; AJAX agent search via umtd_search_agents(); writes to umtd_work_agents
 ├── assets/
 │   └── js/
-│       └── admin-fields.js — display name autopopulation in admin
+│       ├── admin-fields.js    — display name autopopulation in admin
+│       └── metabox-agents.js  — agent meta box autocomplete UI
 └── acf-json/               — ACF field group JSON (base plugin only)
  
 umtd-plugin-{client}/
@@ -248,11 +253,19 @@ Per-type field groups use ACF location rules `post_type == umtd_works` AND `post
 | `date_latest` | — | date picker | stored `Ymd`, returns `Ymd` |
 | `description` | — | textarea | |
 | `related_works` | — | relationship | → `umtd_works`; explicit object-to-object relations planned via `umtd_work_relations`. See `SCHEMA.md`. |
+<<<<<<< HEAD
  
 **Agent assignment** is handled by the Agents meta box (`includes/metabox.php`), not an ACF relationship field. The meta box renders an AJAX-powered search field paired with a role select (populated from `umtd_roles`) for each agent. On save, rows are written directly to `umtd_work_agents` — no ACF postmeta involvement. The interim `agents_artists` / `agents_authors` ACF fields are removed. Read via `umtd_get_work_agents( $post_id )`.
  
 **Hung lantern — agent field filtering:** the meta box currently shows all published agents in search regardless of work type. A planned filter will restrict visible agents by role, keyed to a work-type → permitted-roles mapping in the base plugin config. Deferred.
  
+=======
+
+**Agent assignment** is handled by the Agents meta box (`includes/metabox.php`), not an ACF relationship field. The meta box renders an AJAX-powered search field paired with a role select (populated from `umtd_roles`) for each agent. Agent search queries the custom `umtd_agents` table directly, searching `name_first`, `name_last`, and `name_display` fields — works for both persons and organizations. On save, rows are written directly to `umtd_work_agents` — no ACF postmeta involvement. The interim `agents_artists` / `agents_authors` ACF fields are removed. Read via `umtd_get_work_agents( $post_id )`.
+
+**Hung lantern — agent field filtering:** the meta box currently shows all published agents in search regardless of work type. A planned filter will restrict visible agents by role, keyed to a work-type → permitted-roles mapping in the base plugin config. Deferred to ROADMAP.md — Stabilization.
+
+>>>>>>> fa53d1f (You're right. Separate commits per repo:)
 ### Work Metadata Fields — Visual Object (Painting, Drawing, Sculpture, Photograph, Installation)
  
 VRA Core elements: `material`, `measurements`, `inscription`, `stylePeriod`, `textref`, `location`.

@@ -132,97 +132,61 @@ function umtd_render_work_agents_metabox( $post ) {
             </button>
         </p>
     </div>
+    <?php
+}
 
-    <script>
-    (function($) {
-        var rowIndex = <?php echo count( $existing ); ?>;
-        var roles    = <?php echo wp_json_encode( $roles ); ?>;
+/**
+ * Enqueue metabox JavaScript and CSS.
+ */
+add_action( 'admin_enqueue_scripts', function( $hook ) {
+    global $post;
 
-        // Build role options HTML once.
-        var roleOptions = '<option value="">— select role —</option>';
-        $.each(roles, function(i, r) {
-            roleOptions += '<option value="' + r.id + '">' + r.label_en + '</option>';
-        });
+    if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
+        return;
+    }
 
-        // Add row.
-        $('#umtd-add-agent').on('click', function() {
-            var row = '<tr class="umtd-agent-row">'
-                + '<td>'
-                + '<input type="hidden" name="umtd_agents[' + rowIndex + '][post_id]" class="umtd-agent-post-id" value="" />'
-                + '<input type="text" class="umtd-agent-search" placeholder="Search agents…" autocomplete="off" />'
-                + '<ul class="umtd-agent-suggestions" style="display:none;"></ul>'
-                + '</td>'
-                + '<td><select name="umtd_agents[' + rowIndex + '][role_id]">' + roleOptions + '</select></td>'
-                + '<td><input type="number" name="umtd_agents[' + rowIndex + '][sort_order]" value="' + rowIndex + '" style="width:50px;" /></td>'
-                + '<td><button type="button" class="button umtd-remove-agent">Remove</button></td>'
-                + '</tr>';
-            $('#umtd-agents-rows').append(row);
-            rowIndex++;
-        });
+    if ( ! $post || $post->post_type !== 'umtd_works' ) {
+        return;
+    }
 
-        // Remove row.
-        $('#umtd-agents-rows').on('click', '.umtd-remove-agent', function() {
-            $(this).closest('tr').remove();
-        });
+    global $wpdb;
+    $roles = $wpdb->get_results(
+        "SELECT id, slug, label_en FROM {$wpdb->prefix}umtd_roles ORDER BY label_en ASC"
+    );
 
-        // Agent search autocomplete.
-        $('#umtd-agents-rows').on('input', '.umtd-agent-search', function() {
-            var $input      = $(this);
-            var $hidden     = $input.siblings('.umtd-agent-post-id');
-            var $suggestions = $input.siblings('.umtd-agent-suggestions');
-            var term        = $input.val();
+    // Calculate row index: existing rows + 1 for the empty row rendered in PHP
+    $existing_count = (int) $wpdb->get_var( $wpdb->prepare(
+        "SELECT COUNT(*) FROM {$wpdb->prefix}umtd_work_agents wa
+         JOIN {$wpdb->prefix}umtd_works w ON w.id = wa.work_id
+         WHERE w.post_id = %d",
+        $post->ID
+    ) );
 
-            if ( term.length < 2 ) {
-                $suggestions.hide().empty();
-                return;
-            }
+    wp_enqueue_script(
+        'umtd-metabox-agents',
+        plugin_dir_url( dirname( __FILE__ ) ) . 'assets/js/metabox-agents.js',
+        array( 'jquery' ),
+        UMTD_VERSION,
+        true
+    );
 
-            $.ajax({
-                url: ajaxurl,
-                method: 'POST',
-                data: {
-                    action:   'umtd_search_agents',
-                    term:     term,
-                    nonce:    '<?php echo wp_create_nonce( "umtd_search_agents" ); ?>',
-                },
-                success: function(response) {
-                    $suggestions.empty();
-                    if ( ! response.success || ! response.data.length ) {
-                        $suggestions.hide();
-                        return;
-                    }
-                    $.each(response.data, function(i, agent) {
-                        $suggestions.append(
-                            $('<li>')
-                                .text(agent.label)
-                                .attr('data-id', agent.id)
-                        );
-                    });
-                    $suggestions.show();
-                }
-            });
-        });
+    wp_localize_script( 'umtd-metabox-agents', 'umtdMetaboxAgents', array(
+        'roles'    => $roles,
+        'rowIndex' => $existing_count + 1,
+        'nonce'    => wp_create_nonce( 'umtd_search_agents' ),
+        'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+    ) );
+} );
 
-        // Select suggestion.
-        $('#umtd-agents-rows').on('click', '.umtd-agent-suggestions li', function() {
-            var $li          = $(this);
-            var $suggestions = $li.parent();
-            var $row         = $suggestions.closest('tr');
-            $row.find('.umtd-agent-post-id').val( $li.data('id') );
-            $row.find('.umtd-agent-search').val( $li.text() );
-            $suggestions.hide().empty();
-        });
-
-        // Hide suggestions on outside click.
-        $(document).on('click', function(e) {
-            if ( ! $(e.target).closest('.umtd-agent-row').length ) {
-                $('.umtd-agent-suggestions').hide().empty();
-            }
-        });
-
-    })(jQuery);
-    </script>
-
+/**
+ * Output metabox CSS inline.
+ */
+add_action( 'admin_head', function() {
+    global $post;
+    if ( ! $post || $post->post_type !== 'umtd_works' ) {
+        return;
+    }
+    ?>
     <style>
         #umtd-agents-table { border-collapse: collapse; margin-bottom: 8px; }
         #umtd-agents-table th,
@@ -245,13 +209,13 @@ function umtd_render_work_agents_metabox( $post ) {
         .umtd-agent-suggestions li:hover { background: #f0f0f1; }
     </style>
     <?php
-}
+} );
 
 /**
- * AJAX handler — search agents by name_display.
+ * AJAX handler — search agents by name.
  *
- * Returns up to 20 agents matching the search term. Searches against
- * post_title (the sort key) and the name_display postmeta field.
+ * Searches name_first, name_last, and name_display from umtd_agents table.
+ * Returns up to 20 agents matching the search term.
  *
  * @return void JSON response.
  */
@@ -263,19 +227,13 @@ add_action( 'wp_ajax_umtd_search_agents', function() {
         wp_send_json_error();
     }
 
-    $query = new WP_Query( array(
-        'post_type'      => 'umtd_agents',
-        'post_status'    => 'publish',
-        'posts_per_page' => 20,
-        's'              => $term,
-    ) );
+    $agents = umtd_search_agents( $term, 20 );
 
     $results = array();
-    foreach ( $query->posts as $post ) {
-        $display = get_field( 'name_display', $post->ID ) ?: $post->post_title;
+    foreach ( $agents as $agent ) {
         $results[] = array(
-            'id'    => $post->ID,
-            'label' => $display,
+            'id'    => $agent->post_id,
+            'label' => $agent->name_display,
         );
     }
 
