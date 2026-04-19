@@ -5,7 +5,6 @@
  * Two levels of API:
  *
  * Low-level — single field reads:
-<<<<<<< HEAD
  *   umtd_get_field()        — reads custom tables first, falls back to get_field()
  *   umtd_get_work_agents()  — junction table read for work–agent–role rows
  *   umtd_get_event_agents() — junction table read for event–agent–role rows
@@ -14,7 +13,6 @@
  *   umtd_get_work_id()      — FK lookup: wp post ID → umtd_works.id
  *   umtd_get_event_id()     — FK lookup: wp post ID → umtd_events.id
  *   umtd_format_date()      — Ymd → display string
-=======
  *   umtd_get_field()       — reads custom tables first, falls back to get_field()
  *   umtd_get_work_agents() — junction table read for work–agent–role rows
  *   umtd_get_event_works() — junction table read for event–work rows
@@ -23,7 +21,6 @@
  *   umtd_get_event_id()    — FK lookup: wp post ID → umtd_events.id
  *   umtd_format_date()     — Ymd → display string
  *   umtd_search_agents()   — search agents by name (first/last/display)
->>>>>>> fa53d1f (You're right. Separate commits per repo:)
  *
  * High-level — entity data arrays for templates:
  *   umtd_get_work()        — all scalar work fields as keyed array
