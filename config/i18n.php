@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation config for umt-studio.
+ * Internationalisation config for umtd-plugin.
  *
  * Defines all supported languages and their slug translations for CPTs and
  * taxonomies. Consumed by umtd_register_post_types() and
@@ -17,9 +17,9 @@
  * Adding a new CPT: add its slugs here. Adding a new language: add a column
  * here. Child plugins never modify this file.
  *
- * @package umt-studio
- * @see umt-studio.php umtd_register_post_types()
- * @see umt-studio.php umtd_register_taxonomies()
+ * @package umtd-plugin
+ * @see umtd-plugin.php umtd_register_post_types()
+ * @see umtd-plugin.php umtd_register_taxonomies()
  */
 
 return array(

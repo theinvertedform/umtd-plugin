@@ -1,6 +1,6 @@
 <?php
 /**
- * Base controlled vocabulary for umt-studio.
+ * Base controlled vocabulary for umtd-plugin.
  *
  * Consumed by umtd_seed_terms() on plugin activation. Terms are inserted into
  * their respective taxonomies with the AAT numeric ID stored as 'aat_id' term meta.
@@ -14,9 +14,9 @@
  *
  * Full AAT vocabulary: https://www.getty.edu/research/tools/vocabularies/aat/
  *
- * @package umt-studio
- * @see umt-studio.php umtd_seed_terms()
- * @see umt-studio-{client}/config/terms.php
+ * @package umtd-plugin
+ * @see umtd-plugin.php umtd_seed_terms()
+ * @see umtd-plugin-{client}/config/terms.php
  */
 
 return array(

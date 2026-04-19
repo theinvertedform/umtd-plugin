@@ -1,8 +1,9 @@
+
 /**
  * @file admin-fields.js
- * @package umt-studio
+ * @package umtd-plugin
  *
- * Admin field behaviour for umt-studio edit screens.
+ * Admin field behaviour for umtd-plugin edit screens.
  *
  * Enqueued only on post.php and post-new.php for post types listed in
  * $umtd_admin_script_post_types (see includes/admin.php). Currently active
@@ -68,6 +69,6 @@
 
 	// --- Date display (deferred) ---
 	// Date auto-population has been removed pending a custom date entry UI.
-	// See DEFERRED.md — Custom Date Entry UI.
+	// See ROADMAP.md — Custom Date Entry UI.
 
 })(jQuery);

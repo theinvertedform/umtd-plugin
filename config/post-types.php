@@ -1,8 +1,8 @@
 <?php
 /**
- * CPT definitions for umt-studio.
+ * CPT definitions for umtd-plugin.
  *
- * Consumed by umtd_register_post_types() in umt-studio.php, which applies the
+ * Consumed by umtd_register_post_types() in umtd-plugin.php, which applies the
  * umtd_post_types filter before registration. Keys not listed in
  * $passthrough_keys are consumed internally and not passed to register_post_type().
  *
@@ -11,10 +11,10 @@
  * URLs are built from the slug, which would collide with the page slug.
  *
  * show_in_menu can be used to control placement in the WP admin sidebar.
- * Currently deferred — see DEFERRED.md.
+ * Currently deferred — see ROADMAP.md
  *
- * @package umt-studio
- * @see umt-studio.php umtd_register_post_types()
+ * @package umtd-plugin
+ * @see umtd-plugin.php umtd_register_post_types()
  */
 
 return array(

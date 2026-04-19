@@ -29,6 +29,13 @@ define( 'UMTD_VERSION', '0.2.0' );
 add_action( 'init', 'umtd_register_post_types' );
 add_action( 'init', 'umtd_register_taxonomies' );
 
+/**
+ * Load plugin translation files.
+ *
+ * Translations are stored in /languages/ as .mo/.po files with locale suffix
+ * (e.g., umtd-fr_FR.mo). WordPress automatically loads the appropriate file
+ * based on the site's configured language.
+ */
 add_action( 'init', function() {
     load_plugin_textdomain( 'umtd', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 } );
@@ -254,7 +261,7 @@ add_action( 'plugins_loaded', 'umtd_register_tables' );
  *
  * Reads from config/roles.php — slug as key, language codes as nested keys.
  * Skips rows where the slug already exists; safe to re-run on reactivation
- *umtd-plugin.ph or upgrade without clobbering edited labels.
+ * or upgrade without clobbering edited labels.
  *
  * Child plugins extend the vocabulary via the umtd_roles filter, using the
  * same array shape. New slugs are inserted; existing slugs are never updated
@@ -372,10 +379,22 @@ function umtd_seed_terms() {
     }
 }
 
-// Load base plugin ACF field groups from acf-json/.
-// No save_json filter registered — base field groups are read-only on all
-// deployed installs. To modify: edit on localhost, commit updated JSON, deploy.
-// See ARCHITECTURE.md — ACF Field Groups.
+/**
+ * Load base plugin ACF field groups from acf-json/.
+ * No save_json filter registered — base field groups are read-only on all
+ * deployed installs. To modify: edit on localhost, commit updated JSON, deploy.
+ * See ARCHITECTURE.md — ACF Field Groups.
+ *
+ * The commented save_json filter below may be uncommented temporarily on localhost
+ * when field group edits need to be written back to acf-json/ for version control.
+ * Re-comment after use to prevent accidental edits on deployed servers.
+ *
+ * Register ACF JSON load path for base field groups.
+ *
+ * Adds acf-json/ directory to ACF's search path for field group definitions.
+ * Field groups are loaded from JSON files, not the database, enabling version
+ * control and preventing database bloat.
+ */
 add_filter( 'acf/settings/load_json', function( $paths ) {
     $paths[] = UMTD_PATH . 'acf-json';
     return $paths;
@@ -385,13 +404,23 @@ add_filter( 'acf/settings/load_json', function( $paths ) {
 //    return UMTD_PATH . 'acf-json';
 //} );
 
+/**
+ * Register custom query variable for multilingual routing.
+ *
+ * Adds 'lang' to WordPress's recognized query variables. Supplementary rewrite
+ * rules for non-default languages set this variable, allowing templates to
+ * determine the requested language via get_query_var('lang').
+ *
+ * @see umtd_register_post_types()
+ * @see umtd_register_taxonomies()
+ */
 add_filter( 'query_vars', function( $vars ) {
     $vars[] = 'lang';
     return $vars;
 } );
 
 // Schema.org JSON-LD output for umtd_works singles.
-// Events and agents schema not yet implemented. See DEFERRED.md.
+// Events and agents schema not yet implemented. See ROADMAP.md — Stabilization.
 require_once UMTD_PATH . 'includes/schema.php';
 
 // Agent name sync (post title from ACF name fields) and admin script enqueue.
