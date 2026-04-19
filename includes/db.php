@@ -43,11 +43,11 @@
  * @see includes/save.php    — acf/save_post intercept hooks
  * @see includes/metabox.php — agent+role meta box, writes to umtd_work_agents
  */
- 
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
- 
+
 /**
  * Map of CPT names to their custom entity table and column definitions.
  *
@@ -101,7 +101,7 @@ function umtd_get_table_map() {
         ),
     );
 }
- 
+
 /**
  * Retrieve a field value for a post, reading from custom tables first.
  *
@@ -129,10 +129,10 @@ function umtd_get_table_map() {
 function umtd_get_field( $field, $post_id, $lang = null ) {
     global $wpdb;
     static $row_cache = array();
- 
+
     $post_type = get_post_type( $post_id );
     $map       = umtd_get_table_map();
- 
+
     // Translatable fields — check umtd_translations first.
     $translatable = array( 'title', 'description', 'biography' );
     if ( in_array( $field, $translatable, true ) ) {
@@ -147,7 +147,7 @@ function umtd_get_field( $field, $post_id, $lang = null ) {
             return $value;
         }
     }
- 
+
     // Custom entity table — check if field is a column we own.
     if ( isset( $map[ $post_type ] ) ) {
         $def = $map[ $post_type ];
@@ -166,7 +166,7 @@ function umtd_get_field( $field, $post_id, $lang = null ) {
             // Row doesn't exist yet — fall through to get_field().
         }
     }
- 
+
     // Fallback — field not yet covered by a custom table, or no row exists.
     if ( function_exists( 'get_field' ) ) {
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -177,10 +177,10 @@ function umtd_get_field( $field, $post_id, $lang = null ) {
         }
         return get_field( $field, $post_id );
     }
- 
+
     return null;
 }
- 
+
 /**
  * Retrieve all agents for a work, with their roles.
  *
@@ -200,12 +200,12 @@ function umtd_get_field( $field, $post_id, $lang = null ) {
  */
 function umtd_get_work_agents( $work_post_id, $lang = 'en' ) {
     global $wpdb;
- 
+
     $label_col = 'label_' . $lang;
     if ( ! in_array( $lang, array( 'en', 'fr' ), true ) ) {
         $label_col = 'label_en';
     }
- 
+
     return $wpdb->get_results( $wpdb->prepare(
         "SELECT
             wa.sort_order,
@@ -223,7 +223,7 @@ function umtd_get_work_agents( $work_post_id, $lang = 'en' ) {
         $work_post_id
     ) );
 }
- 
+
 /**
  * Retrieve all agents for an event, with their roles.
  *
@@ -243,12 +243,12 @@ function umtd_get_work_agents( $work_post_id, $lang = 'en' ) {
  */
 function umtd_get_event_agents( $event_post_id, $lang = 'en' ) {
     global $wpdb;
- 
+
     $label_col = 'label_' . $lang;
     if ( ! in_array( $lang, array( 'en', 'fr' ), true ) ) {
         $label_col = 'label_en';
     }
- 
+
     return $wpdb->get_results( $wpdb->prepare(
         "SELECT
             ea.role_id,
@@ -265,7 +265,7 @@ function umtd_get_event_agents( $event_post_id, $lang = 'en' ) {
         $event_post_id
     ) );
 }
- 
+
 /**
  * Retrieve all works for an event.
  *
@@ -277,7 +277,7 @@ function umtd_get_event_agents( $event_post_id, $lang = 'en' ) {
  */
 function umtd_get_event_works( $event_post_id ) {
     global $wpdb;
- 
+
     return $wpdb->get_results( $wpdb->prepare(
         "SELECT w.post_id AS work_post_id
          FROM {$wpdb->prefix}umtd_event_works ew
@@ -287,7 +287,7 @@ function umtd_get_event_works( $event_post_id ) {
         $event_post_id
     ) );
 }
- 
+
 /**
  * Get the umtd_agents.id for a given WordPress post ID.
  *
@@ -305,7 +305,7 @@ function umtd_get_agent_id( $post_id ) {
         $post_id
     ) );
 }
- 
+
 /**
  * Get the umtd_works.id for a given WordPress post ID.
  *
@@ -319,7 +319,7 @@ function umtd_get_work_id( $post_id ) {
         $post_id
     ) );
 }
- 
+
 /**
  * Get the umtd_events.id for a given WordPress post ID.
  *
@@ -333,7 +333,7 @@ function umtd_get_event_id( $post_id ) {
         $post_id
     ) );
 }
- 
+
 /**
  * Format a Ymd date string for display.
  *
@@ -353,7 +353,7 @@ function umtd_format_date( $ymd, $format = 'j F Y' ) {
     $dt = DateTime::createFromFormat( 'Ymd', $ymd );
     return ( $dt && $dt->format( 'Ymd' ) === $ymd ) ? $dt->format( $format ) : $ymd;
 }
- 
+
 /**
  * Retrieve all scalar fields for a work as a keyed array.
  *
@@ -376,54 +376,54 @@ function umtd_format_date( $ymd, $format = 'j F Y' ) {
  */
 function umtd_get_work( $post_id ) {
     global $wpdb;
- 
+
     $work_type_terms = get_the_terms( $post_id, 'umtd_work_type' );
     $work_type_slug  = ( $work_type_terms && ! is_wp_error( $work_type_terms ) )
         ? $work_type_terms[0]->slug
         : null;
- 
+
     $medium_terms = get_the_terms( $post_id, 'umtd_medium' );
- 
+
     $date_earliest = umtd_get_field( 'date_earliest', $post_id );
     $date_latest   = umtd_get_field( 'date_latest',   $post_id );
- 
+
     // Base fields — present on all work types.
     $data = array(
- 
+
         // WordPress core
         'title'         => get_the_title( $post_id ),
         'permalink'     => get_permalink( $post_id ),
         'thumbnail_id'  => get_post_thumbnail_id( $post_id ),
- 
+
         // Taxonomy
         'work_type'      => $work_type_terms ?: array(),
         'work_type_slug' => $work_type_slug,
         'medium'         => ( $medium_terms && ! is_wp_error( $medium_terms ) ) ? $medium_terms : array(),
- 
+
         // Dates
         'date_display'            => umtd_get_field( 'date_display',  $post_id ),
         'date_earliest'           => $date_earliest,
         'date_earliest_formatted' => umtd_format_date( $date_earliest ),
         'date_latest'             => $date_latest,
         'date_latest_formatted'   => umtd_format_date( $date_latest ),
- 
+
         // Physical description
         'accession_number' => umtd_get_field( 'accession_number', $post_id ),
         'dimensions_h'     => umtd_get_field( 'dimensions_h',     $post_id ),
         'dimensions_w'     => umtd_get_field( 'dimensions_w',     $post_id ),
         'dimensions_d'     => get_field( 'dimensions_d',          $post_id ),
         'dimensions_unit'  => umtd_get_field( 'dimensions_unit',  $post_id ),
- 
+
         // Description
         'description' => umtd_get_field( 'description', $post_id ),
     );
- 
+
     // Per-type extension fields — only load the block that matches.
     $visual_types = array( 'painting', 'drawing', 'sculpture', 'photograph', 'installation' );
     $print_types  = array( 'print', 'photograph' );
     $film_types   = array( 'film', 'video' );
     $biblio_types = array( 'books', 'monographs', 'articles', 'artist-book' );
- 
+
     if ( $work_type_slug && in_array( $work_type_slug, $visual_types, true ) ) {
         $data['support']            = get_field( 'support',            $post_id );
         $data['inscription']        = get_field( 'inscription',        $post_id );
@@ -431,13 +431,13 @@ function umtd_get_work( $post_id ) {
         $data['catalogue_raisonne'] = get_field( 'catalogue_raisonne', $post_id );
         $data['current_location']   = get_field( 'current_location',   $post_id );
     }
- 
+
     if ( $work_type_slug && in_array( $work_type_slug, $print_types, true ) ) {
         $data['edition_size']   = get_field( 'edition_size',   $post_id );
         $data['printer_copies'] = get_field( 'printer_copies', $post_id );
         $data['print_state']    = get_field( 'print_state',    $post_id );
     }
- 
+
     if ( $work_type_slug && in_array( $work_type_slug, $film_types, true ) ) {
         $film = $wpdb->get_row( $wpdb->prepare(
             "SELECT wf.runtime, wf.film_format, wf.language, wf.isan, wf.country_of_origin
@@ -452,7 +452,7 @@ function umtd_get_work( $post_id ) {
         $data['isan']              = $film->isan              ?? null;
         $data['country_of_origin'] = $film->country_of_origin ?? null;
     }
- 
+
     if ( $work_type_slug && in_array( $work_type_slug, $biblio_types, true ) ) {
         $data['isbn']                = get_field( 'isbn',                $post_id );
         $data['issn']                = get_field( 'issn',                $post_id );
@@ -465,7 +465,7 @@ function umtd_get_work( $post_id ) {
         $data['issue']               = get_field( 'issue',               $post_id );
         $data['page_range']          = get_field( 'page_range',          $post_id );
     }
- 
+
     if ( 'listing' === $work_type_slug ) {
         $data['listing_address'] = get_field( 'listing_address', $post_id );
         $data['tenure_type']     = get_field( 'tenure_type',     $post_id );
@@ -475,10 +475,10 @@ function umtd_get_work( $post_id ) {
         $data['rooms']           = get_field( 'rooms',           $post_id );
         $data['bathrooms']       = get_field( 'bathrooms',       $post_id );
     }
- 
+
     return $data;
 }
- 
+
 /**
  * Retrieve all scalar fields for an agent as a keyed array.
  *
@@ -494,38 +494,38 @@ function umtd_get_agent( $post_id ) {
     $death_date      = umtd_get_field( 'death_date',      $post_id );
     $founding_date   = umtd_get_field( 'founding_date',   $post_id );
     $dissolution_date= umtd_get_field( 'dissolution_date',$post_id );
- 
+
     return array(
- 
+
         // WordPress core
         'permalink'    => get_permalink( $post_id ),
         'thumbnail_id' => get_post_thumbnail_id( $post_id ),
- 
+
         // Display name — always use this for output
         'name_display' => umtd_get_field( 'name_display', $post_id ),
         'name_first'   => umtd_get_field( 'name_first',   $post_id ),
         'name_last'    => umtd_get_field( 'name_last',    $post_id ),
- 
+
         // Type
         'agent_type' => umtd_get_field( 'agent_type', $post_id ),
- 
+
         // Person dates
         'birth_date'            => $birth_date,
         'birth_date_formatted'  => umtd_format_date( $birth_date ),
         'death_date'            => $death_date,
         'death_date_formatted'  => umtd_format_date( $death_date ),
- 
+
         // Organization dates
         'founding_date'             => $founding_date,
         'founding_date_formatted'   => umtd_format_date( $founding_date ),
         'dissolution_date'          => $dissolution_date,
         'dissolution_date_formatted'=> umtd_format_date( $dissolution_date ),
- 
+
         // Identifiers and contact
         'wikidata_id' => umtd_get_field( 'wikidata_id', $post_id ),
         'ulan_id'     => umtd_get_field( 'ulan_id',     $post_id ),
         'website'     => umtd_get_field( 'website',     $post_id ),
- 
+
         // Still in postmeta
         'biography'    => get_field( 'biography',    $post_id ),
         'country'      => get_field( 'country',      $post_id ),
@@ -534,7 +534,7 @@ function umtd_get_agent( $post_id ) {
         'parent_org'   => get_field( 'parent_org',   $post_id ),
     );
 }
- 
+
 /**
  * Retrieve all works for an agent as an array of post IDs.
  *
@@ -546,12 +546,12 @@ function umtd_get_agent( $post_id ) {
  */
 function umtd_get_agent_works( $post_id ) {
     global $wpdb;
- 
+
     $agent_id = umtd_get_agent_id( $post_id );
     if ( ! $agent_id ) {
         return array();
     }
- 
+
     return $wpdb->get_col( $wpdb->prepare(
         "SELECT w.post_id
          FROM {$wpdb->prefix}umtd_work_agents wa
@@ -561,7 +561,7 @@ function umtd_get_agent_works( $post_id ) {
         $agent_id
     ) );
 }
- 
+
 /**
  * Retrieve all scalar fields for an event as a keyed array.
  *
@@ -576,35 +576,35 @@ function umtd_get_agent_works( $post_id ) {
 function umtd_get_event( $post_id ) {
     $start_date = umtd_get_field( 'start_date', $post_id );
     $end_date   = umtd_get_field( 'end_date',   $post_id );
- 
+
     $event_type_term = get_field( 'event_type', $post_id );
- 
+
     return array(
- 
+
         // WordPress core
         'title'        => get_the_title( $post_id ),
         'permalink'    => get_permalink( $post_id ),
         'thumbnail_id' => get_post_thumbnail_id( $post_id ),
- 
+
         // Dates
         'start_date'           => $start_date,
         'start_date_formatted' => umtd_format_date( $start_date ),
         'end_date'             => $end_date,
         'end_date_formatted'   => umtd_format_date( $end_date ),
- 
+
         // Type — WP_Term object; use ['event_type']->name for display
         'event_type'      => $event_type_term,
         'event_type_name' => $event_type_term ? $event_type_term->name : null,
- 
+
         // Scalar fields
         'event_link'  => umtd_get_field( 'event_link',  $post_id ),
         'description' => umtd_get_field( 'description', $post_id ),
- 
+
         // Location — WP_Post object (venue agent); still in postmeta
         'location' => get_field( 'location', $post_id ),
     );
 }
- 
+
 /**
  * Retrieve agent post IDs associated with works of a given work type.
  *
@@ -620,15 +620,15 @@ function umtd_get_event( $post_id ) {
  */
 function umtd_get_agents_by_work_type( $type_slug, $role_slug = null ) {
     global $wpdb;
- 
+
     $role_join  = '';
     $role_where = '';
- 
+
     if ( $role_slug ) {
         $role_join  = "JOIN {$wpdb->prefix}umtd_roles r ON r.id = wa.role_id";
         $role_where = $wpdb->prepare( "AND r.slug = %s", $role_slug );
     }
- 
+
     return $wpdb->get_col( $wpdb->prepare(
         "SELECT DISTINCT a.post_id
          FROM {$wpdb->prefix}umtd_work_agents wa
@@ -644,9 +644,6 @@ function umtd_get_agents_by_work_type( $type_slug, $role_slug = null ) {
         $type_slug
     ) );
 }
-<<<<<<< HEAD
- 
-=======
 
 /**
  * Search agents by name.
@@ -695,4 +692,3 @@ function umtd_search_agents( $term, $limit = 20 ) {
         $limit
     ) );
 }
->>>>>>> fa53d1f (You're right. Separate commits per repo:)
