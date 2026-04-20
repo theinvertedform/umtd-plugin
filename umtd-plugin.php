@@ -54,6 +54,20 @@ function umtd_get_i18n() {
 	return apply_filters( 'umtd_i18n', require UMTD_PATH . 'config/i18n.php' );
 }
 
+add_filter( 'umtd_cpt_archives_enabled', '__return_true' );
+
+/**
+ * Allow child plugins to disable CPT archives.
+ *
+ * When false, CPT archives are disabled and Page templates must be used.
+ * Controlled via umtd_cpt_archives_enabled filter in child plugin.
+ *
+ * @return bool
+ */
+function umtd_cpt_archives_enabled() {
+    return apply_filters( 'umtd_cpt_archives_enabled', true );
+}
+
 /**
  * Register all CPTs defined in config/post-types.php.
  *
@@ -106,8 +120,14 @@ function umtd_register_post_types() {
 		// If explicitly false in config (e.g. umtd_events), preserve that.
 		// If true or unset, set to the prefixed slug string.
 		$has_archive = isset( $args['has_archive'] ) ? $args['has_archive'] : true;
+
+		// Allow child plugins to disable archives globally
+		if ( ! umtd_cpt_archives_enabled() ) {
+		    $has_archive = false;
+		}
+
 		if ( true === $has_archive ) {
-			$has_archive = $slug;
+		    $has_archive = $slug;
 		}
 
 		$defaults = array(

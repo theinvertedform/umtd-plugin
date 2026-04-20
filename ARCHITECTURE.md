@@ -89,14 +89,15 @@ Child plugins communicate with the base exclusively through filter hooks — no 
 ### Filter Hook Contracts
 
 ```php
-apply_filters( 'umtd_post_types', $post_types )      // CPT definitions
-apply_filters( 'umtd_taxonomies', $taxonomies )      // taxonomy definitions
-apply_filters( 'umtd_terms', $terms )                // controlled vocabulary
-apply_filters( 'umtd_i18n', $i18n )                  // language config and slug translations
-apply_filters( 'umtd_schema_config', $config )       // schema.org output config
-apply_filters( 'umtd_schema_tables', $definitions )  // custom table definitions array — child plugins unset tables not needed for their client
-apply_filters( 'umtd_roles', $roles )                // agent roles vocabulary — child plugins extend
-apply_filters( 'umtd_view_types', $view_types )      // image view types vocabulary — child plugins extend
+apply_filters( 'umtd_post_types', $post_types )           // CPT definitions
+apply_filters( 'umtd_taxonomies', $taxonomies )           // taxonomy definitions
+apply_filters( 'umtd_terms', $terms )                     // controlled vocabulary
+apply_filters( 'umtd_i18n', $i18n )                       // language config and slug translations
+apply_filters( 'umtd_cpt_archives_enabled', true )        // bool — when false, CPT archives disabled, forces Page templates
+apply_filters( 'umtd_schema_config', $config )            // schema.org output config
+apply_filters( 'umtd_schema_tables', $definitions )       // custom table definitions array — child plugins unset tables not needed for their client
+apply_filters( 'umtd_roles', $roles )                     // agent roles vocabulary — child plugins extend
+apply_filters( 'umtd_view_types', $view_types )           // image view types vocabulary — child plugins extend
 ```
 
 ### CPT Registration
@@ -486,11 +487,30 @@ umtd-theme/
 
 ### Page Templates vs CPT Archives
 
-CPT archives (`archive-umtd_*.php`) exist but are not used for primary navigation. Client nav pages are WordPress pages with custom page templates (`templates/*.php`) running their own `WP_Query`. This decouples URL structure from CPT registration.
+The platform supports two archive URL patterns, controlled by the `umtd_cpt_archives_enabled` filter in child plugins:
 
-`umtd_events` has `'has_archive' => false` to prevent URL conflict with the client's events page slug.
+**CPT Archives (default, filter returns true):**
+- Archive URLs: `/works/`, `/agents/`, `/events/` (or `/{lang}/works/` on multilingual installs)
+- Templates: `archive-umtd_works.php`, `archive-umtd_agents.php`, `archive-umtd_events.php`
+- No Pages needed in WP admin
+- Uses WordPress main query loop
+**Page Templates (filter returns false):**
+- Archive URLs: client-defined via Page slugs (e.g., `/artworks/`, `/wiki/works/`, `/our-artists/`)
+- Templates: `templates/works-archive.php`, `templates/artists-archive.php`, `templates/events-archive.php`
+- Requires creating Pages in WP admin and assigning templates
+- Uses custom `WP_Query` in template, not main loop
+- CPT archive URLs 404 and redirect to matching Page slugs via WordPress canonical redirect
+**Default behavior:** CPT archives enabled. Child plugins opt out via single filter:
 
-Page templates are client-specific — the base theme ships minimal stubs. Pages must be created manually in WP admin with the correct template assigned (or via `wp_insert_post()` on child plugin activation — see `ROADMAP.md`).
+```php
+add_filter( 'umtd_cpt_archives_enabled', '__return_false' );
+```
+
+Filter must be added inside `plugins_loaded` callback (CPTs register on `init`, which respects filters from `plugins_loaded` but not top-level code).
+
+**Recommendation:** Use CPT archives unless the client requires custom URL structure or hierarchy. Page templates add manual setup overhead (create Pages, assign templates, flush rewrites).
+
+See `DECISIONS.md` — "CPT Archive URLs vs Page Templates" for design rationale.
 
 ### Semantic HTML Conventions
 
@@ -501,7 +521,6 @@ Page templates are client-specific — the base theme ships minimal stubs. Pages
 - Dates: always `<time datetime="Y-m-d">`
 - Nav filters: `<nav><ul><li><a>`, `aria-current="page"` on active item
 - `<main>` opens in `header.php`, closes in `footer.php`
-
 ### URL Architecture
 
 CPT single and archive URLs are language-prefixed on multilingual installs via the i18n rewrite system. On monolingual installs (single entry in `languages`), no prefix is generated — URLs are bare slugs. Page template URLs are WordPress pages with slugs set manually in WP admin — these are never language-prefixed. Outbound URL rewriting for nav menus is planned — see `ROADMAP.md`.
@@ -543,5 +562,4 @@ Version defined in plugin header and as `UMTD_VERSION` constant. Semantic versio
 - `MAJOR` — breaking change to filter hook signatures or ACF field key renames
 - `MINOR` — new feature, backwards compatible
 - `PATCH` — bugfix
-
 Stay at `0.x` until filter hooks and field keys are stable. Tag releases `git tag v0.x.x`. Child plugins should document which base version they target.
