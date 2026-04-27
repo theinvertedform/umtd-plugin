@@ -27,6 +27,7 @@
  *   umtd_get_agent()       — all scalar agent fields as keyed array
  *   umtd_get_event()       — all scalar event fields as keyed array
  *   umtd_get_agent_works() — works list for an agent (call separately, not embedded)
+ *   umtd_get_agent_events() — events list for an agent (call separately, not embedded)
  *
  * Templates use the high-level functions. Save intercepts and the meta box
  * use the low-level FK lookup helpers. umtd_get_field() is the fallback for
@@ -416,10 +417,10 @@ function umtd_get_work( $post_id ) {
     );
 
     // Per-type extension fields — only load the block that matches.
-    $visual_types = array( 'painting', 'drawing', 'sculpture', 'photograph', 'installation' );
-    $print_types  = array( 'print', 'photograph' );
-    $film_types   = array( 'film', 'video' );
-    $biblio_types = array( 'books', 'monographs', 'articles', 'artist-book' );
+	$visual_types = array( 'paintings', 'drawings', 'sculptures', 'photographs', 'installations' );
+	$print_types  = array( 'prints', 'photographs' );
+	$film_types   = array( 'films', 'videos' );
+	$biblio_types = array( 'books', 'monographs', 'articles', 'artist-books' );
 
     if ( $work_type_slug && in_array( $work_type_slug, $visual_types, true ) ) {
         $data['support']            = get_field( 'support',            $post_id );
@@ -463,7 +464,7 @@ function umtd_get_work( $post_id ) {
         $data['page_range']          = get_field( 'page_range',          $post_id );
     }
 
-    if ( 'listing' === $work_type_slug ) {
+    if ( 'listings' === $work_type_slug ) {
         $data['listing_address'] = get_field( 'listing_address', $post_id );
         $data['tenure_type']     = get_field( 'tenure_type',     $post_id );
         $data['listing_status']  = get_field( 'listing_status',  $post_id );
@@ -555,6 +556,33 @@ function umtd_get_agent_works( $post_id ) {
          JOIN {$wpdb->prefix}umtd_works w ON w.id = wa.work_id
          WHERE wa.agent_id = %d
          ORDER BY wa.sort_order ASC",
+        $agent_id
+    ) );
+}
+
+/**
+ * Retrieve all events for an agent as an array of post IDs.
+ *
+ * Separate from umtd_get_agent() to avoid N+1 queries on archive pages.
+ * Call only in single-agent context or when the events list is explicitly needed.
+ *
+ * @param int $post_id WordPress post ID of the agent.
+ * @return int[] Array of event post IDs.
+ */
+function umtd_get_agent_events( $post_id ) {
+    global $wpdb;
+
+    $agent_id = umtd_get_agent_id( $post_id );
+    if ( ! $agent_id ) {
+        return array();
+    }
+
+    return $wpdb->get_col( $wpdb->prepare(
+        "SELECT e.post_id
+         FROM {$wpdb->prefix}umtd_event_agents ea
+         JOIN {$wpdb->prefix}umtd_events e ON e.id = ea.event_id
+         WHERE ea.agent_id = %d
+         ORDER BY e.start_date DESC",
         $agent_id
     ) );
 }
