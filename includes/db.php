@@ -211,7 +211,10 @@ function umtd_get_work_agents( $work_post_id, $lang = 'en' ) {
             r.slug           AS role_slug,
             r.$label_col     AS role_label,
             a.post_id        AS agent_post_id,
-            a.name_display   AS name_display
+			a.name_display   AS name_display,
+            a.name_first     AS name_first,
+            a.name_last      AS name_last,
+            a.agent_type     AS agent_type
          FROM {$wpdb->prefix}umtd_work_agents wa
          JOIN {$wpdb->prefix}umtd_agents a ON a.id = wa.agent_id
          JOIN {$wpdb->prefix}umtd_roles  r ON r.id = wa.role_id
@@ -253,7 +256,7 @@ function umtd_get_event_agents( $event_post_id, $lang = 'en' ) {
             r.slug           AS role_slug,
             r.$label_col     AS role_label,
             a.post_id        AS agent_post_id,
-            a.name_display   AS name_display
+            a.name_display   AS name_display,
          FROM {$wpdb->prefix}umtd_event_agents ea
          JOIN {$wpdb->prefix}umtd_agents a ON a.id = ea.agent_id
          JOIN {$wpdb->prefix}umtd_roles  r ON r.id = ea.role_id
