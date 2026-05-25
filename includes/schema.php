@@ -90,9 +90,6 @@ function umtd_output_visual_artwork_schema() {
 				$q_id      = ( strpos( $wikidata, 'Q' ) === 0 ) ? $wikidata : 'Q' . $wikidata;
 				$same_as[] = 'https://www.wikidata.org/wiki/' . $q_id;
 			}
-			if ( $ulan = get_field( 'ulan_id', $agent_id ) ) {
-				$same_as[] = 'http://vocab.getty.edu/page/ulan/' . $ulan;
-			}
 			if ( ! empty( $same_as ) ) {
 				$creator['sameAs'] = $same_as;
 			}

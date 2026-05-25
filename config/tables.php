@@ -65,12 +65,14 @@ return array(
 		dimensions_unit     VARCHAR(10)     DEFAULT NULL,
 		edition_size        INT UNSIGNED    DEFAULT NULL,
 		printer_copies      INT UNSIGNED    DEFAULT NULL,
+		wikidata_id         VARCHAR(50)     DEFAULT NULL,
+		viaf_id             VARCHAR(50)     DEFAULT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY post_id (post_id),
 		KEY date_earliest (date_earliest),
-		KEY date_latest (date_latest)
+		KEY date_latest (date_latest),
+		KEY wikidata_id (wikidata_id)
 	) $charset;",
-
 	'umtd_agents' => "CREATE TABLE {$wpdb->prefix}umtd_agents (
 		id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 		post_id             BIGINT UNSIGNED NOT NULL,
@@ -83,12 +85,14 @@ return array(
 		founding_date       VARCHAR(8)      DEFAULT NULL,
 		dissolution_date    VARCHAR(8)      DEFAULT NULL,
 		wikidata_id         VARCHAR(50)     DEFAULT NULL,
-		ulan_id             VARCHAR(50)     DEFAULT NULL,
+		viaf_id             VARCHAR(50)     DEFAULT NULL,
+		isni                VARCHAR(50)     DEFAULT NULL,
 		website             VARCHAR(2083)   DEFAULT NULL,
 		PRIMARY KEY  (id),
 		UNIQUE KEY post_id (post_id),
 		KEY agent_type (agent_type),
-		KEY name_last (name_last)
+		KEY name_last (name_last),
+		KEY wikidata_id (wikidata_id)
 	) $charset;",
 
 	'umtd_works_film' => "CREATE TABLE {$wpdb->prefix}umtd_works_film (
@@ -98,6 +102,24 @@ return array(
 		language            VARCHAR(10)     DEFAULT NULL,
 		isan                VARCHAR(100)    DEFAULT NULL,
 		country_of_origin   VARCHAR(100)    DEFAULT NULL,
+		PRIMARY KEY  (work_id),
+		UNIQUE KEY work_id (work_id)
+	) $charset;",
+
+	'umtd_works_bibliographic' => "CREATE TABLE {$wpdb->prefix}umtd_works_bibliographic (
+		work_id             BIGINT UNSIGNED NOT NULL,
+		doi                 VARCHAR(2083)   DEFAULT NULL,
+		journal_title       VARCHAR(500)    DEFAULT NULL,
+		volume              VARCHAR(50)     DEFAULT NULL,
+		issue               VARCHAR(50)     DEFAULT NULL,
+		pages_start         VARCHAR(20)     DEFAULT NULL,
+		pages_end           VARCHAR(20)     DEFAULT NULL,
+		issn                VARCHAR(20)     DEFAULT NULL,
+		isbn                VARCHAR(20)     DEFAULT NULL,
+		publisher_name      VARCHAR(500)    DEFAULT NULL,
+		place_of_publication VARCHAR(255)   DEFAULT NULL,
+		edition_number      VARCHAR(50)     DEFAULT NULL,
+		page_count          INT UNSIGNED    DEFAULT NULL,
 		PRIMARY KEY  (work_id),
 		UNIQUE KEY work_id (work_id)
 	) $charset;",
