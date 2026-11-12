@@ -84,6 +84,7 @@ return array(
 		death_date          VARCHAR(8)      DEFAULT NULL,
 		founding_date       VARCHAR(8)      DEFAULT NULL,
 		dissolution_date    VARCHAR(8)      DEFAULT NULL,
+		ulan_id             VARCHAR(50)     DEFAULT NULL,
 		wikidata_id         VARCHAR(50)     DEFAULT NULL,
 		viaf_id             VARCHAR(50)     DEFAULT NULL,
 		isni                VARCHAR(50)     DEFAULT NULL,
