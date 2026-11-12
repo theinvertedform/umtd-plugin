@@ -11,6 +11,7 @@
  *
  * Child plugins define a whitelist as a subset of this vocabulary by name.
  * On child plugin activation, terms absent from the whitelist are deleted.
+ * A taxonomy the child does not whitelist keeps every term defined here.
  *
  * Full AAT vocabulary: https://www.getty.edu/research/tools/vocabularies/aat/
  *
